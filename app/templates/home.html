@@ -1,0 +1,17 @@
+{# home.html #}
+
+{% extends "base.html" %}
+
+{% block content %}
+
+	{{ welcome_message }}
+
+	<ul>
+	{% for hour in hours %}
+		<li>
+			{{ hour.name }}
+		</li>
+	{% endfor %}
+	</ul>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{# item_delete.html #}
+
+{% from 'bootstrap/form.html' import render_form %}
+
+{% extends "base.html" %}
+
+{% block content %}
+
+	<h1>
+		{{ title }}
+	</h1>
+	<p>
+		Confirm you want to delete: {{ item_name }}
+	</p>
+
+	{{ render_form(form) }}
+
+{% endblock %}

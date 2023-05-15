@@ -1,0 +1,52 @@
+{# items_list.html #}
+
+{% extends "base.html" %}
+
+{% block content %}
+
+	<h1>
+		{{ title }}
+	</h1>
+	{% if tbody_tr_items %}
+	<table class="table">
+		<thead>
+		<tr>
+			{% for thead_th_item in thead_th_items %}
+			<th scope="col">
+				{{ thead_th_item.col_title }}
+			</th>
+			{% endfor %}
+		</tr>
+		</thead>
+		<tbody>
+			{% for tbody_tr_item in tbody_tr_items %}
+			<tr>
+				{% for tbody_td_item in tbody_tr_item %}
+				<td>
+					{% if tbody_td_item.url %}
+						<a href="{{ tbody_td_item.url }}">
+							{{ tbody_td_item.col_value }}
+						</a>
+					{% else %}
+						{% if tbody_td_item.col_value %}
+							{{ tbody_td_item.col_value }}
+						{% else %}
+							-
+						{% endif %}
+					{% endif %}
+				</td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% else %}
+		<p>
+		No items found
+		</p>
+	{% endif %}
+	<a class="btn btn-outline-dark" href="{{ item_new_url }}" role="button">
+		{{ item_new_text }}
+	</a>
+
+{% endblock %}
