@@ -12,17 +12,23 @@ This application can be used by anyone in any circumstance (commercial, non-comm
 
  ## Getting ready to run:
 
- **(git clone) Clone this repository to your device.** 
+ **(git clone) Clone this repository to your device.**
+ 
  Go into directory and run:
+ 
  pip install -r requirements.txt
 
  After this finishes enter:
 
  **Create the database**
+ 
  alembic revision --autogenerate -m "create db"
+ 
+ 
  alembic upgrade head
  
 **Run the application**
+
  python3 run.py
 
  Open a browser and head to http://127.0.0.1:5000
