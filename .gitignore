@@ -1,1 +1,3 @@
 bia.db
+app.log
+./alembic/versions/*

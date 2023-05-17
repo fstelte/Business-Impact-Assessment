@@ -5212,3 +5212,1079 @@ FROM context_scope ORDER BY context_scope.name
 2023-05-17 09:09:50,962 [INFO ] [          _exec_single_context()] [cached since 3012s ago] ()
 2023-05-17 09:09:50,964 [INFO ] [                _rollback_impl()] ROLLBACK
 2023-05-17 09:09:50,964 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 09:09:50] "GET /manage-data/bia/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:20:39,125 [DEBUG] [                    create_app()] test debug message
+2023-05-17 14:20:39,241 [INFO ] [                          _log()] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.200.0.7:5000
+2023-05-17 14:20:39,242 [INFO ] [                          _log()] [33mPress CTRL+C to quit[0m
+2023-05-17 14:20:39,245 [INFO ] [                          _log()]  * Restarting with stat
+2023-05-17 14:20:39,461 [DEBUG] [                    create_app()] test debug message
+2023-05-17 14:20:39,480 [WARNI] [                          _log()]  * Debugger is active!
+2023-05-17 14:20:39,532 [INFO ] [                          _log()]  * Debugger PIN: 252-557-612
+2023-05-17 14:20:45,773 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:45] "GET / HTTP/1.1" 200 -
+2023-05-17 14:20:45,927 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2023-05-17 14:20:47,941 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:20:47,943 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.component_name
+2023-05-17 14:20:47,943 [INFO ] [          _exec_single_context()] [generated in 0.00012s] ()
+2023-05-17 14:20:47,945 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:20:47,945 [INFO ] [          _exec_single_context()] [generated in 0.00011s] ()
+2023-05-17 14:20:47,950 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:20:47,950 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:47] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:20:48,875 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:20:48,876 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:20:48,876 [INFO ] [          _exec_single_context()] [generated in 0.00013s] ()
+2023-05-17 14:20:48,876 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:20:48,889 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:48] "[35m[1mGET /manage-data/consequence/list?use_li=True HTTP/1.1[0m" 500 -
+2023-05-17 14:20:48,970 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:48] "GET /manage-data/consequence/list?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2023-05-17 14:20:48,971 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:48] "[36mGET /manage-data/consequence/list?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2023-05-17 14:20:49,018 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:49] "GET /manage-data/consequence/list?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2023-05-17 14:20:52,589 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:20:52,590 [INFO ] [          _exec_single_context()] SELECT availability_requirements.id AS availability_requirements_id, availability_requirements.component_name AS availability_requirements_component_name, availability_requirements.mtd AS availability_requirements_mtd, availability_requirements.rto AS availability_requirements_rto, availability_requirements.rpo AS availability_requirements_rpo, availability_requirements.masl AS availability_requirements_masl 
+FROM availability_requirements ORDER BY availability_requirements.id
+2023-05-17 14:20:52,590 [INFO ] [          _exec_single_context()] [generated in 0.00013s] ()
+2023-05-17 14:20:52,592 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:20:52,592 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:52] "GET /manage-data/availability/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:20:53,523 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:20:53,525 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".id
+2023-05-17 14:20:53,525 [INFO ] [          _exec_single_context()] [generated in 0.00024s] ()
+2023-05-17 14:20:53,527 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:20:53,527 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:53] "GET /manage-data/reference/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:20:55,124 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:20:55,124 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.component_name
+2023-05-17 14:20:55,124 [INFO ] [          _exec_single_context()] [cached since 7.182s ago] ()
+2023-05-17 14:20:55,125 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:20:55,125 [INFO ] [          _exec_single_context()] [cached since 7.181s ago] ()
+2023-05-17 14:20:55,127 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:20:55,127 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:55] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:20:56,672 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:20:56,672 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:20:56,672 [INFO ] [          _exec_single_context()] [cached since 7.797s ago] ()
+2023-05-17 14:20:56,673 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:20:56,678 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:56] "[35m[1mGET /manage-data/consequence/list?use_li=True HTTP/1.1[0m" 500 -
+2023-05-17 14:20:56,810 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:56] "[36mGET /manage-data/consequence/list?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2023-05-17 14:20:56,811 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:56] "[36mGET /manage-data/consequence/list?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2023-05-17 14:20:56,827 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:20:56] "[36mGET /manage-data/consequence/list?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2023-05-17 14:22:42,112 [DEBUG] [                    create_app()] test debug message
+2023-05-17 14:22:42,226 [INFO ] [                          _log()] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.200.0.7:5000
+2023-05-17 14:22:42,226 [INFO ] [                          _log()] [33mPress CTRL+C to quit[0m
+2023-05-17 14:22:42,228 [INFO ] [                          _log()]  * Restarting with stat
+2023-05-17 14:22:42,440 [DEBUG] [                    create_app()] test debug message
+2023-05-17 14:22:42,458 [WARNI] [                          _log()]  * Debugger is active!
+2023-05-17 14:22:42,458 [INFO ] [                          _log()]  * Debugger PIN: 252-557-612
+2023-05-17 14:22:50,158 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:22:50,161 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.name
+2023-05-17 14:22:50,161 [INFO ] [          _exec_single_context()] [generated in 0.00029s] ()
+2023-05-17 14:22:50,183 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:22:50,183 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:22:50] "GET /manage-data/bia/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:23:11,694 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:23:11] "GET /manage-data/bia/new HTTP/1.1" 200 -
+2023-05-17 14:26:35,024 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:26:35,025 [INFO ] [          _exec_single_context()] INSERT INTO context_scope (name, responsible, coordinator, start_date, end_date, last_update, service_description, knowledge, interfaces, mission_critical, support_contracts, security_supplier, user_amount, scope_description, risk_assessment_human, risk_assessment_process, risk_assessment_technological, project_leader, risk_owner, product_owner, technical_administrator, security_manager, incident_contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2023-05-17 14:26:35,026 [INFO ] [          _exec_single_context()] [generated in 0.00027s] ('BIA for Finance', 'Bea van Bemmel', 'Ferry Stelte', '2022-11-08', '2024-11-08', '2023-01-18', 'Exact, Clockwise, SpendCloud, HR2Day', 'Exact: Licentie in  eigendom sinds jaren en draait op eigen server. Update worden periodiek uitgevoerd door Managed Services. Managed Services is  be ... (154 characters truncated) ... beheer bij Advisie (tussenpersoon Exact) Clockwise, Spendcloud en HR2Day zijn cloudoplossingen waar geen kennis van technologie voor nodig is intern.', 'Exact: koppeling met Orbis/Visma t/m 31/12 loopt de licentie (inmiddels opgezegd), maar wordt naar verwachting niet meer gebruikt, omdat Visma  factu ... (110 characters truncated) ... load via XML naar Exact. Spendcloud heeft een interface voor de inkoop facturen met Exact en de declaraties worden via een XML load geladen in Exact.', 'Exact is mission critical', 'Exact via helpdesk van Exact (extern) en Managed Sevices (intern), andere diensten Cloudoplossingen (extern). Per 5 december ook Exact via een Clouddienst', 'Geen idee, moeten contracten opzoeken om te zien wat de voorwaarden van de diverse diensten zijn. ', 5, 'All Finance applications', 'No', 'No', 'No', 'Ferry Stelte', 'Bea van Bemmel', 'Bea van Bemmel', 'Third parties', 'Ferry Stelte', 'Ferry Stelte')
+2023-05-17 14:26:35,026 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 14:26:35,032 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:26:35] "[32mPOST /manage-data/bia/new HTTP/1.1[0m" 302 -
+2023-05-17 14:26:35,043 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:26:35,044 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.name
+2023-05-17 14:26:35,044 [INFO ] [          _exec_single_context()] [cached since 224.9s ago] ()
+2023-05-17 14:26:35,046 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:26:35,046 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:26:35] "GET /manage-data/bia/list HTTP/1.1" 200 -
+2023-05-17 14:26:51,607 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:26:51,608 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:26:51,608 [INFO ] [          _exec_single_context()] [generated in 0.00021s] ()
+2023-05-17 14:26:51,610 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:26:51,610 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:26:51] "GET /manage-data/component/new?bia_id=1 HTTP/1.1" 200 -
+2023-05-17 14:27:45,028 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:27:45,029 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:27:45,029 [INFO ] [          _exec_single_context()] [cached since 53.42s ago] ()
+2023-05-17 14:27:45,030 [INFO ] [          _exec_single_context()] INSERT INTO components (bia_name, component_name, processes_dependencies, info_type, user_type, description) VALUES (?, ?, ?, ?, ?, ?)
+2023-05-17 14:27:45,030 [INFO ] [          _exec_single_context()] [generated in 0.00011s] ('BIA for Finance', 'Exact', "Input: Rechten bij 4 personen, zijn standaard processen, ondersteunt door Exact. Exact is gebruikersvriendelijk. Daarnaast is er 1 gebruiker met alle ... (153 characters truncated) ... o's op het gebied van personeel of competentie afhankelijkheden. Aleen als Exact zelf uitvalt tijdens een maandeinde moment. Zie hiervoor aparte tab.", 'Soort data betreft vastlegging van financiele data. Data op basis van klant en leverancier niveau, declaraties zichtbaar  op personeelsniveau. Salari ... (279 characters truncated) ... ortedatum of iets dergelijke. Verder heeft maar een beperkt aantal mensen toegang tot het systeem en ook alleen maar mensen van de Finance afdeling. ', '5 gebruikers, waarvan 1 met beperkte rechten en andere met volledige rechten. Alleen mensen van de Finance afdeling.  (intern) hebben toegang tot het ... (73 characters truncated) ... dig om de update uit te voeren. Managed Service heeft geen account in Exact. Daarnaast is er een account voor de interface van SpendCloud naar Exact.', 'Environment hosted by Advisie')
+2023-05-17 14:27:45,030 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 14:27:45,035 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:27:45] "[32mPOST /manage-data/component/new?bia_id=1 HTTP/1.1[0m" 302 -
+2023-05-17 14:27:45,048 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:27:45,049 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.component_name
+2023-05-17 14:27:45,049 [INFO ] [          _exec_single_context()] [generated in 0.00010s] ()
+2023-05-17 14:27:45,050 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:27:45,050 [INFO ] [          _exec_single_context()] [cached since 53.44s ago] ()
+2023-05-17 14:27:45,051 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:27:45,051 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:27:45] "GET /manage-data/component/list HTTP/1.1" 200 -
+2023-05-17 14:28:13,364 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:28:13,364 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:28:13,364 [INFO ] [          _exec_single_context()] [cached since 81.76s ago] ()
+2023-05-17 14:28:13,366 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:28:13,366 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:28:13] "GET /manage-data/component/new HTTP/1.1" 200 -
+2023-05-17 14:28:51,736 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:28:51,736 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:28:51,736 [INFO ] [          _exec_single_context()] [cached since 120.1s ago] ()
+2023-05-17 14:28:51,737 [INFO ] [          _exec_single_context()] INSERT INTO components (bia_name, component_name, processes_dependencies, info_type, user_type, description) VALUES (?, ?, ?, ?, ?, ?)
+2023-05-17 14:28:51,737 [INFO ] [          _exec_single_context()] [cached since 66.71s ago] ('BIA for Finance', 'Clockwise', 'Facturatie vindt in dit systeem plaats en verder haalt Finance data uit het systeem. En salarisadministratie voegt personeel  gerelateerde gegevens toe. Waarvan de kritsiche gegevens, zoals kostprijs uurtarieven, voor de niet financiële profielen zijn afgeschermd.', 'Verwerking van de urenregistratie tbv facturatie aan klanten. Registratie van projecten Managed services (Cloud en Workspace) ook tbv facturatie aan  ... (127 characters truncated) ...  Wel staat er een berekende kostprijs in, deze is niet terug te leiden naar het salaris. Deze kostprijs is alleen zichtbaar voor Finance en MT leden.', 'Op dit moment 110 licenties die bijna allemaal in gebruik zijn. Gebruikers zijn consultants en subcontractors die hun uren registreren.  Deze hebben  ... (123 characters truncated) ... rt endiverse rapporten draait en download. En view functies voor diverse mensen mbt inzicht in facturen. Klanten hebben geen toegang tot het systeem.', 'SaaS Solution: Betreft een online dienst in beheer bij Clockwise.')
+2023-05-17 14:28:51,737 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 14:28:51,743 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:28:51] "[32mPOST /manage-data/component/new HTTP/1.1[0m" 302 -
+2023-05-17 14:28:51,756 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:28:51,757 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.component_name
+2023-05-17 14:28:51,757 [INFO ] [          _exec_single_context()] [cached since 66.71s ago] ()
+2023-05-17 14:28:51,758 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:28:51,758 [INFO ] [          _exec_single_context()] [cached since 120.1s ago] ()
+2023-05-17 14:28:51,759 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:28:51,760 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:28:51] "GET /manage-data/component/list HTTP/1.1" 200 -
+2023-05-17 14:29:31,071 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:29:31,072 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:29:31,072 [INFO ] [          _exec_single_context()] [cached since 159.5s ago] ()
+2023-05-17 14:29:31,074 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:29:31,074 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:29:31] "GET /manage-data/component/new HTTP/1.1" 200 -
+2023-05-17 14:30:11,241 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:30:11,241 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:30:11,241 [INFO ] [          _exec_single_context()] [cached since 199.6s ago] ()
+2023-05-17 14:30:11,242 [INFO ] [          _exec_single_context()] INSERT INTO components (bia_name, component_name, processes_dependencies, info_type, user_type, description) VALUES (?, ?, ?, ?, ?, ?)
+2023-05-17 14:30:11,242 [INFO ] [          _exec_single_context()] [cached since 146.2s ago] ('BIA for Finance', 'SpendCloud', 'Betreft een inkoopfacturen en declaratie registratie systeem. Welke kan worden ingericht met de vastegelegde autorisaties. SpendCloud heeft een interface met Exact voor het doorzetten van de inkoopfacturen in Exact, waar de betaling kan worden voorbereidt.', 'Vastlegging van inkoopfacturen en declaraties. Met als doel een goed autorisatieproces te waarborgen, alvorens de factuur/declaratie  betaalbaar gesteld wordt. Daarnaast wordt ook hier de boeking voor in exact al gedefinieerd.', 'Er zijn 100 gebruikers. Iedereen heeft rechten om een declaratie in te dienen. Het management heeft autorisatie rechten volgens het  autorisatieschema.', 'SaaS Solution: Betreft een online dienst in beheer bij Advisie (tussenpersoon van Exact).')
+2023-05-17 14:30:11,243 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 14:30:11,249 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:30:11] "[32mPOST /manage-data/component/new HTTP/1.1[0m" 302 -
+2023-05-17 14:30:11,261 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:30:11,261 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.component_name
+2023-05-17 14:30:11,261 [INFO ] [          _exec_single_context()] [cached since 146.2s ago] ()
+2023-05-17 14:30:11,262 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:30:11,262 [INFO ] [          _exec_single_context()] [cached since 199.7s ago] ()
+2023-05-17 14:30:11,264 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:30:11,264 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:30:11] "GET /manage-data/component/list HTTP/1.1" 200 -
+2023-05-17 14:30:18,322 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:30:18,322 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:30:18,322 [INFO ] [          _exec_single_context()] [cached since 206.7s ago] ()
+2023-05-17 14:30:18,323 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:30:18,323 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:30:18] "GET /manage-data/component/new HTTP/1.1" 200 -
+2023-05-17 14:30:59,768 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:30:59,768 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:30:59,768 [INFO ] [          _exec_single_context()] [cached since 248.2s ago] ()
+2023-05-17 14:30:59,769 [INFO ] [          _exec_single_context()] INSERT INTO components (bia_name, component_name, processes_dependencies, info_type, user_type, description) VALUES (?, ?, ?, ?, ?, ?)
+2023-05-17 14:30:59,769 [INFO ] [          _exec_single_context()] [cached since 194.7s ago] ('BIA for Finance', 'HR2Day', 'Betreft het salarisverwerkingssysteem. Salarisverwerking vindt in huis plaats. Is dus niet uitbesteed aan een salaradministratiue kantoor. Verwerking ... (136 characters truncated) ... teden. Maar dit kost wel tijd aan voorbereiding en overdracht. De eerste afvang bij problemen moet dus eerst intern door de backup worden opgevangen.', 'Salarissen en salaris/belasting gerelateerde declaraties. Met doel tot uitbetaling van de vergoedingen/salarissen aan medewerkers.', 'ca 100. Iedere medewerker heeft rechten om een declaratie in te dienen, vrije dagen aan te vragen en zijn/haar eigen gegevens in te zien. Een beperkt aantal mensen heeft meer rechten om alles in te zien.Salarissen inzien kunnen alleen HR, salarisadminstrateur en Finance Directeur.', 'Saas Solution: Betreft een online dienst in beheer bij HR2Day.')
+2023-05-17 14:30:59,769 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 14:30:59,779 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:30:59] "[32mPOST /manage-data/component/new HTTP/1.1[0m" 302 -
+2023-05-17 14:30:59,792 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:30:59,792 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.component_name
+2023-05-17 14:30:59,792 [INFO ] [          _exec_single_context()] [cached since 194.7s ago] ()
+2023-05-17 14:30:59,793 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:30:59,793 [INFO ] [          _exec_single_context()] [cached since 248.2s ago] ()
+2023-05-17 14:30:59,795 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:30:59,795 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:30:59] "GET /manage-data/component/list HTTP/1.1" 200 -
+2023-05-17 14:31:37,246 [INFO ] [                          _log()]  * Detected change in '/home/ferry/Documents/Business-Impact-Assessment/app/blueprints/manage_data/views.py', reloading
+2023-05-17 14:31:37,319 [INFO ] [                          _log()]  * Restarting with stat
+2023-05-17 14:31:37,559 [DEBUG] [                    create_app()] test debug message
+2023-05-17 14:31:37,581 [WARNI] [                          _log()]  * Debugger is active!
+2023-05-17 14:31:37,581 [INFO ] [                          _log()]  * Debugger PIN: 252-557-612
+2023-05-17 14:31:39,963 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:31:39,965 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:31:39,965 [INFO ] [          _exec_single_context()] [generated in 0.00015s] ()
+2023-05-17 14:31:39,967 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:31:39,967 [INFO ] [          _exec_single_context()] [generated in 0.00017s] ()
+2023-05-17 14:31:39,989 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:31:39,989 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:31:39] "GET /manage-data/component/list HTTP/1.1" 200 -
+2023-05-17 14:31:43,123 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:31:43,124 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.name
+2023-05-17 14:31:43,124 [INFO ] [          _exec_single_context()] [generated in 0.00018s] ()
+2023-05-17 14:31:43,126 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:31:43,126 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:31:43] "GET /manage-data/bia/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:31:44,623 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:31:44,625 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:31:44,625 [INFO ] [          _exec_single_context()] [generated in 0.00017s] ()
+2023-05-17 14:31:44,626 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:31:44,626 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:31:44] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:31:45,390 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:31:45,390 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:31:45,391 [INFO ] [          _exec_single_context()] [cached since 5.426s ago] ()
+2023-05-17 14:31:45,392 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:31:45,392 [INFO ] [          _exec_single_context()] [cached since 5.425s ago] ()
+2023-05-17 14:31:45,393 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:31:45,394 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:31:45] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:32:08,392 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:32:08,393 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components 
+WHERE components.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 14:32:08,393 [INFO ] [          _exec_single_context()] [generated in 0.00012s] (1, 1, 0)
+2023-05-17 14:32:08,436 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:32:08,436 [INFO ] [          _exec_single_context()] [cached since 28.47s ago] ()
+2023-05-17 14:32:08,438 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:32:08,438 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:32:08] "GET /manage-data/component/edit/1 HTTP/1.1" 200 -
+2023-05-17 14:32:21,883 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:32:21,883 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components 
+WHERE components.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 14:32:21,883 [INFO ] [          _exec_single_context()] [cached since 13.49s ago] (1, 1, 0)
+2023-05-17 14:32:21,884 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:32:21,884 [INFO ] [          _exec_single_context()] [cached since 41.92s ago] ()
+2023-05-17 14:32:21,885 [INFO ] [          _exec_single_context()] UPDATE components SET description=? WHERE components.id = ?
+2023-05-17 14:32:21,885 [INFO ] [          _exec_single_context()] [generated in 0.00012s] ('SaaS Solution: Environment hosted by Advisie', 1)
+2023-05-17 14:32:21,886 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 14:32:21,892 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:32:21] "[32mPOST /manage-data/component/edit/1 HTTP/1.1[0m" 302 -
+2023-05-17 14:32:21,902 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:32:21,903 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:32:21,903 [INFO ] [          _exec_single_context()] [cached since 41.94s ago] ()
+2023-05-17 14:32:21,903 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:32:21,903 [INFO ] [          _exec_single_context()] [cached since 41.94s ago] ()
+2023-05-17 14:32:21,905 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:32:21,905 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:32:21] "GET /manage-data/component/list HTTP/1.1" 200 -
+2023-05-17 14:32:38,281 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:32:38] "GET /?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:32:39,069 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:32:39,069 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:32:39,069 [INFO ] [          _exec_single_context()] [cached since 59.1s ago] ()
+2023-05-17 14:32:39,070 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:32:39,070 [INFO ] [          _exec_single_context()] [cached since 59.1s ago] ()
+2023-05-17 14:32:39,072 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:32:39,072 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:32:39] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:36:38,155 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:36:38,156 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:36:38,156 [INFO ] [          _exec_single_context()] [cached since 293.5s ago] ()
+2023-05-17 14:36:38,157 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:36:38,157 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:36:38] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:36:40,431 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:36:40,431 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:36:40,431 [INFO ] [          _exec_single_context()] [cached since 300.5s ago] ()
+2023-05-17 14:36:40,433 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 14:36:40,433 [INFO ] [          _exec_single_context()] [generated in 0.00014s] ()
+2023-05-17 14:36:40,434 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 14:36:40,434 [INFO ] [          _exec_single_context()] [generated in 0.00011s] ()
+2023-05-17 14:36:40,435 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:36:40,435 [INFO ] [          _exec_single_context()] [generated in 0.00010s] ()
+2023-05-17 14:36:40,435 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:36:40,436 [INFO ] [          _exec_single_context()] [cached since 0.001003s ago] ()
+2023-05-17 14:36:40,437 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:36:40,437 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:36:40] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 14:36:54,080 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:36:54,080 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:36:54,080 [INFO ] [          _exec_single_context()] [cached since 314.1s ago] ()
+2023-05-17 14:36:54,081 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 14:36:54,081 [INFO ] [          _exec_single_context()] [cached since 314.1s ago] ()
+2023-05-17 14:36:54,082 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:36:54,082 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:36:54] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:45:47,388 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:45:47,388 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:45:47,388 [INFO ] [          _exec_single_context()] [cached since 842.8s ago] ()
+2023-05-17 14:45:47,389 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:45:47,390 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:45:47] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:45:48,279 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:45:48,279 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:45:48,279 [INFO ] [          _exec_single_context()] [cached since 848.3s ago] ()
+2023-05-17 14:45:48,280 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 14:45:48,280 [INFO ] [          _exec_single_context()] [cached since 547.8s ago] ()
+2023-05-17 14:45:48,281 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 14:45:48,281 [INFO ] [          _exec_single_context()] [cached since 547.8s ago] ()
+2023-05-17 14:45:48,282 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:45:48,282 [INFO ] [          _exec_single_context()] [cached since 547.8s ago] ()
+2023-05-17 14:45:48,283 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:45:48,283 [INFO ] [          _exec_single_context()] [cached since 547.8s ago] ()
+2023-05-17 14:45:48,284 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:45:48,284 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:45:48] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 14:51:10,284 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:51:10,285 [INFO ] [          _exec_single_context()] SELECT availability_requirements.id AS availability_requirements_id, availability_requirements.component_name AS availability_requirements_component_name, availability_requirements.mtd AS availability_requirements_mtd, availability_requirements.rto AS availability_requirements_rto, availability_requirements.rpo AS availability_requirements_rpo, availability_requirements.masl AS availability_requirements_masl 
+FROM availability_requirements ORDER BY availability_requirements.id
+2023-05-17 14:51:10,285 [INFO ] [          _exec_single_context()] [generated in 0.00022s] ()
+2023-05-17 14:51:10,286 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:51:10,287 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:51:10] "GET /manage-data/availability/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:51:11,388 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:51:11,388 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:51:11,388 [INFO ] [          _exec_single_context()] [cached since 1171s ago] ()
+2023-05-17 14:51:11,389 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:51:11,389 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:51:11] "GET /manage-data/availability/new HTTP/1.1" 200 -
+2023-05-17 14:51:13,358 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:51:13,358 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:51:13,358 [INFO ] [          _exec_single_context()] [cached since 1169s ago] ()
+2023-05-17 14:51:13,360 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:51:13,360 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:51:13] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:51:14,490 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:51:14,490 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:51:14,490 [INFO ] [          _exec_single_context()] [cached since 1175s ago] ()
+2023-05-17 14:51:14,491 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 14:51:14,491 [INFO ] [          _exec_single_context()] [cached since 874.1s ago] ()
+2023-05-17 14:51:14,491 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 14:51:14,491 [INFO ] [          _exec_single_context()] [cached since 874.1s ago] ()
+2023-05-17 14:51:14,492 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:51:14,492 [INFO ] [          _exec_single_context()] [cached since 874.1s ago] ()
+2023-05-17 14:51:14,492 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:51:14,492 [INFO ] [          _exec_single_context()] [cached since 874.1s ago] ()
+2023-05-17 14:51:14,493 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:51:14,493 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:51:14] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 14:54:13,102 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:54:13,102 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:54:13,102 [INFO ] [          _exec_single_context()] [cached since 1348s ago] ()
+2023-05-17 14:54:13,103 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:54:13,103 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:54:13] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 14:54:14,104 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:54:14,104 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:54:14,104 [INFO ] [          _exec_single_context()] [cached since 1354s ago] ()
+2023-05-17 14:54:14,105 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 14:54:14,105 [INFO ] [          _exec_single_context()] [cached since 1054s ago] ()
+2023-05-17 14:54:14,106 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 14:54:14,106 [INFO ] [          _exec_single_context()] [cached since 1054s ago] ()
+2023-05-17 14:54:14,106 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:54:14,106 [INFO ] [          _exec_single_context()] [cached since 1054s ago] ()
+2023-05-17 14:54:14,107 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:54:14,107 [INFO ] [          _exec_single_context()] [cached since 1054s ago] ()
+2023-05-17 14:54:14,107 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:54:14,108 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:54:14] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 14:54:54,712 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:54:54,712 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:54:54,713 [INFO ] [          _exec_single_context()] [cached since 1395s ago] ()
+2023-05-17 14:54:54,714 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 14:54:54,714 [INFO ] [          _exec_single_context()] [cached since 1094s ago] ()
+2023-05-17 14:54:54,715 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 14:54:54,715 [INFO ] [          _exec_single_context()] [cached since 1094s ago] ()
+2023-05-17 14:54:54,715 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:54:54,715 [INFO ] [          _exec_single_context()] [cached since 1094s ago] ()
+2023-05-17 14:54:54,716 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:54:54,716 [INFO ] [          _exec_single_context()] [cached since 1094s ago] ()
+2023-05-17 14:54:54,717 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:54:54,717 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:54:54] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 14:56:16,364 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:56:16,364 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 14:56:16,364 [INFO ] [          _exec_single_context()] [cached since 1476s ago] ()
+2023-05-17 14:56:16,365 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 14:56:16,365 [INFO ] [          _exec_single_context()] [cached since 1176s ago] ()
+2023-05-17 14:56:16,365 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 14:56:16,365 [INFO ] [          _exec_single_context()] [cached since 1176s ago] ()
+2023-05-17 14:56:16,366 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:56:16,366 [INFO ] [          _exec_single_context()] [cached since 1176s ago] ()
+2023-05-17 14:56:16,366 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 14:56:16,366 [INFO ] [          _exec_single_context()] [cached since 1176s ago] ()
+2023-05-17 14:56:16,367 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 14:56:16,367 [INFO ] [          _exec_single_context()] [generated in 0.00012s] ('Exact', 'Financial', 'Availability', 'High', 'The finance department will not be trusted anymore', 'Medium', 'Vanuit de interne organisatie zal het vertrouwen in de Finance  afdeling afnemen')
+2023-05-17 14:56:16,367 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 14:56:16,374 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:56:16] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 14:56:16,385 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 14:56:16,385 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 14:56:16,386 [INFO ] [          _exec_single_context()] [cached since 1472s ago] ()
+2023-05-17 14:56:16,387 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 14:56:16,387 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 14:56:16] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:05:05,963 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:05:05,963 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:05:05,963 [INFO ] [          _exec_single_context()] [cached since 2006s ago] ()
+2023-05-17 15:05:05,964 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:05:05,964 [INFO ] [          _exec_single_context()] [cached since 1706s ago] ()
+2023-05-17 15:05:05,965 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:05:05,965 [INFO ] [          _exec_single_context()] [cached since 1706s ago] ()
+2023-05-17 15:05:05,966 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:05:05,966 [INFO ] [          _exec_single_context()] [cached since 1706s ago] ()
+2023-05-17 15:05:05,966 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:05:05,966 [INFO ] [          _exec_single_context()] [cached since 1706s ago] ()
+2023-05-17 15:05:05,967 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:05:05,967 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:05:05] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:05:14,794 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:05:14,795 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:05:14,795 [INFO ] [          _exec_single_context()] [cached since 2010s ago] ()
+2023-05-17 15:05:14,795 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:05:14,796 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:05:14] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:05:17,299 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:05:17,299 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:05:17,299 [INFO ] [          _exec_single_context()] [generated in 0.00012s] (1, 1, 0)
+2023-05-17 15:05:17,301 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:05:17,301 [INFO ] [          _exec_single_context()] [cached since 2017s ago] ()
+2023-05-17 15:05:17,301 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:05:17,301 [INFO ] [          _exec_single_context()] [cached since 1717s ago] ()
+2023-05-17 15:05:17,302 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:05:17,302 [INFO ] [          _exec_single_context()] [cached since 1717s ago] ()
+2023-05-17 15:05:17,302 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:05:17,302 [INFO ] [          _exec_single_context()] [cached since 1717s ago] ()
+2023-05-17 15:05:17,303 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:05:17,303 [INFO ] [          _exec_single_context()] [cached since 1717s ago] ()
+2023-05-17 15:05:17,303 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:05:17,303 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:05:17] "GET /manage-data/consequence/edit/1 HTTP/1.1" 200 -
+2023-05-17 15:05:26,417 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:05:26,417 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:05:26,417 [INFO ] [          _exec_single_context()] [cached since 9.118s ago] (1, 1, 0)
+2023-05-17 15:05:26,418 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:05:26,418 [INFO ] [          _exec_single_context()] [cached since 2026s ago] ()
+2023-05-17 15:05:26,418 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:05:26,418 [INFO ] [          _exec_single_context()] [cached since 1726s ago] ()
+2023-05-17 15:05:26,419 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:05:26,419 [INFO ] [          _exec_single_context()] [cached since 1726s ago] ()
+2023-05-17 15:05:26,419 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:05:26,419 [INFO ] [          _exec_single_context()] [cached since 1726s ago] ()
+2023-05-17 15:05:26,419 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:05:26,419 [INFO ] [          _exec_single_context()] [cached since 1726s ago] ()
+2023-05-17 15:05:26,420 [INFO ] [          _exec_single_context()] UPDATE consequences SET component_name=?, category=?, security_property=?, consequence_worstcase=?, consequence_realisticcase=? WHERE consequences.id = ?
+2023-05-17 15:05:26,420 [INFO ] [          _exec_single_context()] [generated in 0.00011s] (<app.model.Components object at 0x7fe370480580>, <app.model.References object at 0x7fe370482260>, <app.model.SecurityProperties object at 0x7fe370480550>, <app.model.ConsequenceChoices object at 0x7fe370481a50>, <app.model.ConsequenceChoices object at 0x7fe370481a50>, 1)
+2023-05-17 15:05:26,420 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:05:26,434 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:05:26] "[35m[1mPOST /manage-data/consequence/edit/1 HTTP/1.1[0m" 500 -
+2023-05-17 15:05:26,508 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:05:26] "GET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2023-05-17 15:05:26,509 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:05:26] "GET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2023-05-17 15:05:26,527 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:05:26] "GET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2023-05-17 15:06:26,126 [INFO ] [                          _log()]  * Detected change in '/home/ferry/Documents/Business-Impact-Assessment/app/blueprints/manage_data/views.py', reloading
+2023-05-17 15:06:26,259 [INFO ] [                          _log()]  * Restarting with stat
+2023-05-17 15:06:26,569 [DEBUG] [                    create_app()] test debug message
+2023-05-17 15:06:26,601 [WARNI] [                          _log()]  * Debugger is active!
+2023-05-17 15:06:26,602 [INFO ] [                          _log()]  * Debugger PIN: 252-557-612
+2023-05-17 15:06:29,038 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:06:29,040 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:06:29,040 [INFO ] [          _exec_single_context()] [generated in 0.00013s] (1, 1, 0)
+2023-05-17 15:06:29,041 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:06:29,042 [INFO ] [          _exec_single_context()] [generated in 0.00010s] ()
+2023-05-17 15:06:29,043 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:06:29,043 [INFO ] [          _exec_single_context()] [generated in 0.00011s] ()
+2023-05-17 15:06:29,043 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:06:29,043 [INFO ] [          _exec_single_context()] [generated in 0.00009s] ()
+2023-05-17 15:06:29,044 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:06:29,044 [INFO ] [          _exec_single_context()] [generated in 0.00008s] ()
+2023-05-17 15:06:29,044 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:06:29,044 [INFO ] [          _exec_single_context()] [cached since 0.0004629s ago] ()
+2023-05-17 15:06:29,046 [INFO ] [          _exec_single_context()] UPDATE consequences SET category=?, security_property=?, consequence_worstcase=?, consequence_realisticcase=? WHERE consequences.id = ?
+2023-05-17 15:06:29,046 [INFO ] [          _exec_single_context()] [generated in 0.00012s] ('Reputation and Trust', 'Confidentiality', 'Low', 'Low', 1)
+2023-05-17 15:06:29,046 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:06:29,063 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:06:29] "[35m[1mPOST /manage-data/consequence/edit/1 HTTP/1.1[0m" 500 -
+2023-05-17 15:06:29,143 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:06:29] "[36mGET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2023-05-17 15:06:29,146 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:06:29] "[36mGET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2023-05-17 15:06:29,168 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:06:29] "[36mGET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2023-05-17 15:07:20,230 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:20] "GET / HTTP/1.1" 200 -
+2023-05-17 15:07:21,965 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:07:21,966 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:07:21,966 [INFO ] [          _exec_single_context()] [generated in 0.00013s] ()
+2023-05-17 15:07:21,970 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:07:21,970 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:21] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:07:26,739 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:07:26,739 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:07:26,739 [INFO ] [          _exec_single_context()] [cached since 57.7s ago] (1, 1, 0)
+2023-05-17 15:07:26,785 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:07:26,785 [INFO ] [          _exec_single_context()] [cached since 57.74s ago] ()
+2023-05-17 15:07:26,786 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:07:26,786 [INFO ] [          _exec_single_context()] [cached since 57.74s ago] ()
+2023-05-17 15:07:26,786 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:07:26,786 [INFO ] [          _exec_single_context()] [cached since 57.74s ago] ()
+2023-05-17 15:07:26,787 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:07:26,787 [INFO ] [          _exec_single_context()] [cached since 57.74s ago] ()
+2023-05-17 15:07:26,787 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:07:26,787 [INFO ] [          _exec_single_context()] [cached since 57.74s ago] ()
+2023-05-17 15:07:26,788 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:07:26,788 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:26] "GET /manage-data/consequence/edit/1 HTTP/1.1" 200 -
+2023-05-17 15:07:31,207 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:07:31,207 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:07:31,207 [INFO ] [          _exec_single_context()] [cached since 62.17s ago] (1, 1, 0)
+2023-05-17 15:07:31,208 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:07:31,208 [INFO ] [          _exec_single_context()] [cached since 62.17s ago] ()
+2023-05-17 15:07:31,208 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:07:31,208 [INFO ] [          _exec_single_context()] [cached since 62.17s ago] ()
+2023-05-17 15:07:31,209 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:07:31,209 [INFO ] [          _exec_single_context()] [cached since 62.17s ago] ()
+2023-05-17 15:07:31,209 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:07:31,209 [INFO ] [          _exec_single_context()] [cached since 62.17s ago] ()
+2023-05-17 15:07:31,210 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:07:31,210 [INFO ] [          _exec_single_context()] [cached since 62.17s ago] ()
+2023-05-17 15:07:31,210 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:07:31,212 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:31] "[35m[1mPOST /manage-data/consequence/edit/1 HTTP/1.1[0m" 500 -
+2023-05-17 15:07:31,290 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:31] "[36mGET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2023-05-17 15:07:31,290 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:31] "[36mGET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2023-05-17 15:07:31,309 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:31] "[36mGET /manage-data/consequence/edit/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2023-05-17 15:07:52,700 [INFO ] [                          _log()]  * Detected change in '/home/ferry/Documents/Business-Impact-Assessment/app/blueprints/manage_data/views.py', reloading
+2023-05-17 15:07:52,776 [INFO ] [                          _log()]  * Restarting with stat
+2023-05-17 15:07:53,007 [DEBUG] [                    create_app()] test debug message
+2023-05-17 15:07:53,028 [WARNI] [                          _log()]  * Debugger is active!
+2023-05-17 15:07:53,029 [INFO ] [                          _log()]  * Debugger PIN: 252-557-612
+2023-05-17 15:07:56,466 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:07:56,469 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:07:56,469 [INFO ] [          _exec_single_context()] [generated in 0.00042s] (1, 1, 0)
+2023-05-17 15:07:56,472 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:07:56,472 [INFO ] [          _exec_single_context()] [generated in 0.00017s] ()
+2023-05-17 15:07:56,473 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:07:56,473 [INFO ] [          _exec_single_context()] [generated in 0.00010s] ()
+2023-05-17 15:07:56,473 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:07:56,473 [INFO ] [          _exec_single_context()] [generated in 0.00009s] ()
+2023-05-17 15:07:56,474 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:07:56,474 [INFO ] [          _exec_single_context()] [generated in 0.00009s] ()
+2023-05-17 15:07:56,474 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:07:56,474 [INFO ] [          _exec_single_context()] [cached since 0.0004667s ago] ()
+2023-05-17 15:07:56,475 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:07:56,476 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:56] "[32mPOST /manage-data/consequence/edit/1 HTTP/1.1[0m" 302 -
+2023-05-17 15:07:56,493 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:07:56,493 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:07:56,494 [INFO ] [          _exec_single_context()] [generated in 0.00020s] ()
+2023-05-17 15:07:56,518 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:07:56,518 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:07:56] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:08:53,786 [INFO ] [                          _log()]  * Detected change in '/home/ferry/Documents/Business-Impact-Assessment/app/blueprints/manage_data/views.py', reloading
+2023-05-17 15:08:53,848 [INFO ] [                          _log()]  * Restarting with stat
+2023-05-17 15:08:54,081 [DEBUG] [                    create_app()] test debug message
+2023-05-17 15:08:54,108 [WARNI] [                          _log()]  * Debugger is active!
+2023-05-17 15:08:54,109 [INFO ] [                          _log()]  * Debugger PIN: 252-557-612
+2023-05-17 15:08:56,119 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:08:56,122 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:08:56,122 [INFO ] [          _exec_single_context()] [generated in 0.00014s] (1, 1, 0)
+2023-05-17 15:08:56,187 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:08:56,187 [INFO ] [          _exec_single_context()] [generated in 0.00030s] ()
+2023-05-17 15:08:56,188 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:08:56,188 [INFO ] [          _exec_single_context()] [generated in 0.00012s] ()
+2023-05-17 15:08:56,189 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:08:56,189 [INFO ] [          _exec_single_context()] [generated in 0.00010s] ()
+2023-05-17 15:08:56,190 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:08:56,190 [INFO ] [          _exec_single_context()] [generated in 0.00010s] ()
+2023-05-17 15:08:56,191 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:08:56,191 [INFO ] [          _exec_single_context()] [cached since 0.0007307s ago] ()
+2023-05-17 15:08:56,192 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:08:56,192 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:08:56] "GET /manage-data/consequence/edit/1 HTTP/1.1" 200 -
+2023-05-17 15:09:27,486 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:09:27,486 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences 
+WHERE consequences.id = ?
+ LIMIT ? OFFSET ?
+2023-05-17 15:09:27,486 [INFO ] [          _exec_single_context()] [cached since 31.36s ago] (1, 1, 0)
+2023-05-17 15:09:27,487 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:09:27,487 [INFO ] [          _exec_single_context()] [cached since 31.3s ago] ()
+2023-05-17 15:09:27,487 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:09:27,487 [INFO ] [          _exec_single_context()] [cached since 31.3s ago] ()
+2023-05-17 15:09:27,488 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:09:27,488 [INFO ] [          _exec_single_context()] [cached since 31.3s ago] ()
+2023-05-17 15:09:27,488 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:09:27,488 [INFO ] [          _exec_single_context()] [cached since 31.3s ago] ()
+2023-05-17 15:09:27,488 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:09:27,488 [INFO ] [          _exec_single_context()] [cached since 31.3s ago] ()
+2023-05-17 15:09:27,489 [INFO ] [          _exec_single_context()] UPDATE consequences SET security_property=?, consequence_worstcase=?, consequence_realisticcase=? WHERE consequences.id = ?
+2023-05-17 15:09:27,490 [INFO ] [          _exec_single_context()] [generated in 0.00011s] ('Availability', 'High', 'Medium', 1)
+2023-05-17 15:09:27,490 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:09:27,496 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:09:27] "[32mPOST /manage-data/consequence/edit/1 HTTP/1.1[0m" 302 -
+2023-05-17 15:09:27,511 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:09:27,512 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:09:27,512 [INFO ] [          _exec_single_context()] [generated in 0.00011s] ()
+2023-05-17 15:09:27,516 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:09:27,516 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:09:27] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:15:00,524 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:15:00,525 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:15:00,525 [INFO ] [          _exec_single_context()] [cached since 364.3s ago] ()
+2023-05-17 15:15:00,525 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:15:00,526 [INFO ] [          _exec_single_context()] [cached since 364.3s ago] ()
+2023-05-17 15:15:00,526 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:15:00,526 [INFO ] [          _exec_single_context()] [cached since 364.3s ago] ()
+2023-05-17 15:15:00,527 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:15:00,527 [INFO ] [          _exec_single_context()] [cached since 364.3s ago] ()
+2023-05-17 15:15:00,528 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:15:00,528 [INFO ] [          _exec_single_context()] [cached since 364.3s ago] ()
+2023-05-17 15:15:00,529 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:15:00,529 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:15:00] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:15:36,086 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:15:36,086 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:15:36,086 [INFO ] [          _exec_single_context()] [cached since 399.9s ago] ()
+2023-05-17 15:15:36,087 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:15:36,087 [INFO ] [          _exec_single_context()] [cached since 399.9s ago] ()
+2023-05-17 15:15:36,087 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:15:36,087 [INFO ] [          _exec_single_context()] [cached since 399.9s ago] ()
+2023-05-17 15:15:36,088 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:15:36,088 [INFO ] [          _exec_single_context()] [cached since 399.9s ago] ()
+2023-05-17 15:15:36,088 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:15:36,088 [INFO ] [          _exec_single_context()] [cached since 399.9s ago] ()
+2023-05-17 15:15:36,090 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 15:15:36,090 [INFO ] [          _exec_single_context()] [generated in 0.00012s] ('Exact', 'Financial', 'Availability', 'Huge', 'Unability to get cashflow', 'High', 'Geen maandafsluiting, geen rapportage naar Orange, geen BTW aangifte kunnen doen')
+2023-05-17 15:15:36,090 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:15:36,096 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:15:36] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 15:15:36,111 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:15:36,111 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:15:36,111 [INFO ] [          _exec_single_context()] [cached since 368.6s ago] ()
+2023-05-17 15:15:36,114 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:15:36,114 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:15:36] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:15:40,054 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:15:40,054 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:15:40,054 [INFO ] [          _exec_single_context()] [cached since 403.9s ago] ()
+2023-05-17 15:15:40,055 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:15:40,055 [INFO ] [          _exec_single_context()] [cached since 403.9s ago] ()
+2023-05-17 15:15:40,056 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:15:40,056 [INFO ] [          _exec_single_context()] [cached since 403.9s ago] ()
+2023-05-17 15:15:40,057 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:15:40,057 [INFO ] [          _exec_single_context()] [cached since 403.9s ago] ()
+2023-05-17 15:15:40,058 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:15:40,059 [INFO ] [          _exec_single_context()] [cached since 403.9s ago] ()
+2023-05-17 15:15:40,060 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:15:40,060 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:15:40] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:16:10,971 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:16:10,971 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:16:10,971 [INFO ] [          _exec_single_context()] [cached since 434.8s ago] ()
+2023-05-17 15:16:10,972 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:16:10,972 [INFO ] [          _exec_single_context()] [cached since 434.8s ago] ()
+2023-05-17 15:16:10,973 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:16:10,973 [INFO ] [          _exec_single_context()] [cached since 434.8s ago] ()
+2023-05-17 15:16:10,973 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:16:10,973 [INFO ] [          _exec_single_context()] [cached since 434.8s ago] ()
+2023-05-17 15:16:10,974 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:16:10,974 [INFO ] [          _exec_single_context()] [cached since 434.8s ago] ()
+2023-05-17 15:16:10,974 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 15:16:10,974 [INFO ] [          _exec_single_context()] [cached since 34.88s ago] ('Exact', 'Regulatory', 'Availability', 'Huge', 'Fines from tax services', 'High', 'Geen tijdige en juiste aangifte van belastingen')
+2023-05-17 15:16:10,975 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:16:10,981 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:16:10] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 15:16:10,993 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:16:10,993 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:16:10,993 [INFO ] [          _exec_single_context()] [cached since 403.5s ago] ()
+2023-05-17 15:16:10,995 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:16:10,995 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:16:10] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:16:24,857 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:16:24,857 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:16:24,857 [INFO ] [          _exec_single_context()] [cached since 448.7s ago] ()
+2023-05-17 15:16:24,858 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:16:24,858 [INFO ] [          _exec_single_context()] [cached since 448.7s ago] ()
+2023-05-17 15:16:24,859 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:16:24,859 [INFO ] [          _exec_single_context()] [cached since 448.7s ago] ()
+2023-05-17 15:16:24,860 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:16:24,860 [INFO ] [          _exec_single_context()] [cached since 448.7s ago] ()
+2023-05-17 15:16:24,861 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:16:24,861 [INFO ] [          _exec_single_context()] [cached since 448.7s ago] ()
+2023-05-17 15:16:24,861 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:16:24,862 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:16:24] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:17:03,951 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:17:03,951 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:17:03,951 [INFO ] [          _exec_single_context()] [cached since 487.8s ago] ()
+2023-05-17 15:17:03,952 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:17:03,952 [INFO ] [          _exec_single_context()] [cached since 487.8s ago] ()
+2023-05-17 15:17:03,952 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:17:03,953 [INFO ] [          _exec_single_context()] [cached since 487.8s ago] ()
+2023-05-17 15:17:03,953 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:17:03,953 [INFO ] [          _exec_single_context()] [cached since 487.8s ago] ()
+2023-05-17 15:17:03,953 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:17:03,953 [INFO ] [          _exec_single_context()] [cached since 487.8s ago] ()
+2023-05-17 15:17:03,954 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 15:17:03,954 [INFO ] [          _exec_single_context()] [cached since 87.86s ago] ('Exact', 'Operational', 'Availability', 'Huge', 'Not being able to do business', 'High', 'Als einde maand niet beschikbaar komen we in tijdsnood om  tijdig te kunnen rapporteren.')
+2023-05-17 15:17:03,954 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:17:03,965 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:17:03] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 15:17:03,980 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:17:03,980 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:17:03,980 [INFO ] [          _exec_single_context()] [cached since 456.5s ago] ()
+2023-05-17 15:17:03,982 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:17:03,982 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:17:03] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:19:41,022 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:19:41,022 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:19:41,023 [INFO ] [          _exec_single_context()] [cached since 644.8s ago] ()
+2023-05-17 15:19:41,023 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:19:41,024 [INFO ] [          _exec_single_context()] [cached since 644.8s ago] ()
+2023-05-17 15:19:41,024 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:19:41,024 [INFO ] [          _exec_single_context()] [cached since 644.8s ago] ()
+2023-05-17 15:19:41,025 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:19:41,025 [INFO ] [          _exec_single_context()] [cached since 644.8s ago] ()
+2023-05-17 15:19:41,026 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:19:41,026 [INFO ] [          _exec_single_context()] [cached since 644.8s ago] ()
+2023-05-17 15:19:41,027 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:19:41,028 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:19:41] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:20:15,070 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:20:15,070 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:20:15,070 [INFO ] [          _exec_single_context()] [cached since 678.9s ago] ()
+2023-05-17 15:20:15,070 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:20:15,071 [INFO ] [          _exec_single_context()] [cached since 678.9s ago] ()
+2023-05-17 15:20:15,071 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:20:15,071 [INFO ] [          _exec_single_context()] [cached since 678.9s ago] ()
+2023-05-17 15:20:15,072 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:20:15,072 [INFO ] [          _exec_single_context()] [cached since 678.9s ago] ()
+2023-05-17 15:20:15,073 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:20:15,073 [INFO ] [          _exec_single_context()] [cached since 678.9s ago] ()
+2023-05-17 15:20:15,073 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 15:20:15,073 [INFO ] [          _exec_single_context()] [cached since 279s ago] ('Exact', 'Financial', 'Integrity', 'Huge', 'Als systeem of input in het systeem niet integer is zullen de  resultaten niet betrouwbaar zijn en fraude kan dan ook aan de orde zijn', 'High', 'Als systeem of input in het systeem niet integer is zullen de  resultaten niet betrouwbaar zijn en fraude kan dan ook aan de orde zijn')
+2023-05-17 15:20:15,073 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:20:15,085 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:20:15] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 15:20:15,098 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:20:15,099 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:20:15,099 [INFO ] [          _exec_single_context()] [cached since 647.6s ago] ()
+2023-05-17 15:20:15,101 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:20:15,101 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:20:15] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:20:22,252 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:20:22,253 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:20:22,253 [INFO ] [          _exec_single_context()] [cached since 686.1s ago] ()
+2023-05-17 15:20:22,254 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:20:22,254 [INFO ] [          _exec_single_context()] [cached since 686.1s ago] ()
+2023-05-17 15:20:22,254 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:20:22,254 [INFO ] [          _exec_single_context()] [cached since 686.1s ago] ()
+2023-05-17 15:20:22,255 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:20:22,255 [INFO ] [          _exec_single_context()] [cached since 686.1s ago] ()
+2023-05-17 15:20:22,256 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:20:22,256 [INFO ] [          _exec_single_context()] [cached since 686.1s ago] ()
+2023-05-17 15:20:22,257 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:20:22,257 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:20:22] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:20:44,066 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:20:44,066 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:20:44,066 [INFO ] [          _exec_single_context()] [cached since 707.9s ago] ()
+2023-05-17 15:20:44,067 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:20:44,067 [INFO ] [          _exec_single_context()] [cached since 707.9s ago] ()
+2023-05-17 15:20:44,068 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:20:44,068 [INFO ] [          _exec_single_context()] [cached since 707.9s ago] ()
+2023-05-17 15:20:44,068 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:20:44,068 [INFO ] [          _exec_single_context()] [cached since 707.9s ago] ()
+2023-05-17 15:20:44,069 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:20:44,069 [INFO ] [          _exec_single_context()] [cached since 707.9s ago] ()
+2023-05-17 15:20:44,069 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 15:20:44,069 [INFO ] [          _exec_single_context()] [cached since 308s ago] ('Exact', 'Operational', 'Integrity', 'Huge', 'Als systeem of input in het systeem niet integer is zullen de  resultaten niet betrouwbaar zijn en fraude kan dan ook aan de orde zijn', 'Huge', 'Als systeem of input in het systeem niet integer is zullen de  resultaten niet betrouwbaar zijn en fraude kan dan ook aan de orde zijn')
+2023-05-17 15:20:44,069 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:20:44,079 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:20:44] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 15:20:44,090 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:20:44,090 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:20:44,090 [INFO ] [          _exec_single_context()] [cached since 676.6s ago] ()
+2023-05-17 15:20:44,092 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:20:44,092 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:20:44] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:23:13,544 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:23:13,544 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:23:13,544 [INFO ] [          _exec_single_context()] [cached since 857.4s ago] ()
+2023-05-17 15:23:13,545 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:23:13,545 [INFO ] [          _exec_single_context()] [cached since 857.4s ago] ()
+2023-05-17 15:23:13,546 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:23:13,546 [INFO ] [          _exec_single_context()] [cached since 857.4s ago] ()
+2023-05-17 15:23:13,546 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:23:13,546 [INFO ] [          _exec_single_context()] [cached since 857.4s ago] ()
+2023-05-17 15:23:13,547 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:23:13,547 [INFO ] [          _exec_single_context()] [cached since 857.4s ago] ()
+2023-05-17 15:23:13,548 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:23:13,548 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:23:13] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:23:36,669 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:23:36,669 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:23:36,669 [INFO ] [          _exec_single_context()] [cached since 880.5s ago] ()
+2023-05-17 15:23:36,670 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:23:36,670 [INFO ] [          _exec_single_context()] [cached since 880.5s ago] ()
+2023-05-17 15:23:36,671 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:23:36,671 [INFO ] [          _exec_single_context()] [cached since 880.5s ago] ()
+2023-05-17 15:23:36,671 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:23:36,672 [INFO ] [          _exec_single_context()] [cached since 880.5s ago] ()
+2023-05-17 15:23:36,672 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:23:36,672 [INFO ] [          _exec_single_context()] [cached since 880.5s ago] ()
+2023-05-17 15:23:36,673 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 15:23:36,673 [INFO ] [          _exec_single_context()] [cached since 480.6s ago] ('Exact', 'Regulatory', 'Integrity', 'Huge', 'Niet volgen van wet en regelgeving kan boetes als gevolg hebben', 'High', 'Niet volgen van wet en regelgeving kan boetes als gevolg hebben')
+2023-05-17 15:23:36,673 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:23:36,685 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:23:36] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 15:23:36,696 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:23:36,697 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:23:36,697 [INFO ] [          _exec_single_context()] [cached since 849.2s ago] ()
+2023-05-17 15:23:36,698 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:23:36,698 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:23:36] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:23:52,311 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:23:52,311 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:23:52,311 [INFO ] [          _exec_single_context()] [cached since 896.1s ago] ()
+2023-05-17 15:23:52,311 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:23:52,312 [INFO ] [          _exec_single_context()] [cached since 896.1s ago] ()
+2023-05-17 15:23:52,312 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:23:52,312 [INFO ] [          _exec_single_context()] [cached since 896.1s ago] ()
+2023-05-17 15:23:52,313 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:23:52,313 [INFO ] [          _exec_single_context()] [cached since 896.1s ago] ()
+2023-05-17 15:23:52,314 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:23:52,314 [INFO ] [          _exec_single_context()] [cached since 896.1s ago] ()
+2023-05-17 15:23:52,315 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:23:52,315 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:23:52] "GET /manage-data/consequence/new HTTP/1.1" 200 -
+2023-05-17 15:24:12,515 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:24:12,515 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:24:12,515 [INFO ] [          _exec_single_context()] [cached since 916.3s ago] ()
+2023-05-17 15:24:12,516 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".consequence_category
+2023-05-17 15:24:12,516 [INFO ] [          _exec_single_context()] [cached since 916.3s ago] ()
+2023-05-17 15:24:12,516 [INFO ] [          _exec_single_context()] SELECT security_properties.id AS security_properties_id, security_properties.choice AS security_properties_choice 
+FROM security_properties ORDER BY security_properties.id
+2023-05-17 15:24:12,516 [INFO ] [          _exec_single_context()] [cached since 916.3s ago] ()
+2023-05-17 15:24:12,516 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:24:12,517 [INFO ] [          _exec_single_context()] [cached since 916.3s ago] ()
+2023-05-17 15:24:12,517 [INFO ] [          _exec_single_context()] SELECT consequence_choices.id AS consequence_choices_id, consequence_choices.choice AS consequence_choices_choice 
+FROM consequence_choices ORDER BY consequence_choices.id
+2023-05-17 15:24:12,517 [INFO ] [          _exec_single_context()] [cached since 916.3s ago] ()
+2023-05-17 15:24:12,517 [INFO ] [          _exec_single_context()] INSERT INTO consequences (component_name, category, security_property, consequence_worstcase, justification_worstcase, consequence_realisticcase, justification_realisticcase) VALUES (?, ?, ?, ?, ?, ?, ?)
+2023-05-17 15:24:12,517 [INFO ] [          _exec_single_context()] [cached since 516.4s ago] ('Exact', 'Reputation and Trust', 'Integrity', 'Huge', 'Als eenmaal fraude of niet volgens van regels is geconstateerd  zullen er meer audits gaan volgen.', 'High', 'Als eenmaal fraude of niet volgens van regels is geconstateerd  zullen er meer audits gaan volgen.')
+2023-05-17 15:24:12,518 [INFO ] [                  _commit_impl()] COMMIT
+2023-05-17 15:24:12,523 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:24:12] "[32mPOST /manage-data/consequence/new HTTP/1.1[0m" 302 -
+2023-05-17 15:24:12,534 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:24:12,534 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:24:12,534 [INFO ] [          _exec_single_context()] [cached since 885s ago] ()
+2023-05-17 15:24:12,536 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:24:12,537 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:24:12] "GET /manage-data/consequence/list HTTP/1.1" 200 -
+2023-05-17 15:26:31,648 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:31,648 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:26:31,649 [INFO ] [          _exec_single_context()] [cached since 1055s ago] ()
+2023-05-17 15:26:31,651 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 15:26:31,652 [INFO ] [          _exec_single_context()] [generated in 0.00020s] ()
+2023-05-17 15:26:31,653 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:31,653 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:31] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:51,093 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:51,093 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:26:51,093 [INFO ] [          _exec_single_context()] [cached since 1044s ago] ()
+2023-05-17 15:26:51,094 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:51,095 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:51] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:51,561 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:51,562 [INFO ] [          _exec_single_context()] SELECT availability_requirements.id AS availability_requirements_id, availability_requirements.component_name AS availability_requirements_component_name, availability_requirements.mtd AS availability_requirements_mtd, availability_requirements.rto AS availability_requirements_rto, availability_requirements.rpo AS availability_requirements_rpo, availability_requirements.masl AS availability_requirements_masl 
+FROM availability_requirements ORDER BY availability_requirements.id
+2023-05-17 15:26:51,562 [INFO ] [          _exec_single_context()] [generated in 0.00013s] ()
+2023-05-17 15:26:51,563 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:51,563 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:51] "GET /manage-data/availability/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:52,457 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:52,457 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:26:52,458 [INFO ] [          _exec_single_context()] [cached since 1045s ago] ()
+2023-05-17 15:26:52,459 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:52,460 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:52] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:53,023 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:53,024 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:26:53,024 [INFO ] [          _exec_single_context()] [cached since 1077s ago] ()
+2023-05-17 15:26:53,024 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 15:26:53,024 [INFO ] [          _exec_single_context()] [cached since 21.37s ago] ()
+2023-05-17 15:26:53,025 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:53,025 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:53] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:53,623 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:53,624 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".id
+2023-05-17 15:26:53,624 [INFO ] [          _exec_single_context()] [generated in 0.00013s] ()
+2023-05-17 15:26:53,626 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:53,626 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:53] "GET /manage-data/reference/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:54,340 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:54,341 [INFO ] [          _exec_single_context()] SELECT availability_requirements.id AS availability_requirements_id, availability_requirements.component_name AS availability_requirements_component_name, availability_requirements.mtd AS availability_requirements_mtd, availability_requirements.rto AS availability_requirements_rto, availability_requirements.rpo AS availability_requirements_rpo, availability_requirements.masl AS availability_requirements_masl 
+FROM availability_requirements ORDER BY availability_requirements.id
+2023-05-17 15:26:54,341 [INFO ] [          _exec_single_context()] [cached since 2.779s ago] ()
+2023-05-17 15:26:54,341 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:54,342 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:54] "GET /manage-data/availability/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:55,042 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:55,042 [INFO ] [          _exec_single_context()] SELECT "references".id AS references_id, "references".consequence_category AS references_consequence_category, "references".consequence_small AS references_consequence_small, "references".consequence_medium AS references_consequence_medium, "references".consequence_large AS references_consequence_large, "references".consequence_huge AS references_consequence_huge 
+FROM "references" ORDER BY "references".id
+2023-05-17 15:26:55,042 [INFO ] [          _exec_single_context()] [cached since 1.419s ago] ()
+2023-05-17 15:26:55,044 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:55,044 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:55] "GET /manage-data/reference/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:58,958 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:58,958 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:26:58,959 [INFO ] [          _exec_single_context()] [cached since 1051s ago] ()
+2023-05-17 15:26:58,960 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:58,960 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:58] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:26:59,425 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:26:59,425 [INFO ] [          _exec_single_context()] SELECT components.id AS components_id, components.bia_name AS components_bia_name, components.component_name AS components_component_name, components.processes_dependencies AS components_processes_dependencies, components.info_type AS components_info_type, components.user_type AS components_user_type, components.description AS components_description 
+FROM components ORDER BY components.id
+2023-05-17 15:26:59,425 [INFO ] [          _exec_single_context()] [cached since 1083s ago] ()
+2023-05-17 15:26:59,426 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.id
+2023-05-17 15:26:59,426 [INFO ] [          _exec_single_context()] [cached since 27.77s ago] ()
+2023-05-17 15:26:59,427 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:26:59,428 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:26:59] "GET /manage-data/component/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:27:00,237 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:27:00,238 [INFO ] [          _exec_single_context()] SELECT context_scope.id AS context_scope_id, context_scope.name AS context_scope_name, context_scope.responsible AS context_scope_responsible, context_scope.coordinator AS context_scope_coordinator, context_scope.start_date AS context_scope_start_date, context_scope.end_date AS context_scope_end_date, context_scope.last_update AS context_scope_last_update, context_scope.service_description AS context_scope_service_description, context_scope.knowledge AS context_scope_knowledge, context_scope.interfaces AS context_scope_interfaces, context_scope.mission_critical AS context_scope_mission_critical, context_scope.support_contracts AS context_scope_support_contracts, context_scope.security_supplier AS context_scope_security_supplier, context_scope.user_amount AS context_scope_user_amount, context_scope.scope_description AS context_scope_scope_description, context_scope.risk_assessment_human AS context_scope_risk_assessment_human, context_scope.risk_assessment_process AS context_scope_risk_assessment_process, context_scope.risk_assessment_technological AS context_scope_risk_assessment_technological, context_scope.project_leader AS context_scope_project_leader, context_scope.risk_owner AS context_scope_risk_owner, context_scope.product_owner AS context_scope_product_owner, context_scope.technical_administrator AS context_scope_technical_administrator, context_scope.security_manager AS context_scope_security_manager, context_scope.incident_contact AS context_scope_incident_contact 
+FROM context_scope ORDER BY context_scope.name
+2023-05-17 15:27:00,238 [INFO ] [          _exec_single_context()] [generated in 0.00012s] ()
+2023-05-17 15:27:00,239 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:27:00,239 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:27:00] "GET /manage-data/bia/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:27:01,787 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:27:01] "GET /?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:27:03,447 [INFO ] [                   _begin_impl()] BEGIN (implicit)
+2023-05-17 15:27:03,447 [INFO ] [          _exec_single_context()] SELECT consequences.id AS consequences_id, consequences.component_name AS consequences_component_name, consequences.category AS consequences_category, consequences.security_property AS consequences_security_property, consequences.consequence_worstcase AS consequences_consequence_worstcase, consequences.justification_worstcase AS consequences_justification_worstcase, consequences.consequence_realisticcase AS consequences_consequence_realisticcase, consequences.justification_realisticcase AS consequences_justification_realisticcase 
+FROM consequences ORDER BY consequences.id
+2023-05-17 15:27:03,447 [INFO ] [          _exec_single_context()] [cached since 1056s ago] ()
+2023-05-17 15:27:03,449 [INFO ] [                _rollback_impl()] ROLLBACK
+2023-05-17 15:27:03,449 [INFO ] [                          _log()] 127.0.0.1 - - [17/May/2023 15:27:03] "GET /manage-data/consequence/list?use_li=True HTTP/1.1" 200 -
+2023-05-17 15:37:22,646 [DEBUG] [                    create_app()] test debug message
+2023-05-17 15:37:22,784 [INFO ] [                          _log()] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.200.0.7:5000
+2023-05-17 15:37:22,784 [INFO ] [                          _log()] [33mPress CTRL+C to quit[0m
+2023-05-17 15:37:22,786 [INFO ] [                          _log()]  * Restarting with stat
+2023-05-17 15:37:23,006 [DEBUG] [                    create_app()] test debug message
+2023-05-17 15:37:23,024 [WARNI] [                          _log()]  * Debugger is active!
+2023-05-17 15:37:23,024 [INFO ] [                          _log()]  * Debugger PIN: 252-557-612

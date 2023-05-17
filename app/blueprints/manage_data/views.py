@@ -136,7 +136,7 @@ def bia_delete(bia_id):
 # Components
 @manage_data_blueprint.route('/component/list', methods=['GET', 'POST'])
 def component_list():
-    components = app_db.session.query(Components).order_by(Components.component_name).all()
+    components = app_db.session.query(Components).order_by(Components.id).all()
     bias = app_db.session.query(Context_Scope).order_by(Context_Scope.id).all()
 
     thead_th_items = [
@@ -496,8 +496,15 @@ def consequence_edit(consequence_id):
 
     if form.validate_on_submit():
         form.populate_obj(item)
+        item.component_name = form.component_name.data.component_name
+        item.category = form.category.data.consequence_category
+        item.security_property = form.security_property.data.choice
+        item.consequence_worstcase = form.consequence_worstcase.data.choice
+        item.justification_worstcase = form.justification_worstcase.data
+        item.consequence_realisticcase = form.consequence_realisticcase.data.choice
+        item.justification_realisticcase = form.justification_realisticcase.data
         app_db.session.commit()
-        flash('Consequences updated: ' + item.consequence_category, 'info')
+        flash('Consequences updated: ' + item.component_name + item.category, 'info')
         return redirect(url_for('manage_data.consequence_list'))
 
     return render_template('item_new_edit.html', title='Edit Consequence', form=form)
