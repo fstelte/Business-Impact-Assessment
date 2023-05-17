@@ -6,7 +6,7 @@ from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import InputRequired, Length
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences, ConsequenceChoices, SecurityProperties
 
 # BIA
 class BIANewEditFormMixin():
@@ -69,5 +69,95 @@ class CompEditForm(FlaskForm, CompNewEditFormMixin):
     submit = SubmitField('Update')
 
 class CompDeleteForm(FlaskForm):
+
+    submit = SubmitField('Confirm delete')
+
+
+# References
+class ReferenceNewEditFormMixin():
+    consequence_category = StringField('Category for reference ', validators=[InputRequired()])
+    consequence_small = StringField('What does the small consequence entail? ', validators=[InputRequired()])
+    consequence_medium = StringField('What does the medium consequence entail? ', validators=[InputRequired()])
+    consequence_large = StringField('What does the large consequence entail? ', validators=[InputRequired()])
+    consequence_huge = StringField('What does the huge consequence entail? ', validators=[InputRequired()])
+
+class ReferenceNewForm(FlaskForm, ReferenceNewEditFormMixin):
+    submit = SubmitField('Add')
+
+class ReferenceEditForm(FlaskForm, ReferenceNewEditFormMixin):
+
+    submit = SubmitField('Update')
+
+class ReferenceDeleteForm(FlaskForm):
+
+    submit = SubmitField('Confirm delete')
+
+# Consequences
+class ConsequenceNewEditFormMixin():
+    component_name = QuerySelectField('Linked to Component',
+                           get_label='component_name',
+                           query_factory=lambda: app_db.session.query(Components).order_by(Components.id).all(),
+                           allow_blank=False,
+                           blank_text='Select the Component',
+                           render_kw={'size': 1})
+    category = QuerySelectField('Consequence Category',
+                           get_label='consequence_category',
+                           query_factory=lambda: app_db.session.query(References).order_by(References.consequence_category).all(),
+                           allow_blank=False,
+                           blank_text='Select the category',
+                           render_kw={'size': 1})
+    security_property = QuerySelectField('Where does the consequence interfere with',
+                           get_label='choice',
+                           query_factory=lambda: app_db.session.query(SecurityProperties).order_by(SecurityProperties.id).all(),
+                           allow_blank=False,
+                           blank_text='Select the property',
+                           render_kw={'size': 1})
+    consequence_worstcase = QuerySelectField('Worstcase consequence',
+                           get_label='choice',
+                           query_factory=lambda: app_db.session.query(ConsequenceChoices).order_by(ConsequenceChoices.id).all(),
+                           allow_blank=False,
+                           blank_text='Select the Consequence',
+                           render_kw={'size': 1})
+    justification_worstcase = StringField('Justification for worstcase consequence')
+
+    consequence_realisticcase = QuerySelectField('Realistic consequence',
+                           get_label='choice',
+                           query_factory=lambda: app_db.session.query(ConsequenceChoices).order_by(ConsequenceChoices.id).all(),
+                           allow_blank=False,
+                           blank_text='Select the Consequence',
+                           render_kw={'size': 1})
+    justification_realisticcase = StringField('Justification for realistic consequence')
+
+class ConsequenceNewForm(FlaskForm, ConsequenceNewEditFormMixin):
+    submit = SubmitField('Add')
+
+class ConsequenceEditForm(FlaskForm, ConsequenceNewEditFormMixin):
+    submit = SubmitField('Update')
+
+
+class ConsequenceDeleteForm(FlaskForm):
+
+    submit = SubmitField('Confirm delete')
+# Availability
+class AvailabilityNewEditFormMixin():
+    component_name = QuerySelectField('Linked to Component',
+                           get_label='component_name',
+                           query_factory=lambda: app_db.session.query(Components).order_by(Components.id).all(),
+                           allow_blank=False,
+                           blank_text='Select the Component',
+                           render_kw={'size': 1})
+    mtd = StringField('What is the MTD? ', validators=[InputRequired()])
+    rto = StringField('What is the RTO? ', validators=[InputRequired()])
+    rpo = StringField('What is the RPO? ', validators=[InputRequired()])
+    masl = StringField('What is the MASL ', validators=[InputRequired()])
+
+class AvailabilityNewForm(FlaskForm, AvailabilityNewEditFormMixin):
+    submit = SubmitField('Add')
+
+class AvailabilityEditForm(FlaskForm, AvailabilityNewEditFormMixin):
+
+    submit = SubmitField('Update')
+
+class AvailabilityDeleteForm(FlaskForm):
 
     submit = SubmitField('Confirm delete')

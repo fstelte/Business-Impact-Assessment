@@ -21,6 +21,9 @@
                 {{ render_nav_item('index', 'Home', use_li=True) }}
                 {{ render_nav_item('manage_data.bia_list', 'BIA', use_li=True) }}
                 {{ render_nav_item('manage_data.component_list', 'Components', use_li=True) }}
+                {{ render_nav_item('manage_data.consequence_list', 'Consequences', use_li=True) }}
+                {{ render_nav_item('manage_data.availability_list', 'Availability Requirements', use_li=True) }}
+                {{ render_nav_item('manage_data.reference_list', 'Consequence references', use_li=True) }}
             </ul>
         </div>
     </nav>
@@ -29,6 +32,11 @@
         {{ render_messages(container=False, dismissible=True) }}
         {% block content %}{% endblock %}
     </main>
+
+    <footer class="footer mt-auto py-3 bg-light">
+		<!-- Footer -->
+		{% include "incl_footer.html" %}
+	</footer>
 
     {{ bootstrap.load_js() }}
 </body>

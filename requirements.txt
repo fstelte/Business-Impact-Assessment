@@ -1,0 +1,6 @@
+Flask
+flask-wtf
+bootstrap-flask
+sqlalchemy
+wtforms-sqlalchemy
+alembic

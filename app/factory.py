@@ -2,7 +2,7 @@
 
 from flask import Flask, request, g, url_for, current_app, render_template
 from flask_wtf.csrf import CSRFProtect
-from flask_bootstrap import Bootstrap4
+from flask_bootstrap import Bootstrap5
 
 from .services import app_logging, app_db
 #from .model import from app.model import Context_Scope, Components, Availability_Requirements, References
@@ -18,7 +18,7 @@ def create_app():
     app_db.init_app(app)
     app.logger.debug('test debug message')
 
-    Bootstrap4(app)
+    Bootstrap5(app)
 
     csrf = CSRFProtect()
     csrf.init_app(app)

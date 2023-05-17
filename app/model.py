@@ -44,7 +44,7 @@ class Components(Base):
 class Availability_Requirements(Base):
     __tablename__ = 'availability_requirements'
     id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.id'))
+    component_name = Column(Integer, ForeignKey('components.component_name'))
     mtd = Column(String)
     rto = Column(String)
     rpo = Column(String)
@@ -58,3 +58,24 @@ class References(Base):
     consequence_medium = Column(String)
     consequence_large = Column(String)
     consequence_huge = Column(String)
+
+class Consequences(Base):
+    __tablename__ = 'consequences'
+    id = Column(Integer, primary_key=True)
+    component_name = Column(Integer, ForeignKey('components.component_name'))
+    category = Column(String)
+    security_property = Column(String)
+    consequence_worstcase = Column(String)
+    justification_worstcase = Column(String)
+    consequence_realisticcase = Column(String)
+    justification_realisticcase = Column(String)
+
+class ConsequenceChoices(Base):
+    __tablename__ = 'consequence_choices'
+    id = Column(Integer, primary_key=True)
+    choice = Column(String)
+
+class SecurityProperties(Base):
+    __tablename__ = 'security_properties'
+    id = Column(Integer, primary_key=True)
+    choice = Column(String)
