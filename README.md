@@ -27,6 +27,21 @@ This application can be used by anyone in any circumstance (commercial, non-comm
  
  alembic upgrade head
  
+ **Create entries in security_properties**
+ 
+ Standard I use Confidentiality, Integrity, Availability
+ 
+ **Create entries in consequence_choices**
+ 
+ I use Low, Medium, High, Huge
+ 
+ **Create entries in references**
+ 
+ I use Financial, Operational, Regulatory, Reputation and Trust, Human and Safety, Privacy
+ 
+ 
+ You are now good to go.
+ 
 **Run the application**
 
  python3 run.py
