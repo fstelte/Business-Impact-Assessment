@@ -65,7 +65,6 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
 ```I use Financial, Operational, Regulatory, Reputation and Trust, Human and Safety, Privacy```
   
->>>>>>> f1dea5af6308f6388c5fd4c86cebb49545dba298
  You are now good to go.
   
 ### Run the application
