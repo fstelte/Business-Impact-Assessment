@@ -16,35 +16,34 @@ This application can be used by anyone in any circumstance (commercial, non-comm
 
 ### (git clone) Clone this repository to your device
   
- ```git clone https://github.com/fstelte/Business-Impact-Assessment.git```
+    git clone https://github.com/fstelte/Business-Impact-Assessment.git
   
  Go into directory and run:
   
- ```pip install -r requirements.txt```
+    pip install -r requirements.txt
 
  After this finishes, create the database:
   
- ```alembic revision --autogenerate -m "create db"```
-  
- ```alembic upgrade head```
+    alembic revision --autogenerate -m "create db"
+    alembic upgrade head
   
 ### Create entries in security_properties
   
-    Standard I use Confidentiality, Integrity, Availability
+```Standard I use Confidentiality, Integrity, Availability```
   
 ### Create entries in consequence_choices
   
-    I use Low, Medium, High, Huge
+```I use Low, Medium, High, Huge```
   
 ### Create entries in references
   
-    I use Financial, Operational, Regulatory, Reputation and Trust, Human and Safety, Privacy
+```I use Financial, Operational, Regulatory, Reputation and Trust, Human and Safety, Privacy```
   
  You are now good to go.
   
 ### Run the application
 
- ```python3 run.py```
+    python3 run.py
 
  Open a browser and head to http://127.0.0.1:5000
 
