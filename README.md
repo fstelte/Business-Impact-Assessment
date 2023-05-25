@@ -25,8 +25,8 @@ This application can be used by anyone in any circumstance (commercial, non-comm
 Create a file named **mysecrets.py**
 
 from within python run (python3):
-    >>> import os
-    >>> os.urandom(61).hex()
+     >>> import os
+     >>> os.urandom(61).hex()
 
  After this finishes, create the database:
   
