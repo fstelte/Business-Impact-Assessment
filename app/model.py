@@ -38,6 +38,7 @@ class Components(Base):
     component_name = Column(String)
     processes_dependencies = Column(String)
     info_type = Column(String)
+    info_owner = Column(String)
     user_type = Column(String)
     description = Column(String)
 

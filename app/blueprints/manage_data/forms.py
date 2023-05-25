@@ -58,6 +58,7 @@ class CompNewEditFormMixin():
     component_name = StringField('Name for Component ', validators=[InputRequired()])
     processes_dependencies = StringField('What processes are dependent on the component', validators=[InputRequired()])
     info_type = StringField('What type of information does the component hold ', validators=[InputRequired()])
+    info_owner = StringField('Who is the owner of the information that the component holds?', validators=[InputRequired()])
     user_type = StringField('What type of users use this component ', validators=[InputRequired()])
     description = StringField('Describe the component', validators=[InputRequired()])
 

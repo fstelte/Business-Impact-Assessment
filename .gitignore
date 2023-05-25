@@ -1,3 +1,7 @@
-bia.db
-app.log
-./alembic/versions/*
+*.db
+*.log
+*/alembic/versions/*
+__pycache__
+./app/__pycache__
+./blueprints/manage_data/__pycache__
+**/__pycache__/

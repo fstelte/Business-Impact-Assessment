@@ -1,5 +1,7 @@
 Flask
 flask-wtf
+flask_wtf
+flask-bootstrap
 bootstrap-flask
 sqlalchemy
 wtforms-sqlalchemy
