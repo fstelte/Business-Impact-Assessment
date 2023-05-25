@@ -22,11 +22,22 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
     pip install -r requirements.txt
 
+Create a file named **mysecrets.py**
+
+from within python run (python3):
+    >>> import os
+    >>> os.urandom(61).hex()
+
  After this finishes, create the database:
   
     alembic revision --autogenerate -m "create db"
     alembic upgrade head
-  
+
+ **Adding the default values** 
+ 
+ Now included is the **default_values.sql**
+ ``` python3 first_run_default_values.py ```
+
 ### Create entries in security_properties
   
 ```Standard I use Confidentiality, Integrity, Availability```
@@ -39,9 +50,7 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
 ```I use Financial, Operational, Regulatory, Reputation and Trust, Human and Safety, Privacy```
 
- **Adding the default values** 
- 
-``` Now included is de **default_values.sql**, you can run this SQL file from for instance SQLite browser to add default values to the database.```
+
   
  You are now good to go.
   
