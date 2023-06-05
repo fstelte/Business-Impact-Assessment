@@ -28,7 +28,7 @@ from within python run (python3):
 
     import os
     os.urandom(61).hex()
-Put the hex value in the mysecrets.py like so *SECRET_KEY = HEXVALUE*
+Put the hex value in the mysecrets.py like so *SECRET_KEY = "HEXVALUE"*
 
  After this finishes, create the database:
   
