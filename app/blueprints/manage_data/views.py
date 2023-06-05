@@ -520,7 +520,7 @@ def consequence_delete(consequence_id):
 
     form = ConsequenceDeleteForm(obj=item)
 
-    item_name = item.consequence_category
+    item_name = item.component_name + " " + item.category
     if form.validate_on_submit():
         app_db.session.delete(item)
         app_db.session.commit()

@@ -101,18 +101,19 @@ class ConsequenceNewEditFormMixin():
                            allow_blank=False,
                            blank_text='Select the Component',
                            render_kw={'size': 1})
-    category = QuerySelectField('Consequence Category',
-                           get_label='consequence_category',
-                           query_factory=lambda: app_db.session.query(References).order_by(References.consequence_category).all(),
-                           allow_blank=False,
-                           blank_text='Select the category',
-                           render_kw={'size': 1})
     security_property = QuerySelectField('Where does the consequence interfere with',
                            get_label='choice',
                            query_factory=lambda: app_db.session.query(SecurityProperties).order_by(SecurityProperties.id).all(),
                            allow_blank=False,
                            blank_text='Select the property',
                            render_kw={'size': 1})
+    category = QuerySelectField('Consequence Category',
+                           get_label='consequence_category',
+                           query_factory=lambda: app_db.session.query(References).order_by(References.consequence_category).all(),
+                           allow_blank=False,
+                           blank_text='Select the category',
+                           render_kw={'size': 1})
+
     consequence_worstcase = QuerySelectField('Worstcase consequence',
                            get_label='choice',
                            query_factory=lambda: app_db.session.query(ConsequenceChoices).order_by(ConsequenceChoices.id).all(),
