@@ -7,7 +7,7 @@ Built on python, flask and some extenions for flask.
 
 This application can be used by anyone in any circumstance (commercial, non-commercial, business, personal), only thing I ask of you is to provide credits for the original work that has been done to get this application to work. It would be great if an active community would help me maintain and built out the capabilities of this application.
 
-## Pre requisists:
+## Prerequisites:
 
  1. Python3 running on your device (https://www.python.org/downloads/)
  2. PIP running on your devices (https://www.makeuseof.com/tag/install-pip-for-python/)
@@ -22,13 +22,13 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
     pip install -r requirements.txt
 
-Create a file named **mysecrets.py** in the root folder
+Create a **.env** file in the root folder
 
 from within python run (python3):
 
     import os
     os.urandom(61).hex()
-Put the hex value in the mysecrets.py like so *SECRET_KEY = "HEXVALUE"*
+Put the hex value in the .env like so *SECRET_KEY = "HEXVALUE"*
 
  After this finishes, create the database:
   
