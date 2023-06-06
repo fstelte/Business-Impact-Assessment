@@ -7,7 +7,7 @@ Built on python, flask and some extenions for flask.
 
 This application can be used by anyone in any circumstance (commercial, non-commercial, business, personal), only thing I ask of you is to provide credits for the original work that has been done to get this application to work. It would be great if an active community would help me maintain and built out the capabilities of this application.
 
-## Pre requisists:
+## Prerequisites:
 
  1. Python3 running on your device (https://www.python.org/downloads/)
  2. PIP running on your devices (https://www.makeuseof.com/tag/install-pip-for-python/)
