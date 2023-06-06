@@ -22,13 +22,13 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
     pip install -r requirements.txt
 
-Create a file named **mysecrets.py** in the root folder
+Create a **.env** file in the root folder
 
 from within python run (python3):
 
     import os
     os.urandom(61).hex()
-Put the hex value in the mysecrets.py like so *SECRET_KEY = "HEXVALUE"*
+Put the hex value in the .env like so *SECRET_KEY = "HEXVALUE"*
 
  After this finishes, create the database:
   
