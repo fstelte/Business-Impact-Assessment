@@ -4,6 +4,6 @@
 __pycache__
 ./app/__pycache__
 ./blueprints/manage_data/__pycache__
-mysecrets.py
 */versions/
 alembic/versions/__pycache__
+.env

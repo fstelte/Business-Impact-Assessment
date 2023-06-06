@@ -1,5 +1,6 @@
-# run.py
-
+# Import environment variables from .env
+from dotenv import load_dotenv
+# Import factory function
 from app import factory
 
 app = factory.create_app()
