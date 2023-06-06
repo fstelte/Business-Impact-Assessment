@@ -8,45 +8,45 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Business Impact Assessment</title>
-    {{ bootstrap.load_css() }}
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        main {
-            flex: 1;
-        }
-    </style>
+    {{ bootstrap.load_css() }}   
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto fw-semibold hov">
-                {{ render_nav_item('index', 'Home', use_li=True) }}
-                {{ render_nav_item('manage_data.bia_list', 'BIA', use_li=True) }}
-                {{ render_nav_item('manage_data.component_list', 'Components', use_li=True) }}
-                {{ render_nav_item('manage_data.consequence_list', 'Consequences', use_li=True) }}
-                {{ render_nav_item('manage_data.availability_list', 'Availability Requirements', use_li=True) }}
-                {{ render_nav_item('manage_data.reference_list', 'Consequence references', use_li=True) }}
-            </ul>
-        </div>
-    </nav>
+<body class="d-flex flex-column min-vh-100">
+  
+        <!--Navbar-->
+       
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto fw-semibold hov">
+                        {{ render_nav_item('index', 'Home', use_li=True) }}
+                        {{ render_nav_item('manage_data.bia_list', 'BIA', use_li=True) }}
+                        {{ render_nav_item('manage_data.component_list', 'Components', use_li=True) }}
+                        {{ render_nav_item('manage_data.consequence_list', 'Consequences', use_li=True) }}
+                        {{ render_nav_item('manage_data.availability_list', 'Availability Requirements', use_li=True) }}
+                        {{ render_nav_item('manage_data.reference_list', 'Consequence references', use_li=True) }}
+                    </ul>
+                </div>
+            </nav>
+       
 
-    <main class="container">
-        {{ render_messages(container=False, dismissible=True) }}
-        {% block content %}{% endblock %}
-    </main>
-
-    <footer class="text-center text-lg-start bg-white text-muted mt-auto">
-        <span class="text-muted">{% include "incl_footer.html" %}</span>
-    </footer>
+        <!--Body-->
+       
+            <main class="container bg-light min-h-100 d-inline-block flex-grow-1 mb-4 border rounded">
+                <div class="p-4">
+                {{ render_messages(container=False, dismissible=True) }}
+                {% block content %}{% endblock %}
+                </div>
+            </main>
+   
+   
+        <!--Footer-->
+        <footer class="text-center text-lg-start bg-light text-muted mt-auto">
+            <span class="text-muted">{% include "incl_footer.html" %}</span>
+        </footer>
+ 
 
     {{ bootstrap.load_js() }}
 </body>

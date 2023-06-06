@@ -7,3 +7,4 @@ __pycache__
 */versions/
 alembic/versions/__pycache__
 .env
+env/*
