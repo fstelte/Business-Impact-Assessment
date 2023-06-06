@@ -8,8 +8,8 @@ class Config(object):
 class ConfigDevelopment(Config):
 
     SECRET_KEY = os.getenv('SECRET_KEY')
-    if(SECRET_KEY is None):
-        raise ValueError("No SECRET_KEY set please follow the README")
+    #if(SECRET_KEY is None):
+    #    raise ValueError("No SECRET_KEY set please follow the README")
     
     project_dir = os.path.dirname(os.path.abspath(__file__))
     DEBUG = True
