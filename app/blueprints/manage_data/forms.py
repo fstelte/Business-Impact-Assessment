@@ -139,10 +139,6 @@ class ConsequenceDeleteForm(FlaskForm):
 # Availability
 class AvailabilityNewEditFormMixin():
     component_name = QuerySelectField('Linked to Component',
-                           get_label='component_name',
-                           query_factory=lambda: app_db.session.query(Components).order_by(Components.id).all(),
-                           allow_blank=False,
-                           blank_text='Select the Component',
                            render_kw={'size': 1})
     mtd = StringField('What is the MTD? ', validators=[InputRequired()])
     rto = StringField('What is the RTO? ', validators=[InputRequired()])

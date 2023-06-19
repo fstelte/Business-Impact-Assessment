@@ -484,7 +484,7 @@ def consequence_new():
     if form.validate_on_submit():
         #form.populate_obj(item)
         # Map form fields to object attributes
-        item.component_name = form.component_name.data.component_name
+        item.component_name = form.component_name.data #.component_name
         item.category = form.category.data.consequence_category
         item.security_property = form.security_property.data.choice
         item.consequence_worstcase = form.consequence_worstcase.data.choice
@@ -623,6 +623,9 @@ def availability_new():
 
     item = Availability_Requirements()
     form = AvailabilityNewForm()
+
+    lijst = choices_maken(Components, 'component_name', item)
+    form.component_name.choices = lijst
 
     if form.validate_on_submit():
         form.populate_obj(item)
