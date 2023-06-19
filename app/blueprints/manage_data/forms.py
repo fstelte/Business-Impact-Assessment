@@ -1,7 +1,7 @@
 # forms.py
 
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, DateField
+from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import InputRequired, Length
 
@@ -93,13 +93,9 @@ class ReferenceDeleteForm(FlaskForm):
 
     submit = SubmitField('Confirm delete', render_kw={'class': 'mt-2'})
 
-# Consequences
-class ConsequenceNewEditFormMixin():
-    component_name = QuerySelectField('Linked to Component',
-                           get_label='component_name',
-                           query_factory=lambda: app_db.session.query(Components).order_by(Components.id).all(),
-                           allow_blank=False,
-                           blank_text='Select the Component',
+# Consequences app_db.session.query(Consequences).filter(Consequences.id == consequence_id).first()
+class ConsequenceNewEditFormMixin:
+    component_name = SelectField('Linked to Component',
                            render_kw={'size': 1})
     security_property = QuerySelectField('Where does the consequence interfere with',
                            get_label='choice',
