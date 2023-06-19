@@ -13,6 +13,18 @@ from .forms import (
 )
 
 
+def choices_maken(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.component_name)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.component_name)
+
+        return lijst
+
+
 manage_data_blueprint = Blueprint('manage_data', __name__)
 
 #BIA / Context_Scope
@@ -464,8 +476,10 @@ def consequence_list():
 def consequence_new():
 
     item = Consequences()
-    #name = app_db.session.query(Components).order_by(Components.id).all()
     form = ConsequenceNewForm()
+
+    lijst = choices_maken(Components, 'component_name', item)
+    form.component_name.choices = lijst
 
     if form.validate_on_submit():
         #form.populate_obj(item)
@@ -494,9 +508,12 @@ def consequence_edit(consequence_id):
 
     form = ConsequenceEditForm(obj=item)
 
+    lijst = choices_maken(Components, 'component_name', item)
+    form.component_name.choices = lijst
+
     if form.validate_on_submit():
         form.populate_obj(item)
-        item.component_name = form.component_name.data.component_name
+        item.component_name = form.component_name.data
         item.category = form.category.data.consequence_category
         item.security_property = form.security_property.data.choice
         item.consequence_worstcase = form.consequence_worstcase.data.choice
