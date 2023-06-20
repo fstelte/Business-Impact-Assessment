@@ -97,32 +97,15 @@ class ReferenceDeleteForm(FlaskForm):
 class ConsequenceNewEditFormMixin:
     component_name = SelectField('Linked to Component',
                            render_kw={'size': 1})
-    security_property = QuerySelectField('Where does the consequence interfere with',
-                           get_label='choice',
-                           query_factory=lambda: app_db.session.query(SecurityProperties).order_by(SecurityProperties.id).all(),
-                           allow_blank=False,
-                           blank_text='Select the property',
+    security_property = SelectField('Where does the consequence interfere with',
                            render_kw={'size': 1})
-    category = QuerySelectField('Consequence Category',
-                           get_label='consequence_category',
-                           query_factory=lambda: app_db.session.query(References).order_by(References.consequence_category).all(),
-                           allow_blank=False,
-                           blank_text='Select the category',
+    consequence_category = SelectField('Consequence Category',
                            render_kw={'size': 1})
-
-    consequence_worstcase = QuerySelectField('Worstcase consequence',
-                           get_label='choice',
-                           query_factory=lambda: app_db.session.query(ConsequenceChoices).order_by(ConsequenceChoices.id).all(),
-                           allow_blank=False,
-                           blank_text='Select the Consequence',
+    consequence_worstcase = SelectField('Worstcase consequence',
                            render_kw={'size': 1})
     justification_worstcase = StringField('Justification for worstcase consequence')
 
-    consequence_realisticcase = QuerySelectField('Realistic consequence',
-                           get_label='choice',
-                           query_factory=lambda: app_db.session.query(ConsequenceChoices).order_by(ConsequenceChoices.id).all(),
-                           allow_blank=False,
-                           blank_text='Select the Consequence',
+    consequence_realisticcase = SelectField('Realistic consequence',
                            render_kw={'size': 1})
     justification_realisticcase = StringField('Justification for realistic consequence')
 
@@ -138,7 +121,7 @@ class ConsequenceDeleteForm(FlaskForm):
     submit = SubmitField('Confirm delete')
 # Availability
 class AvailabilityNewEditFormMixin():
-    component_name = QuerySelectField('Linked to Component',
+    component_name = SelectField('Linked to Component',
                            render_kw={'size': 1})
     mtd = StringField('What is the MTD? ', validators=[InputRequired()])
     rto = StringField('What is the RTO? ', validators=[InputRequired()])

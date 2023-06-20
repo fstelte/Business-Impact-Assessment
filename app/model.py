@@ -64,7 +64,7 @@ class Consequences(Base):
     __tablename__ = 'consequences'
     id = Column(Integer, primary_key=True)
     component_name = Column(Integer, ForeignKey('components.component_name'))
-    category = Column(String)
+    consequence_category = Column(String)
     security_property = Column(String)
     consequence_worstcase = Column(String)
     justification_worstcase = Column(String)
@@ -74,9 +74,10 @@ class Consequences(Base):
 class ConsequenceChoices(Base):
     __tablename__ = 'consequence_choices'
     id = Column(Integer, primary_key=True)
-    choice = Column(String)
+    consequence_worstcase = Column(String)
+    consequence_realisticcase = Column(String)
 
 class SecurityProperties(Base):
     __tablename__ = 'security_properties'
     id = Column(Integer, primary_key=True)
-    choice = Column(String)
+    security_property = Column(String)

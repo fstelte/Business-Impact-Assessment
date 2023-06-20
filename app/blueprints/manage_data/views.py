@@ -24,6 +24,49 @@ def choices_maken(klas, tagg, items):
 
         return lijst
 
+def get_choices(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.security_property)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.security_property)
+
+        return lijst
+
+
+def get_references(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.consequence_category)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.consequence_category)
+
+        return lijst
+
+def get_consequences_wc(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.consequence_worstcase)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.consequence_worstcase)
+
+        return lijst
+def get_consequences_rc(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.consequence_realisticcase)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.consequence_realisticcase)
+
+        return lijst
 
 manage_data_blueprint = Blueprint('manage_data', __name__)
 
@@ -417,11 +460,12 @@ def consequence_list():
             'col_title': 'Linked to component',
         },
         {
-            'col_title': 'Category',
-        },
-       {
             'col_title': 'Security Property',
         },
+        {
+            'col_title': 'Category',
+        },
+       
        {
             'col_title': 'Consequence realistic',
         },
@@ -449,11 +493,12 @@ def consequence_list():
                 'url': url_for('manage_data.consequence_edit', consequence_id=consequence.id),
             },
             {
-                'col_value': consequence.category,
-            },
-            {
                 'col_value': consequence.security_property,
             },
+            {
+                'col_value': consequence.consequence_category,
+            },
+
             {
                 'col_value': consequence.consequence_realisticcase,
             },
@@ -481,20 +526,32 @@ def consequence_new():
     lijst = choices_maken(Components, 'component_name', item)
     form.component_name.choices = lijst
 
+    sec_prop = get_choices(SecurityProperties, 'security_property', item)
+    form.security_property.choices = sec_prop
+
+    con_cat = get_references(References, 'consequence_category', item)
+    form.consequence_category.choices = con_cat
+
+    con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
+    form.consequence_worstcase.choices = con_wc
+
+    con_rc = get_consequences_rc(ConsequenceChoices, 'consequence_realisticcase', item)
+    form.consequence_realisticcase.choices = con_rc
+
     if form.validate_on_submit():
-        #form.populate_obj(item)
+        form.populate_obj(item)
         # Map form fields to object attributes
         item.component_name = form.component_name.data #.component_name
-        item.category = form.category.data.consequence_category
-        item.security_property = form.security_property.data.choice
-        item.consequence_worstcase = form.consequence_worstcase.data.choice
+        item.security_property = form.security_property.data
+        item.consequence_category = form.consequence_category.data
+        item.consequence_worstcase = form.consequence_worstcase.data
         item.justification_worstcase = form.justification_worstcase.data
-        item.consequence_realisticcase = form.consequence_realisticcase.data.choice
+        item.consequence_realisticcase = form.consequence_realisticcase.data
         item.justification_realisticcase = form.justification_realisticcase.data
         #item.component_name = form.name.data.name
         app_db.session.add(item)
         app_db.session.commit()
-        flash('Consequence added: ' + item.category, 'info')
+        flash('Consequence added: ' + item.consequence_category, 'info')
         return redirect(url_for('manage_data.consequence_list'))
 
     return render_template('item_new_edit.html', title='New Consequence', form=form)
@@ -511,17 +568,29 @@ def consequence_edit(consequence_id):
     lijst = choices_maken(Components, 'component_name', item)
     form.component_name.choices = lijst
 
+    sec_prop = get_choices(SecurityProperties, 'security_property', item)
+    form.security_property.choices = sec_prop
+
+    con_cat = get_references(References, 'consequence_category', item)
+    form.consequence_category.choices = con_cat
+
+    con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
+    form.consequence_worstcase.choices = con_wc
+
+    con_rc = get_consequences_rc(ConsequenceChoices, 'consequence_realisticcase', item)
+    form.consequence_realisticcase.choices = con_rc
+
     if form.validate_on_submit():
         form.populate_obj(item)
         item.component_name = form.component_name.data
-        item.category = form.category.data.consequence_category
-        item.security_property = form.security_property.data.choice
-        item.consequence_worstcase = form.consequence_worstcase.data.choice
+        item.security_property = form.security_property.data
+        item.consequence_category = form.consequence_category.data
+        item.consequence_worstcase = form.consequence_worstcase.data
         item.justification_worstcase = form.justification_worstcase.data
         item.consequence_realisticcase = form.consequence_realisticcase.data.choice
         item.justification_realisticcase = form.justification_realisticcase.data
         app_db.session.commit()
-        flash('Consequences updated: ' + item.component_name + item.category, 'info')
+        flash('Consequences updated: ' + item.component_name + item.consequence_category, 'info')
         return redirect(url_for('manage_data.consequence_list'))
 
     return render_template('item_new_edit.html', title='Edit Consequence', form=form)
@@ -537,7 +606,7 @@ def consequence_delete(consequence_id):
 
     form = ConsequenceDeleteForm(obj=item)
 
-    item_name = item.component_name + " " + item.category
+    item_name = item.component_name + " " + item.consequence_category
     if form.validate_on_submit():
         app_db.session.delete(item)
         app_db.session.commit()
@@ -629,7 +698,7 @@ def availability_new():
 
     if form.validate_on_submit():
         form.populate_obj(item)
-        item.component_name = form.component_name.data.component_name
+        item.component_name = form.component_name.data #.component_name
         app_db.session.add(item)
         app_db.session.commit()
         flash('Availability requirement added: ' + item.component_name, 'info')
@@ -646,10 +715,13 @@ def availability_edit(availability_id):
 
     form = AvailabilityEditForm(obj=item)
 
+    lijst = choices_maken(Components, 'component_name', item)
+    form.component_name.choices = lijst
+
     if form.validate_on_submit():
         form.populate_obj(item)
         app_db.session.commit()
-        flash('Availability requirements updated: ' + item.id, 'info')
+        flash('Availability requirements updated: ' + item.component_name, 'info')
         return redirect(url_for('manage_data.availability_list'))
 
     return render_template('item_new_edit.html', title='Edit Availability requirement', form=form)
@@ -663,7 +735,7 @@ def availability_delete(availability_id):
 
     form = AvailabilityDeleteForm(obj=item)
 
-    item_name = item.id
+    item_name = item.component_name
     if form.validate_on_submit():
         app_db.session.delete(item)
         app_db.session.commit()
