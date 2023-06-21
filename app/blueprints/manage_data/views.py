@@ -57,6 +57,7 @@ def get_consequences_wc(klas, tagg, items):
                 lijst.append(values.consequence_worstcase)
 
         return lijst
+
 def get_consequences_rc(klas, tagg, items):
         lijst = []
         tobequeried = app_db.session.query(klas).order_by(klas.id).all()
@@ -65,6 +66,17 @@ def get_consequences_rc(klas, tagg, items):
         for values in tobequeried:
             if getattr(values,tagg) not in lijst:
                 lijst.append(values.consequence_realisticcase)
+
+        return lijst
+
+def get_bia(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.name)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.name)
 
         return lijst
 
@@ -234,7 +246,7 @@ def component_list():
                 'url': url_for('manage_data.component_edit', component_id=component.id),
             },
             {
-                'col_value': component.bia_name
+                'col_value': component.name
             },
             {
                 'col_value': component.description
@@ -265,8 +277,13 @@ def component_new():
     form = CompNewForm()
     form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
 
+    item = Components()
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
     if form.validate_on_submit():
-        item = Components()
+        
         form.populate_obj(item)
         item.bia_name = form.name.data.name
         #bia_name = form.name.data 
@@ -291,6 +308,10 @@ def component_edit(component_id):
     item = app_db.session.query(Components).filter(Components.id == component_id).first()
     form = CompEditForm(obj=item)
     form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
     if item is None:
         abort(403)
 

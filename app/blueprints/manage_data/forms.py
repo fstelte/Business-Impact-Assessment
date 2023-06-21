@@ -50,10 +50,7 @@ class BIADeleteForm(FlaskForm):
 
 # Components
 class CompNewEditFormMixin():
-    name = QuerySelectField('Linked to BIA',
-        get_label='name',
-        allow_blank=False,
-        blank_text='Select the BIA',
+    name = SelectField('Linked to BIA',
         render_kw={'size': 1})
     component_name = StringField('Name for Component ', validators=[InputRequired()])
     processes_dependencies = StringField('What processes are dependent on the component', validators=[InputRequired()])

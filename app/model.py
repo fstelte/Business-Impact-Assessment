@@ -34,7 +34,7 @@ class Context_Scope(Base):
 class Components(Base):
     __tablename__ = 'components'
     id = Column(Integer, primary_key=True)
-    bia_name = Column(Integer, ForeignKey('context_scope.name'))
+    name = Column(Integer, ForeignKey('context_scope.name'))
     component_name = Column(String)
     processes_dependencies = Column(String)
     info_type = Column(String)

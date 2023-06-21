@@ -8,4 +8,4 @@ __pycache__
 alembic/versions/__pycache__
 .env
 env/*
-backup/*
+*backup/*
