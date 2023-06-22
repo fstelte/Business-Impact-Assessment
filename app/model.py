@@ -34,7 +34,7 @@ class Context_Scope(Base):
 class Components(Base):
     __tablename__ = 'components'
     id = Column(Integer, primary_key=True)
-    name = Column(Integer, ForeignKey('context_scope.name'))
+    name = Column(String, ForeignKey('context_scope.name'))
     component_name = Column(String)
     processes_dependencies = Column(String)
     info_type = Column(String)
@@ -44,8 +44,8 @@ class Components(Base):
 
 class Availability_Requirements(Base):
     __tablename__ = 'availability_requirements'
-    id = Column(Integer, primary_key=True)
-    component_name = Column(Integer, ForeignKey('components.component_name'))
+    id = Column(String, primary_key=True)
+    component_name = Column(String, ForeignKey('components.component_name'))
     mtd = Column(String)
     rto = Column(String)
     rpo = Column(String)
