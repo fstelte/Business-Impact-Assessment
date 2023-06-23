@@ -1,7 +1,7 @@
 # forms.py
 
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField
+from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField, TextAreaField
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import InputRequired, Length
 
@@ -100,11 +100,11 @@ class ConsequenceNewEditFormMixin:
                            render_kw={'size': 1})
     consequence_worstcase = SelectField('Worstcase consequence',
                            render_kw={'size': 1})
-    justification_worstcase = StringField('Justification for worstcase consequence')
+    justification_worstcase = TextAreaField('Justification for worstcase consequence', render_kw={"rows": 6, "cols": 6})
 
     consequence_realisticcase = SelectField('Realistic consequence',
                            render_kw={'size': 1})
-    justification_realisticcase = StringField('Justification for realistic consequence')
+    justification_realisticcase = TextAreaField('Justification for realistic consequence', render_kw={"rows": 6, "cols": 6})
 
 class ConsequenceNewForm(FlaskForm, ConsequenceNewEditFormMixin):
     submit = SubmitField('Add', render_kw={'class': 'mt-2'})
@@ -139,7 +139,8 @@ class AvailabilityDeleteForm(FlaskForm):
 class SummaryNewEditFormMixin():
         name = SelectField('Linked to BIA',
                            render_kw={'size': 1})
-        summary_text = StringField('Type your summary', render_kw={'size': 3})
+        summary_text = TextAreaField('Type your summary', render_kw={"rows": 30, "cols": 11})
+        
 
 
 class SummaryNewForm(FlaskForm, SummaryNewEditFormMixin):
