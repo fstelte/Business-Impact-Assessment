@@ -4,12 +4,13 @@ from flask import Flask, Blueprint, current_app, g, session, request, url_for, r
     render_template, flash, abort
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
 from .forms import (
     BIANewForm, BIAEditForm, BIADeleteForm, CompNewForm, CompEditForm, CompDeleteForm,
     ReferenceNewForm, ReferenceEditForm, ReferenceDeleteForm,
     ConsequenceNewForm, ConsequenceEditForm, ConsequenceDeleteForm,
-    AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm
+    AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm,
+    SummaryNewForm, SummaryEditForm, SummaryDeleteForm
 )
 
 
@@ -299,7 +300,7 @@ def component_new():
         flash('Component added: ' + item.component_name, 'info')
         return redirect(url_for('manage_data.component_list'))
 
-    return render_template('item_new_edit.html', title='New BIA', form=form)
+    return render_template('item_new_edit.html', title='New Component', form=form)
 
 @manage_data_blueprint.route('/component/edit/<int:component_id>', methods=['GET', 'POST'])
 def component_edit(component_id):
@@ -340,7 +341,7 @@ def component_delete(component_id):
         flash('Deleted hours: ' + item_name, 'info')
         return redirect(url_for('manage_data.component_list'))
 
-    return render_template('item_delete.html', title='Delete BIA', item_name=item_name, form=form)
+    return render_template('item_delete.html', title='Delete Component', item_name=item_name, form=form)
 
 #References
 @manage_data_blueprint.route('/reference/list', methods=['GET', 'POST'])
@@ -764,3 +765,124 @@ def availability_delete(availability_id):
         return redirect(url_for('manage_data.availability_list'))
 
     return render_template('item_delete.html', title='Delete availability requirement', item_name=item_name, form=form)
+
+@manage_data_blueprint.route('/summary/list', methods=['GET', 'POST'])
+def summary_list():
+    summarys = app_db.session.query(Summary).order_by(Summary.id).all()
+    bias = app_db.session.query(Context_Scope).order_by(Context_Scope.id).all()
+
+    thead_th_items = [
+        {
+            'col_title': '#',
+        },
+        {
+            'col_title': 'Linked to BIA'
+        },
+        {
+            'col_title': 'Summary'
+        },
+        {
+            'col_title': 'Delete'
+        }
+    ]
+
+    tbody_tr_items = []
+    for summary in summarys:
+
+ #       Customers_name = '-'
+ #       if friend.Customers:
+ #           Customers_name = friend.Customers.name
+ #       Months_names = '-'
+ #       if friend.hobbies:
+ #           Months_names = ', '.join([x.name for x in friend.hobbies])
+
+        tbody_tr_items.append([
+            {
+                'col_value': summary.id,
+            },
+            {
+                'col_value': summary.name,
+                'url': url_for('manage_data.summary_edit', summary_id=summary.id),
+            },
+            {
+                'col_value': summary.summary_text
+            },
+            {
+                'col_value': 'delete',
+                'url': url_for('manage_data.summary_delete', summary_id=summary.id),
+            }
+            ])
+
+    return render_template(
+        'items_list.html',
+        title='Summary',
+        thead_th_items=thead_th_items,
+        tbody_tr_items=tbody_tr_items,
+        item_new_url=url_for('manage_data.summary_new'),
+        item_new_text='New Summary',
+    )
+
+@manage_data_blueprint.route('/summary/new', methods=['GET', 'POST'])
+def summary_new():
+
+    
+    form = SummaryNewForm()
+    form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+
+    item = Summary()
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
+    if form.validate_on_submit():
+        
+        form.populate_obj(item)
+        item.name = form.name.data
+        app_db.session.add(item)
+        #app_db.session.add(new_data)
+        app_db.session.commit()
+        flash('Summary added: ' + item.name, 'info')
+        return redirect(url_for('manage_data.summary_list'))
+
+    return render_template('item_new_edit.html', title='New summary', form=form)
+
+@manage_data_blueprint.route('/summary/edit/<int:summary_id>', methods=['GET', 'POST'])
+def summary_edit(summary_id):
+
+   
+    item = app_db.session.query(Summary).filter(Summary.id == summary_id).first()
+    form = SummaryEditForm(obj=item)
+    form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
+    if item is None:
+        abort(403)
+
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        app_db.session.commit()
+        flash('Component updated: ' + item.name, 'info')
+        return redirect(url_for('manage_data.summary_list'))
+
+    return render_template('item_new_edit.html', title='Edit Summary', form=form)
+
+@manage_data_blueprint.route('/summary/delete/<int:summary_id>', methods=['GET', 'POST'])
+def summary_delete(summary_id):
+
+    item = app_db.session.query(Summary).filter(Summary.id == summary_id).first()
+    if item is None:
+        abort(403)
+
+    form = SummaryDeleteForm(obj=item)
+
+
+    item_name = item.name
+    if form.validate_on_submit():
+        app_db.session.delete(item)
+        app_db.session.commit()
+        flash('Deleted summary for BIA: ' + item_name, 'info')
+        return redirect(url_for('manage_data.summary_list'))
+
+    return render_template('item_delete.html', title='Delete Summary', item_name=item_name, form=form)

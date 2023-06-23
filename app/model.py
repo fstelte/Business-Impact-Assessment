@@ -81,3 +81,9 @@ class SecurityProperties(Base):
     __tablename__ = 'security_properties'
     id = Column(Integer, primary_key=True)
     security_property = Column(String)
+
+class Summary(Base):
+    __tablename__ = 'bia_summary'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, ForeignKey('context_scope.name'))
+    summary_text = Column(String)

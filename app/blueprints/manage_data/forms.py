@@ -6,7 +6,7 @@ from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import InputRequired, Length
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences, ConsequenceChoices, SecurityProperties
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences, ConsequenceChoices, SecurityProperties, Summary
 
 # BIA
 class BIANewEditFormMixin():
@@ -135,3 +135,20 @@ class AvailabilityEditForm(FlaskForm, AvailabilityNewEditFormMixin):
 class AvailabilityDeleteForm(FlaskForm):
 
     submit = SubmitField('Confirm delete', render_kw={'class': 'mt-2'})
+
+class SummaryNewEditFormMixin():
+        name = SelectField('Linked to BIA',
+                           render_kw={'size': 1})
+        summary_text = StringField('Type your summary', render_kw={'size': 3})
+
+
+class SummaryNewForm(FlaskForm, SummaryNewEditFormMixin):
+
+    submit = SubmitField('Add', render_kw={'class': 'mt-2'})
+
+class SummaryEditForm(FlaskForm, SummaryNewEditFormMixin):
+
+    submit = SubmitField('Update', render_kw={'class': 'mt-2'})
+
+class SummaryDeleteForm(FlaskForm):
+    submit = SubmitField('Confirm delete')
