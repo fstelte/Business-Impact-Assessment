@@ -34,7 +34,7 @@ class Context_Scope(Base):
 class Components(Base):
     __tablename__ = 'components'
     id = Column(Integer, primary_key=True)
-    bia_name = Column(Integer, ForeignKey('context_scope.name'))
+    name = Column(String, ForeignKey('context_scope.name'))
     component_name = Column(String)
     processes_dependencies = Column(String)
     info_type = Column(String)
@@ -44,8 +44,8 @@ class Components(Base):
 
 class Availability_Requirements(Base):
     __tablename__ = 'availability_requirements'
-    id = Column(Integer, primary_key=True)
-    component_name = Column(Integer, ForeignKey('components.component_name'))
+    id = Column(String, primary_key=True)
+    component_name = Column(String, ForeignKey('components.component_name'))
     mtd = Column(String)
     rto = Column(String)
     rpo = Column(String)
@@ -64,7 +64,7 @@ class Consequences(Base):
     __tablename__ = 'consequences'
     id = Column(Integer, primary_key=True)
     component_name = Column(Integer, ForeignKey('components.component_name'))
-    category = Column(String)
+    consequence_category = Column(String)
     security_property = Column(String)
     consequence_worstcase = Column(String)
     justification_worstcase = Column(String)
@@ -74,9 +74,16 @@ class Consequences(Base):
 class ConsequenceChoices(Base):
     __tablename__ = 'consequence_choices'
     id = Column(Integer, primary_key=True)
-    choice = Column(String)
+    consequence_worstcase = Column(String)
+    consequence_realisticcase = Column(String)
 
 class SecurityProperties(Base):
     __tablename__ = 'security_properties'
     id = Column(Integer, primary_key=True)
-    choice = Column(String)
+    security_property = Column(String)
+
+class Summary(Base):
+    __tablename__ = 'bia_summary'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, ForeignKey('context_scope.name'))
+    summary_text = Column(String)

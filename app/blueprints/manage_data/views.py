@@ -4,12 +4,13 @@ from flask import Flask, Blueprint, current_app, g, session, request, url_for, r
     render_template, flash, abort
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
 from .forms import (
     BIANewForm, BIAEditForm, BIADeleteForm, CompNewForm, CompEditForm, CompDeleteForm,
     ReferenceNewForm, ReferenceEditForm, ReferenceDeleteForm,
     ConsequenceNewForm, ConsequenceEditForm, ConsequenceDeleteForm,
-    AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm
+    AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm,
+    SummaryNewForm, SummaryEditForm, SummaryDeleteForm
 )
 
 
@@ -24,6 +25,61 @@ def choices_maken(klas, tagg, items):
 
         return lijst
 
+def get_choices(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.security_property)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.security_property)
+
+        return lijst
+
+
+def get_references(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.consequence_category)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.consequence_category)
+
+        return lijst
+
+def get_consequences_wc(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.consequence_worstcase)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.consequence_worstcase)
+
+        return lijst
+
+def get_consequences_rc(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.consequence_realisticcase)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.consequence_realisticcase)
+
+        return lijst
+
+def get_bia(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.name)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.name)
+
+        return lijst
 
 manage_data_blueprint = Blueprint('manage_data', __name__)
 
@@ -191,7 +247,7 @@ def component_list():
                 'url': url_for('manage_data.component_edit', component_id=component.id),
             },
             {
-                'col_value': component.bia_name
+                'col_value': component.name
             },
             {
                 'col_value': component.description
@@ -222,8 +278,13 @@ def component_new():
     form = CompNewForm()
     form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
 
+    item = Components()
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
     if form.validate_on_submit():
-        item = Components()
+        
         form.populate_obj(item)
         item.bia_name = form.name.data.name
         #bia_name = form.name.data 
@@ -239,7 +300,7 @@ def component_new():
         flash('Component added: ' + item.component_name, 'info')
         return redirect(url_for('manage_data.component_list'))
 
-    return render_template('item_new_edit.html', title='New BIA', form=form)
+    return render_template('item_new_edit.html', title='New Component', form=form)
 
 @manage_data_blueprint.route('/component/edit/<int:component_id>', methods=['GET', 'POST'])
 def component_edit(component_id):
@@ -248,6 +309,10 @@ def component_edit(component_id):
     item = app_db.session.query(Components).filter(Components.id == component_id).first()
     form = CompEditForm(obj=item)
     form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
     if item is None:
         abort(403)
 
@@ -276,7 +341,7 @@ def component_delete(component_id):
         flash('Deleted hours: ' + item_name, 'info')
         return redirect(url_for('manage_data.component_list'))
 
-    return render_template('item_delete.html', title='Delete BIA', item_name=item_name, form=form)
+    return render_template('item_delete.html', title='Delete Component', item_name=item_name, form=form)
 
 #References
 @manage_data_blueprint.route('/reference/list', methods=['GET', 'POST'])
@@ -417,11 +482,12 @@ def consequence_list():
             'col_title': 'Linked to component',
         },
         {
-            'col_title': 'Category',
-        },
-       {
             'col_title': 'Security Property',
         },
+        {
+            'col_title': 'Category',
+        },
+       
        {
             'col_title': 'Consequence realistic',
         },
@@ -449,11 +515,12 @@ def consequence_list():
                 'url': url_for('manage_data.consequence_edit', consequence_id=consequence.id),
             },
             {
-                'col_value': consequence.category,
-            },
-            {
                 'col_value': consequence.security_property,
             },
+            {
+                'col_value': consequence.consequence_category,
+            },
+
             {
                 'col_value': consequence.consequence_realisticcase,
             },
@@ -481,20 +548,32 @@ def consequence_new():
     lijst = choices_maken(Components, 'component_name', item)
     form.component_name.choices = lijst
 
+    sec_prop = get_choices(SecurityProperties, 'security_property', item)
+    form.security_property.choices = sec_prop
+
+    con_cat = get_references(References, 'consequence_category', item)
+    form.consequence_category.choices = con_cat
+
+    con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
+    form.consequence_worstcase.choices = con_wc
+
+    con_rc = get_consequences_rc(ConsequenceChoices, 'consequence_realisticcase', item)
+    form.consequence_realisticcase.choices = con_rc
+
     if form.validate_on_submit():
-        #form.populate_obj(item)
+        form.populate_obj(item)
         # Map form fields to object attributes
-        item.component_name = form.component_name.data.component_name
-        item.category = form.category.data.consequence_category
-        item.security_property = form.security_property.data.choice
-        item.consequence_worstcase = form.consequence_worstcase.data.choice
+        item.component_name = form.component_name.data #.component_name
+        item.security_property = form.security_property.data
+        item.consequence_category = form.consequence_category.data
+        item.consequence_worstcase = form.consequence_worstcase.data
         item.justification_worstcase = form.justification_worstcase.data
-        item.consequence_realisticcase = form.consequence_realisticcase.data.choice
+        item.consequence_realisticcase = form.consequence_realisticcase.data
         item.justification_realisticcase = form.justification_realisticcase.data
         #item.component_name = form.name.data.name
         app_db.session.add(item)
         app_db.session.commit()
-        flash('Consequence added: ' + item.category, 'info')
+        flash('Consequence added: ' + item.consequence_category, 'info')
         return redirect(url_for('manage_data.consequence_list'))
 
     return render_template('item_new_edit.html', title='New Consequence', form=form)
@@ -511,17 +590,29 @@ def consequence_edit(consequence_id):
     lijst = choices_maken(Components, 'component_name', item)
     form.component_name.choices = lijst
 
+    sec_prop = get_choices(SecurityProperties, 'security_property', item)
+    form.security_property.choices = sec_prop
+
+    con_cat = get_references(References, 'consequence_category', item)
+    form.consequence_category.choices = con_cat
+
+    con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
+    form.consequence_worstcase.choices = con_wc
+
+    con_rc = get_consequences_rc(ConsequenceChoices, 'consequence_realisticcase', item)
+    form.consequence_realisticcase.choices = con_rc
+
     if form.validate_on_submit():
         form.populate_obj(item)
         item.component_name = form.component_name.data
-        item.category = form.category.data.consequence_category
-        item.security_property = form.security_property.data.choice
-        item.consequence_worstcase = form.consequence_worstcase.data.choice
+        item.security_property = form.security_property.data
+        item.consequence_category = form.consequence_category.data
+        item.consequence_worstcase = form.consequence_worstcase.data
         item.justification_worstcase = form.justification_worstcase.data
         item.consequence_realisticcase = form.consequence_realisticcase.data.choice
         item.justification_realisticcase = form.justification_realisticcase.data
         app_db.session.commit()
-        flash('Consequences updated: ' + item.component_name + item.category, 'info')
+        flash('Consequences updated: ' + item.component_name + item.consequence_category, 'info')
         return redirect(url_for('manage_data.consequence_list'))
 
     return render_template('item_new_edit.html', title='Edit Consequence', form=form)
@@ -537,7 +628,7 @@ def consequence_delete(consequence_id):
 
     form = ConsequenceDeleteForm(obj=item)
 
-    item_name = item.component_name + " " + item.category
+    item_name = item.component_name + " " + item.consequence_category
     if form.validate_on_submit():
         app_db.session.delete(item)
         app_db.session.commit()
@@ -624,9 +715,12 @@ def availability_new():
     item = Availability_Requirements()
     form = AvailabilityNewForm()
 
+    lijst = choices_maken(Components, 'component_name', item)
+    form.component_name.choices = lijst
+
     if form.validate_on_submit():
         form.populate_obj(item)
-        item.component_name = form.component_name.data.component_name
+        item.component_name = form.component_name.data #.component_name
         app_db.session.add(item)
         app_db.session.commit()
         flash('Availability requirement added: ' + item.component_name, 'info')
@@ -643,10 +737,13 @@ def availability_edit(availability_id):
 
     form = AvailabilityEditForm(obj=item)
 
+    lijst = choices_maken(Components, 'component_name', item)
+    form.component_name.choices = lijst
+
     if form.validate_on_submit():
         form.populate_obj(item)
         app_db.session.commit()
-        flash('Availability requirements updated: ' + item.id, 'info')
+        flash('Availability requirements updated: ' + item.component_name, 'info')
         return redirect(url_for('manage_data.availability_list'))
 
     return render_template('item_new_edit.html', title='Edit Availability requirement', form=form)
@@ -660,7 +757,7 @@ def availability_delete(availability_id):
 
     form = AvailabilityDeleteForm(obj=item)
 
-    item_name = item.id
+    item_name = item.component_name
     if form.validate_on_submit():
         app_db.session.delete(item)
         app_db.session.commit()
@@ -668,3 +765,124 @@ def availability_delete(availability_id):
         return redirect(url_for('manage_data.availability_list'))
 
     return render_template('item_delete.html', title='Delete availability requirement', item_name=item_name, form=form)
+
+@manage_data_blueprint.route('/summary/list', methods=['GET', 'POST'])
+def summary_list():
+    summarys = app_db.session.query(Summary).order_by(Summary.id).all()
+    bias = app_db.session.query(Context_Scope).order_by(Context_Scope.id).all()
+
+    thead_th_items = [
+        {
+            'col_title': '#',
+        },
+        {
+            'col_title': 'Linked to BIA'
+        },
+        {
+            'col_title': 'Summary'
+        },
+        {
+            'col_title': 'Delete'
+        }
+    ]
+
+    tbody_tr_items = []
+    for summary in summarys:
+
+ #       Customers_name = '-'
+ #       if friend.Customers:
+ #           Customers_name = friend.Customers.name
+ #       Months_names = '-'
+ #       if friend.hobbies:
+ #           Months_names = ', '.join([x.name for x in friend.hobbies])
+
+        tbody_tr_items.append([
+            {
+                'col_value': summary.id,
+            },
+            {
+                'col_value': summary.name,
+                'url': url_for('manage_data.summary_edit', summary_id=summary.id),
+            },
+            {
+                'col_value': summary.summary_text
+            },
+            {
+                'col_value': 'delete',
+                'url': url_for('manage_data.summary_delete', summary_id=summary.id),
+            }
+            ])
+
+    return render_template(
+        'items_list.html',
+        title='Summary',
+        thead_th_items=thead_th_items,
+        tbody_tr_items=tbody_tr_items,
+        item_new_url=url_for('manage_data.summary_new'),
+        item_new_text='New Summary',
+    )
+
+@manage_data_blueprint.route('/summary/new', methods=['GET', 'POST'])
+def summary_new():
+
+    
+    form = SummaryNewForm()
+    form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+
+    item = Summary()
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
+    if form.validate_on_submit():
+        
+        form.populate_obj(item)
+        item.name = form.name.data
+        app_db.session.add(item)
+        #app_db.session.add(new_data)
+        app_db.session.commit()
+        flash('Summary added: ' + item.name, 'info')
+        return redirect(url_for('manage_data.summary_list'))
+
+    return render_template('item_new_edit.html', title='New summary', form=form)
+
+@manage_data_blueprint.route('/summary/edit/<int:summary_id>', methods=['GET', 'POST'])
+def summary_edit(summary_id):
+
+   
+    item = app_db.session.query(Summary).filter(Summary.id == summary_id).first()
+    form = SummaryEditForm(obj=item)
+    form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+
+    if item is None:
+        abort(403)
+
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        app_db.session.commit()
+        flash('Component updated: ' + item.name, 'info')
+        return redirect(url_for('manage_data.summary_list'))
+
+    return render_template('item_new_edit.html', title='Edit Summary', form=form)
+
+@manage_data_blueprint.route('/summary/delete/<int:summary_id>', methods=['GET', 'POST'])
+def summary_delete(summary_id):
+
+    item = app_db.session.query(Summary).filter(Summary.id == summary_id).first()
+    if item is None:
+        abort(403)
+
+    form = SummaryDeleteForm(obj=item)
+
+
+    item_name = item.name
+    if form.validate_on_submit():
+        app_db.session.delete(item)
+        app_db.session.commit()
+        flash('Deleted summary for BIA: ' + item_name, 'info')
+        return redirect(url_for('manage_data.summary_list'))
+
+    return render_template('item_delete.html', title='Delete Summary', item_name=item_name, form=form)

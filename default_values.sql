@@ -1,7 +1,8 @@
 BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS "consequence_choices" (
 	"id"	INTEGER NOT NULL,
-	"choice"	VARCHAR,
+	"consequence_worstcase"	VARCHAR,
+	"consequence_realisticcase"	VARCHAR,
 	PRIMARY KEY("id")
 );
 CREATE TABLE IF NOT EXISTS "references" (
@@ -18,10 +19,10 @@ CREATE TABLE IF NOT EXISTS "security_properties" (
 	"choice"	VARCHAR,
 	PRIMARY KEY("id")
 );
-INSERT INTO "consequence_choices" ("id","choice") VALUES (1,'Low');
-INSERT INTO "consequence_choices" ("id","choice") VALUES (2,'Medium');
-INSERT INTO "consequence_choices" ("id","choice") VALUES (3,'High');
-INSERT INTO "consequence_choices" ("id","choice") VALUES (4,'Huge');
+INSERT INTO "consequence_choices" ("id","consequence_worstcase","consequence_realisticcase") VALUES (1,'Low','Low');
+INSERT INTO "consequence_choices" ("id","consequence_worstcase","consequence_realisticcase") VALUES (2,'Medium','Medium');
+INSERT INTO "consequence_choices" ("id","consequence_worstcase","consequence_realisticcase") VALUES (3,'High','High');
+INSERT INTO "consequence_choices" ("id","consequence_worstcase","consequence_realisticcase") VALUES (4,'Huge','Huge');;
 INSERT INTO "references" ("id","consequence_category","consequence_small","consequence_medium","consequence_large","consequence_huge") VALUES (1,'Financial',NULL,NULL,NULL,NULL);
 INSERT INTO "references" ("id","consequence_category","consequence_small","consequence_medium","consequence_large","consequence_huge") VALUES (2,'Operational',NULL,NULL,NULL,NULL);
 INSERT INTO "references" ("id","consequence_category","consequence_small","consequence_medium","consequence_large","consequence_huge") VALUES (3,'Regulatory',NULL,NULL,NULL,NULL);
