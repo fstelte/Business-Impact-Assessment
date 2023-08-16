@@ -4,13 +4,14 @@ from flask import Flask, Blueprint, current_app, g, session, request, url_for, r
     render_template, flash, abort
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary, Impact_Customer
 from .forms import (
     BIANewForm, BIAEditForm, BIADeleteForm, CompNewForm, CompEditForm, CompDeleteForm,
     ReferenceNewForm, ReferenceEditForm, ReferenceDeleteForm,
     ConsequenceNewForm, ConsequenceEditForm, ConsequenceDeleteForm,
     AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm,
-    SummaryNewForm, SummaryEditForm, SummaryDeleteForm
+    SummaryNewForm, SummaryEditForm, SummaryDeleteForm,
+    ImpactCustomerNewForm, ImpactCustomerEditForm, ImpactCustomerDeleteForm
 )
 
 
@@ -36,15 +37,25 @@ def get_choices(klas, tagg, items):
 
         return lijst
 
+def get_impacts(klas, tagg, items):
+        lijst = []
+        tobequeried = app_db.session.query(klas).order_by(klas.id).all()
+        if getattr(items,tagg) is not None:
+            lijst.append(items.category)
+        for values in tobequeried:
+            if getattr(values,tagg) not in lijst:
+                lijst.append(values.category)
+
+        return lijst
 
 def get_references(klas, tagg, items):
         lijst = []
         tobequeried = app_db.session.query(klas).order_by(klas.id).all()
         if getattr(items,tagg) is not None:
-            lijst.append(items.consequence_category)
+            lijst.append(items.category)
         for values in tobequeried:
             if getattr(values,tagg) not in lijst:
-                lijst.append(values.consequence_category)
+                lijst.append(values.category)
 
         return lijst
 
@@ -58,6 +69,8 @@ def get_consequences_wc(klas, tagg, items):
                 lijst.append(values.consequence_worstcase)
 
         return lijst
+
+
 
 def get_consequences_rc(klas, tagg, items):
         lijst = []
@@ -386,7 +399,7 @@ def reference_list():
                 'col_value': reference.id,
             },
             {
-                'col_value': reference.consequence_category,
+                'col_value': reference.category,
                 'url': url_for('manage_data.reference_edit', reference_id=reference.id),
             },
             {
@@ -430,7 +443,7 @@ def reference_new():
         form.populate_obj(item)
         app_db.session.add(item)
         app_db.session.commit()
-        flash('Reference added: ' + item.consequence_category, 'info')
+        flash('Reference added: ' + item.category, 'info')
         return redirect(url_for('manage_data.reference_list'))
 
     return render_template('item_new_edit.html', title='New Reference', form=form)
@@ -447,7 +460,7 @@ def reference_edit(reference_id):
     if form.validate_on_submit():
         form.populate_obj(item)
         app_db.session.commit()
-        flash('Reference updated: ' + item.consequence_category, 'info')
+        flash('Reference updated: ' + item.category, 'info')
         return redirect(url_for('manage_data.reference_list'))
 
     return render_template('item_new_edit.html', title='Edit Reference', form=form)
@@ -461,7 +474,7 @@ def reference_delete(reference_id):
 
     form = ReferenceDeleteForm(obj=item)
 
-    item_name = item.consequence_category
+    item_name = item.category
     if form.validate_on_submit():
         app_db.session.delete(item)
         app_db.session.commit()
@@ -518,7 +531,7 @@ def consequence_list():
                 'col_value': consequence.security_property,
             },
             {
-                'col_value': consequence.consequence_category,
+                'col_value': consequence.category,
             },
 
             {
@@ -551,8 +564,8 @@ def consequence_new():
     sec_prop = get_choices(SecurityProperties, 'security_property', item)
     form.security_property.choices = sec_prop
 
-    con_cat = get_references(References, 'consequence_category', item)
-    form.consequence_category.choices = con_cat
+    con_cat = get_references(References, 'category', item)
+    form.category.choices = con_cat
 
     con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
     form.consequence_worstcase.choices = con_wc
@@ -565,7 +578,7 @@ def consequence_new():
         # Map form fields to object attributes
         item.component_name = form.component_name.data #.component_name
         item.security_property = form.security_property.data
-        item.consequence_category = form.consequence_category.data
+        item.category = form.category.data
         item.consequence_worstcase = form.consequence_worstcase.data
         item.justification_worstcase = form.justification_worstcase.data
         item.consequence_realisticcase = form.consequence_realisticcase.data
@@ -573,7 +586,7 @@ def consequence_new():
         #item.component_name = form.name.data.name
         app_db.session.add(item)
         app_db.session.commit()
-        flash('Consequence added: ' + item.consequence_category, 'info')
+        flash('Consequence added: ' + item.category, 'info')
         return redirect(url_for('manage_data.consequence_list'))
 
     return render_template('item_new_edit.html', title='New Consequence', form=form)
@@ -593,8 +606,8 @@ def consequence_edit(consequence_id):
     sec_prop = get_choices(SecurityProperties, 'security_property', item)
     form.security_property.choices = sec_prop
 
-    con_cat = get_references(References, 'consequence_category', item)
-    form.consequence_category.choices = con_cat
+    con_cat = get_references(References, 'category', item)
+    form.category.choices = con_cat
 
     con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
     form.consequence_worstcase.choices = con_wc
@@ -606,13 +619,13 @@ def consequence_edit(consequence_id):
         form.populate_obj(item)
         item.component_name = form.component_name.data
         item.security_property = form.security_property.data
-        item.consequence_category = form.consequence_category.data
+        item.category = form.category.data
         item.consequence_worstcase = form.consequence_worstcase.data
         item.justification_worstcase = form.justification_worstcase.data
         item.consequence_realisticcase = form.consequence_realisticcase.data.choice
         item.justification_realisticcase = form.justification_realisticcase.data
         app_db.session.commit()
-        flash('Consequences updated: ' + item.component_name + item.consequence_category, 'info')
+        flash('Consequences updated: ' + item.component_name + item.category, 'info')
         return redirect(url_for('manage_data.consequence_list'))
 
     return render_template('item_new_edit.html', title='Edit Consequence', form=form)
@@ -628,7 +641,7 @@ def consequence_delete(consequence_id):
 
     form = ConsequenceDeleteForm(obj=item)
 
-    item_name = item.component_name + " " + item.consequence_category
+    item_name = item.component_name + " " + item.category
     if form.validate_on_submit():
         app_db.session.delete(item)
         app_db.session.commit()
@@ -886,3 +899,163 @@ def summary_delete(summary_id):
         return redirect(url_for('manage_data.summary_list'))
 
     return render_template('item_delete.html', title='Delete Summary', item_name=item_name, form=form)
+
+@manage_data_blueprint.route('/impactcustomer/list', methods=['GET', 'POST'])
+def impactcustomer_list():
+    impactcustomers = app_db.session.query(Impact_Customer).order_by(Impact_Customer.id).all()
+    bias = app_db.session.query(Context_Scope).order_by(Context_Scope.id).all()
+
+    thead_th_items = [
+        {
+            'col_title': '#',
+        },
+        {
+            'col_title': 'Linked to BIA'
+        },
+        {
+            'col_title': 'Category',
+        },
+        {
+            'col_title': 'Low'
+        },
+        {
+            'col_title': 'Medium'
+        },
+        {
+            'col_title': 'Large'
+        },
+        {
+            'col_title': 'Huge'
+        },
+        {
+            'col_title': 'Delete'
+        }
+    ]
+
+    tbody_tr_items = []
+    for impactcustomer in impactcustomers:
+
+ #       Customers_name = '-'
+ #       if friend.Customers:
+ #           Customers_name = friend.Customers.name
+ #       Months_names = '-'
+ #       if friend.hobbies:
+ #           Months_names = ', '.join([x.name for x in friend.hobbies])
+
+        tbody_tr_items.append([
+            {
+                'col_value': impactcustomer.id,
+            },
+            {
+                'col_value': impactcustomer.name,
+                'url': url_for('manage_data.impactcustomer_edit', impactcustomer_id=impactcustomer.id),
+            },
+             {
+                'col_value': impactcustomer.category
+                
+            },
+            {
+                'col_value': impactcustomer.impact_small
+                
+            },
+            {
+                'col_value': impactcustomer.impact_medium
+                
+            },
+
+            {
+                'col_value': impactcustomer.impact_large
+                
+            },
+            {
+                'col_value': impactcustomer.impact_huge
+            },
+            {
+                'col_value': 'delete',
+                'url': url_for('manage_data.impactcustomer_delete', impactcustomer_id=impactcustomer.id),
+            }
+            ])
+
+    return render_template(
+        'items_list.html',
+        title='Impact Customer',
+        thead_th_items=thead_th_items,
+        tbody_tr_items=tbody_tr_items,
+        item_new_url=url_for('manage_data.impactcustomer_new'),
+        item_new_text='New Impact',
+    )
+
+@manage_data_blueprint.route('/impactcustomer/new', methods=['GET', 'POST'])
+def impactcustomer_new():
+
+    
+    form = ImpactCustomerNewForm()
+    form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+    form.category.query = app_db.session.query(Impact_Customer).order_by(Impact_Customer.id)
+
+    item = Impact_Customer()
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+    keuzes= get_impacts(References, 'category', item)
+    form.category.choices = keuzes
+
+    
+
+    if form.validate_on_submit():
+        
+        form.populate_obj(item)
+        item.name = form.name.data
+        item.category = form.category.data
+        app_db.session.add(item)
+        #app_db.session.add(new_data)
+        app_db.session.commit()
+        flash('Impact added: ' + item.name, 'info')
+        return redirect(url_for('manage_data.impactcustomer_list'))
+
+    return render_template('item_new_edit.html', title='New Impact', form=form)
+
+@manage_data_blueprint.route('/impactcustomer/edit/<int:impactcustomer_id>', methods=['GET', 'POST'])
+def impactcustomer_edit(impactcustomer_id):
+
+   
+    item = app_db.session.query(Impact_Customer).filter(Impact_Customer.id == impactcustomer_id).first()
+    form = ImpactCustomerEditForm(obj=item)
+    form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
+    form.category.query = app_db.session.query(Impact_Customer).order_by(Impact_Customer.id)
+
+    lijst = get_bia(Context_Scope, 'name', item)
+    form.name.choices = lijst
+    keuzes= get_impacts(References, 'category', item)
+    form.category.choices = keuzes
+
+    if item is None:
+        abort(403)
+
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        app_db.session.commit()
+        flash('Impact updated: ' + item.name, 'info')
+        return redirect(url_for('manage_data.impactcustomer_list'))
+
+    return render_template('item_new_edit.html', title='Edit Impact', form=form)
+    
+
+@manage_data_blueprint.route('/impactcustomer/delete/<int:impactcustomer_id>', methods=['GET', 'POST'])
+def impactcustomer_delete(impactcustomer_id):
+
+    item = app_db.session.query(Impact_Customer).filter(Impact_Customer.id == impactcustomer_id).first()
+    if item is None:
+        abort(403)
+
+    form = ImpactCustomerDeleteForm(obj=item)
+
+
+    item_name = item.name
+    if form.validate_on_submit():
+        app_db.session.delete(item)
+        app_db.session.commit()
+        flash('Deleted Impact for BIA: ' + item_name, 'info')
+        return redirect(url_for('manage_data.impactcustomer_list'))
+
+    return render_template('item_delete.html', title='Delete Impact', item_name=item_name, form=form)

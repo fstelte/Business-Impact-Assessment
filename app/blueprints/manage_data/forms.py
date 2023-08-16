@@ -6,7 +6,7 @@ from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import InputRequired, Length
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences, ConsequenceChoices, SecurityProperties, Summary
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences, ConsequenceChoices, SecurityProperties, Summary, Impact_Customer
 
 # BIA
 class BIANewEditFormMixin():
@@ -73,7 +73,7 @@ class CompDeleteForm(FlaskForm):
 
 # References
 class ReferenceNewEditFormMixin():
-    consequence_category = StringField('Category for reference ', validators=[InputRequired()])
+    category = StringField('Category for reference ', validators=[InputRequired()])
     consequence_small = StringField('What does the small consequence entail? ', validators=[InputRequired()])
     consequence_medium = StringField('What does the medium consequence entail? ', validators=[InputRequired()])
     consequence_large = StringField('What does the large consequence entail? ', validators=[InputRequired()])
@@ -153,3 +153,23 @@ class SummaryEditForm(FlaskForm, SummaryNewEditFormMixin):
 
 class SummaryDeleteForm(FlaskForm):
     submit = SubmitField('Confirm delete')
+
+class ImpactCustomerNewEditFormMixin():
+    name = SelectField('Linked to BIA',
+                           render_kw={'size': 1})
+    category = SelectField('Category for impact ',  render_kw={'size': 1})
+    impact_small = StringField('What does the small impact entail? ', validators=[InputRequired()])
+    impact_medium = StringField('What does the medium impact entail? ', validators=[InputRequired()])
+    impact_large = StringField('What does the large impact entail? ', validators=[InputRequired()])
+    impact_huge = StringField('What does the huge impact entail? ', validators=[InputRequired()])
+
+class ImpactCustomerNewForm(FlaskForm, ImpactCustomerNewEditFormMixin):
+    submit = SubmitField('Add', render_kw={'class': 'mt-2'})
+
+class ImpactCustomerEditForm(FlaskForm, ImpactCustomerNewEditFormMixin):
+
+    submit = SubmitField('Update', render_kw={'class': 'mt-2'})
+
+class ImpactCustomerDeleteForm(FlaskForm):
+
+    submit = SubmitField('Confirm delete', render_kw={'class': 'mt-2'})

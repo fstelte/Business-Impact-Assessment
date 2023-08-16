@@ -54,7 +54,7 @@ class Availability_Requirements(Base):
 class References(Base):
     __tablename__ = 'references'
     id = Column(Integer, primary_key=True)
-    consequence_category = Column(String)
+    category = Column(String)
     consequence_small = Column(String)
     consequence_medium = Column(String)
     consequence_large = Column(String)
@@ -64,7 +64,7 @@ class Consequences(Base):
     __tablename__ = 'consequences'
     id = Column(Integer, primary_key=True)
     component_name = Column(Integer, ForeignKey('components.component_name'))
-    consequence_category = Column(String)
+    category = Column(String)
     security_property = Column(String)
     consequence_worstcase = Column(String)
     justification_worstcase = Column(String)
@@ -87,3 +87,13 @@ class Summary(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, ForeignKey('context_scope.name'))
     summary_text = Column(String)
+
+class Impact_Customer(Base):
+    __tablename__ = 'impact_customer'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, ForeignKey('context_scope.name'))
+    category = Column(String)
+    impact_small = Column(String)
+    impact_medium = Column(String)
+    impact_large = Column(String)
+    impact_huge = Column(String)
