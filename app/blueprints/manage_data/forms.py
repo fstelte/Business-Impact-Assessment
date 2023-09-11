@@ -96,7 +96,7 @@ class ConsequenceNewEditFormMixin:
                            render_kw={'size': 1})
     security_property = SelectField('Where does the consequence interfere with',
                            render_kw={'size': 1})
-    consequence_category = SelectField('Consequence Category',
+    category = SelectField('Consequence Category',
                            render_kw={'size': 1})
     consequence_worstcase = SelectField('Worstcase consequence',
                            render_kw={'size': 1})
