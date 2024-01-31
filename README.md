@@ -22,7 +22,7 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
     pip install -r requirements.txt
 
-Create a **.env** file in the root folder
+Create a file named **.env** in the root folder
 
 from within python run (python3):
 
