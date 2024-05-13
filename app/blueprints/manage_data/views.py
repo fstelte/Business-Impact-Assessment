@@ -204,7 +204,7 @@ def bia_delete(bia_id):
 # Components
 @manage_data_blueprint.route('/component/list', methods=['GET', 'POST'])
 def component_list():
-    components = app_db.session.query(Components).order_by(Components.id).all()
+    comps = app_db.session.query(Components).order_by(Components.id).all()
     bias = app_db.session.query(Context_Scope).order_by(Context_Scope.id).all()
 
     thead_th_items = [
@@ -229,7 +229,7 @@ def component_list():
     ]
 
     tbody_tr_items = []
-    for component in components:
+    for component in comps:
 
  #       Customers_name = '-'
  #       if friend.Customers:

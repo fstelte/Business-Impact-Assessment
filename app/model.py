@@ -81,6 +81,7 @@ class SecurityProperties(Base):
     __tablename__ = 'security_properties'
     id = Column(Integer, primary_key=True)
     security_property = Column(String)
+    choice = Column(String)
 
 class Summary(Base):
     __tablename__ = 'bia_summary'
