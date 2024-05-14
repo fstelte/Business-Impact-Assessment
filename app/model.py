@@ -44,7 +44,7 @@ class Components(Base):
 
 class Availability_Requirements(Base):
     __tablename__ = 'availability_requirements'
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     component_name = Column(String, ForeignKey('components.component_name'))
     mtd = Column(String)
     rto = Column(String)

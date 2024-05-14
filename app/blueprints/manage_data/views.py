@@ -1,7 +1,9 @@
 # views.py
+import os
 
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
     render_template, flash, abort
+from flask_csv import send_csv
 
 from app.services import app_db
 from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
@@ -12,7 +14,7 @@ from .forms import (
     AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm,
     SummaryNewForm, SummaryEditForm, SummaryDeleteForm
 )
-
+from werkzeug.utils import secure_filename
 
 def choices_maken(klas, tagg, items):
         lijst = []
@@ -161,6 +163,10 @@ def bia_new():
     if form.validate_on_submit():
         form.populate_obj(item)
         app_db.session.add(item)
+        directory_name = secure_filename(item.name)
+        if not os.path.exists(directory_name):
+            os.makedirs(directory_name)
+#        send_csv(item)
         app_db.session.commit()
         flash('BIA added: ' + item.name, 'info')
         return redirect(url_for('manage_data.bia_list'))
@@ -286,7 +292,7 @@ def component_new():
     if form.validate_on_submit():
         
         form.populate_obj(item)
-        item.bia_name = form.name.data.name
+        item.bia_name = form.name.data
         #bia_name = form.name.data 
         #component_name = form.component_name.data
         #processes_dependencies = form.processes_dependencies.data

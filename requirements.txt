@@ -7,3 +7,4 @@ sqlalchemy
 wtforms-sqlalchemy
 alembic
 python-dotenv
+flask_csv
