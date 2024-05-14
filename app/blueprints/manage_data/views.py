@@ -218,9 +218,10 @@ def bia_delete(bia_id):
 def bia_export(bia_id):
     bias = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).all()
     CSV_Name = bias[0].name
-    summary=app_db.session.query(Summary).all()
+    summary=app_db.session.query(Summary).filter(Context_Scope.id == bia_id).all()
     components=app_db.session.query(Components).filter(Context_Scope.id == bia_id).all()
     consequences=app_db.session.query(Consequences).filter(Context_Scope.id == bia_id).all()
+    availability=app_db.session.query(Availability_Requirements).filter(Context_Scope.id == bia_id).all()
     aantal_elementen=len(bias)
     print(f"Er zijn {aantal_elementen} in de lijst")
 
@@ -275,6 +276,23 @@ def bia_export(bia_id):
 
     }for d in consequences]
     df_consequences = pd.DataFrame(cons_dicts)
+
+    avail_dicts = [{
+        'Gerelateerd aan Component' : e.component_name,
+        'Maximum Tolerable Downtime' : e.mtd,
+        'Recovery Time Objective ' : e.rto,
+        'WRecovery Point Objective' : e.rpo,
+        'Minimum Acceptable Service Level' : e.masl,
+
+    }for e in availability]
+    df_availability = pd.DataFrame(avail_dicts)
+
+    summary_dicts = [{
+        'Gerelateerd aan BIA' : f.name,
+        'Summary Test' : f.summary_text,
+
+    }for f in summary]
+    df_summary = pd.DataFrame(summary_dicts)
    
     if not df_bias.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
@@ -285,6 +303,12 @@ def bia_export(bia_id):
     if not df_consequences.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
         df_consequences.to_csv(f'{CSV_Name}_consequences.csv', index=False)
+    if not df_availability.empty:
+        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
+        df_availability.to_csv(f'{CSV_Name}_availability.csv', index=False)
+    if not df_summary.empty:
+        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
+        df_summary.to_csv(f'{CSV_Name}_summary.csv', index=False)
     return "Export Successfull", 200
 # Components
 @manage_data_blueprint.route('/component/list', methods=['GET', 'POST'])
