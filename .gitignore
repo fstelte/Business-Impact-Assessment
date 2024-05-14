@@ -9,3 +9,4 @@ alembic/versions/__pycache__
 .env
 env/*
 *backup/*
+*.csv

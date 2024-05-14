@@ -1,9 +1,9 @@
 # views.py
 import os
+import pandas as pd
 
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
     render_template, flash, abort
-from flask_csv import send_csv
 
 from app.services import app_db
 from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
@@ -84,7 +84,7 @@ def get_bia(klas, tagg, items):
         return lijst
 
 manage_data_blueprint = Blueprint('manage_data', __name__)
-
+app = Flask(__name__)
 #BIA / Context_Scope
 @manage_data_blueprint.route('/bia/list', methods=['GET', 'POST'])
 def bia_list():
@@ -109,6 +109,9 @@ def bia_list():
         {
             'col_title': 'Add Component'
         },
+        {
+            'col_title' : 'Export to CSV'
+        }
     ]
 
     tbody_tr_items = []
@@ -133,7 +136,7 @@ def bia_list():
                 
             },
             {
-                'col_value': bia.responsible
+                'col_value': bia.responsible,
             },
             {
                 'col_value': 'delete',
@@ -141,7 +144,11 @@ def bia_list():
             },
             { 
                 'col_value': 'Add Component',
-                'url': url_for('manage_data.component_new', bia_id=bia.id)
+                'url': url_for('manage_data.component_new', bia_id=bia.id),
+            },
+            {
+                'col_value': 'Export to CSV',
+                'url': url_for('manage_data.bia_export', bia_id=bia.id),
             }
             ])
 
@@ -207,6 +214,78 @@ def bia_delete(bia_id):
         return redirect(url_for('manage_data.bia_list'))
 
     return render_template('item_delete.html', title='Delete BIA', item_name=item_name, form=form)
+@manage_data_blueprint.route('/bia/export/<int:bia_id>', methods=['GET', 'POST'])
+def bia_export(bia_id):
+    bias = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).all()
+    CSV_Name = bias[0].name
+    summary=app_db.session.query(Summary).all()
+    components=app_db.session.query(Components).filter(Context_Scope.id == bia_id).all()
+    consequences=app_db.session.query(Consequences).filter(Context_Scope.id == bia_id).all()
+    aantal_elementen=len(bias)
+    print(f"Er zijn {aantal_elementen} in de lijst")
+
+    bias_dicts = [{
+        'BIA Name': b.name, 
+        'BIA Responsible': b.responsible, 
+        'BIA Coordinator': b.coordinator, 
+        'BIA Start Date': b.start_date, 
+        'BIA End Date': b.end_date, 
+        'BIA Last Update': b.last_update,
+        'Service Description': b.service_description,
+        'Knowledge': b.knowledge,
+        'Interfaces': b.interfaces,
+        'mission_critical': b.mission_critical,
+        'support_contracts': b.support_contracts,
+        'security_supplier': b.security_supplier,
+        'user_amount': b.user_amount,
+        'scope_description': b.scope_description,
+        'risk_assessment_human': b.risk_assessment_human,
+        'risk_assessment_process': b.risk_assessment_process,
+        'risk_assessment_technological': b.risk_assessment_technological,
+        'project_leader': b.project_leader,
+        'risk_owner': b.risk_owner,
+        'product_owner': b.product_owner,
+        'technical_administrator': b.technical_administrator,
+        'security_manager': b.security_manager,
+        'incident_contact': b.incident_contact
+    } for b in bias]
+
+    df_bias = pd.DataFrame(bias_dicts)
+
+    comp_dicts = [{
+        'Gerelateerd aan BIA' : c.name,
+        'Component name' : c.component_name,
+        'Process Dependencies' : c.processes_dependencies,
+        'Type of information' : c.info_type,
+        'Information Owner' : c.info_owner,
+        'Types of users' : c.user_type,
+        'Description of the component' : c.description,
+
+    }for c in components]
+    df_components = pd.DataFrame(comp_dicts)
+    
+    cons_dicts = [{
+        'Gerelateerd aan Component' : d.component_name,
+        'Category of consequence' : d.consequence_category,
+        'Property of Security' : d.security_property,
+        'Worstcase consequence' : d.consequence_worstcase,
+        'Justification for worst consequence' : d.justification_worstcase,
+        'Realistic consequence' : d.consequence_realisticcase,
+        'Justification for realistic consequence' : d.justification_realisticcase,
+
+    }for d in consequences]
+    df_consequences = pd.DataFrame(cons_dicts)
+   
+    if not df_bias.empty:
+        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
+        df_bias.to_csv(f'{CSV_Name}_bia.csv', index=False)
+    if not df_components.empty:
+        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
+        df_components.to_csv(f'{CSV_Name}_components.csv', index=False)
+    if not df_consequences.empty:
+        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
+        df_consequences.to_csv(f'{CSV_Name}_consequences.csv', index=False)
+    return "Export Successfull", 200
 # Components
 @manage_data_blueprint.route('/component/list', methods=['GET', 'POST'])
 def component_list():
@@ -892,3 +971,4 @@ def summary_delete(summary_id):
         return redirect(url_for('manage_data.summary_list'))
 
     return render_template('item_delete.html', title='Delete Summary', item_name=item_name, form=form)
+
