@@ -147,7 +147,7 @@ def bia_list():
                 'url': url_for('manage_data.component_new', bia_id=bia.id),
             },
             {
-                'col_value': 'Export to CSV',
+                'col_value': 'Export',
                 'url': url_for('manage_data.bia_export', bia_id=bia.id),
             }
             ])
@@ -170,10 +170,7 @@ def bia_new():
     if form.validate_on_submit():
         form.populate_obj(item)
         app_db.session.add(item)
-        directory_name = secure_filename(item.name)
-        if not os.path.exists(directory_name):
-            os.makedirs(directory_name)
-#        send_csv(item)
+       # send_csv(item)
         app_db.session.commit()
         flash('BIA added: ' + item.name, 'info')
         return redirect(url_for('manage_data.bia_list'))
@@ -222,8 +219,10 @@ def bia_export(bia_id):
     components=app_db.session.query(Components).filter(Context_Scope.id == bia_id).all()
     consequences=app_db.session.query(Consequences).filter(Context_Scope.id == bia_id).all()
     availability=app_db.session.query(Availability_Requirements).filter(Context_Scope.id == bia_id).all()
-    aantal_elementen=len(bias)
-    print(f"Er zijn {aantal_elementen} in de lijst")
+    directory_name = secure_filename(CSV_Name)
+    #directory_name = CSV_Name
+    if not os.path.exists(directory_name):
+            os.makedirs(directory_name)
 
     bias_dicts = [{
         'BIA Name': b.name, 
@@ -296,20 +295,23 @@ def bia_export(bia_id):
    
     if not df_bias.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_bias.to_csv(f'{CSV_Name}_bia.csv', index=False)
+        df_bias.to_csv(os.path.join(directory_name,f'{CSV_Name}_bia.csv'), index=False)
     if not df_components.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_components.to_csv(f'{CSV_Name}_components.csv', index=False)
+        df_components.to_csv(os.path.join(directory_name,f'{CSV_Name}_components.csv'), index=False)
     if not df_consequences.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_consequences.to_csv(f'{CSV_Name}_consequences.csv', index=False)
+        df_consequences.to_csv(os.path.join(directory_name,f'{CSV_Name}_consequences.csv'), index=False)
     if not df_availability.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_availability.to_csv(f'{CSV_Name}_availability.csv', index=False)
+        df_availability.to_csv(os.path.join(directory_name,f'{CSV_Name}_availability.csv'), index=False)
     if not df_summary.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_summary.to_csv(f'{CSV_Name}_summary.csv', index=False)
-    return "Export Successfull", 200
+        df_summary.to_csv(os.path.join(directory_name,f'{CSV_Name}_summary.csv'), index=False)
+    #return "Export Successfull", 200
+    flash('Export geslaagd!')
+    return redirect(url_for('manage_data.bia_list'))
+   
 # Components
 @manage_data_blueprint.route('/component/list', methods=['GET', 'POST'])
 def component_list():
