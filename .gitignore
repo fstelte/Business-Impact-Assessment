@@ -10,3 +10,4 @@ alembic/versions/__pycache__
 env/*
 *backup/*
 *.csv
+*bia_venv/*

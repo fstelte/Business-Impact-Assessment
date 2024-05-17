@@ -20,6 +20,13 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
  Go into directory and run:
   
+create a python virtual enviroment
+python -m venv <directory>
+
+activate the virtual environment
+source <director>/bin/activate
+
+after that:
     pip install -r requirements.txt
 
 Create a file named **.env** in the root folder
@@ -40,15 +47,15 @@ Put the hex value in the .env like so *SECRET_KEY = "HEXVALUE"*
  Now included is the **default_values.sql**
  ``` python3 first_run_default_values.py ```
 
-### Create entries in security_properties
+### Creates entries in security_properties
   
 ```Standard I use Confidentiality, Integrity, Availability```
   
-### Create entries in consequence_choices
+### Creatse entries in consequence_choices
   
 ```I use Low, Medium, High, Huge```
   
-### Create entries in references
+### Creates entries in references
   
 ```I use Financial, Operational, Regulatory, Reputation and Trust, Human and Safety, Privacy```
 
