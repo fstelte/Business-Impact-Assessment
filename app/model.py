@@ -63,7 +63,7 @@ class References(Base):
 class Consequences(Base):
     __tablename__ = 'consequences'
     id = Column(Integer, primary_key=True)
-    component_name = Column(Integer, ForeignKey('components.component_name'))
+    component_name = Column(String, ForeignKey('components.component_name'))
     consequence_category = Column(String)
     security_property = Column(String)
     consequence_worstcase = Column(String)

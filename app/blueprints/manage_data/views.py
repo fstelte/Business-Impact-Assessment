@@ -720,7 +720,7 @@ def consequence_edit(consequence_id):
         item.consequence_category = form.consequence_category.data
         item.consequence_worstcase = form.consequence_worstcase.data
         item.justification_worstcase = form.justification_worstcase.data
-        item.consequence_realisticcase = form.consequence_realisticcase.data.choice
+        item.consequence_realisticcase = form.consequence_realisticcase.data
         item.justification_realisticcase = form.justification_realisticcase.data
         app_db.session.commit()
         flash('Consequences updated: ' + item.component_name + item.consequence_category, 'info')
