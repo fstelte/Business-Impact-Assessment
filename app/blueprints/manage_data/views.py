@@ -104,13 +104,13 @@ def bia_list():
             'col_title': 'Responsible'
         },
         {
-            'col_title': 'Delete'
+            'col_title': 'Add component'
         },
         {
-            'col_title': 'Add Component'
+            'col_title': 'Export to CSV'
         },
         {
-            'col_title' : 'Export to CSV'
+            'col_title' : 'Delete BIA'
         }
     ]
 
@@ -138,17 +138,17 @@ def bia_list():
             {
                 'col_value': bia.responsible,
             },
-            {
-                'col_value': 'delete',
-                'url': url_for('manage_data.bia_delete', bia_id=bia.id),
-            },
             { 
-                'col_value': 'Add Component',
+                'col_value': 'Add',
                 'url': url_for('manage_data.component_new', bia_id=bia.id),
             },
             {
                 'col_value': 'Export',
                 'url': url_for('manage_data.bia_export', bia_id=bia.id),
+            },
+            {
+                'col_value': 'delete',
+                'url': url_for('manage_data.bia_delete', bia_id=bia.id),
             }
             ])
 

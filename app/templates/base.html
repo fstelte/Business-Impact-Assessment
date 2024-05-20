@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no body-dark">
     <title>Business Impact Assessment</title>
     {{ bootstrap.load_css() }}   
     <!--DarkMode begin-->
@@ -14,10 +14,10 @@
         @media (prefers-color-scheme: dark) {
             body {
                 background-color: #343a40;
-                color: #000000;
+                color: #fff;
             }
         
-            .btn-primary {
+            .button-primary {
                 background-color: #0d6efd;
                 border-color: #0d6efd;
             }
@@ -29,7 +29,7 @@
   
         <!--Navbar-->
        
-            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -50,7 +50,7 @@
 
         <!--Body-->
        
-            <main class="container bg-light min-h-100 d-inline-block flex-grow-1 mb-4 border rounded">
+            <main class="container bg-dark min-h-100 d-inline-block flex-grow-1 mb-4 border rounded">
                 <div class="p-4">
                 {{ render_messages(container=False, dismissible=True) }}
                 {% block content %}{% endblock %}
@@ -59,7 +59,7 @@
    
    
         <!--Footer-->
-        <footer class="text-center text-lg-start bg-light text-muted mt-auto">
+        <footer class="text-center text-lg-start bg-dark text-muted mt-auto">
             <span class="text-muted">{% include "incl_footer.html" %}</span>
         </footer>
  

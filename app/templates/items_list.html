@@ -8,7 +8,7 @@
 		{{ title }}
 	</h1>
 	{% if tbody_tr_items %}
-	<table class="table">
+	<table class="table table-dark">
 		<thead>
 		<tr>
 			{% for thead_th_item in thead_th_items %}
@@ -45,7 +45,7 @@
 		No items found
 		</p>
 	{% endif %}
-	<a class="btn btn-outline-dark" href="{{ item_new_url }}" role="button">
+	<a class="btn btn-outline-light" href="{{ item_new_url }}" role="button">
 		{{ item_new_text }}
 	</a>
 
