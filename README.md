@@ -20,13 +20,13 @@ This application can be used by anyone in any circumstance (commercial, non-comm
   
  Go into directory and run:
   
-create a python virtual enviroment
-python -m venv <directory>
+### create a python virtual enviroment
+    python -m venv <directory>
 
-activate the virtual environment
-source <director>/bin/activate
+### activate the virtual environment
+    source <directory>/bin/activate
 
-after that:
+### after that:
     pip install -r requirements.txt
 
 Create a file named **.env** in the root folder
