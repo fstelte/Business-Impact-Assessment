@@ -219,6 +219,8 @@ def bia_export(bia_id):
     components=app_db.session.query(Components).filter(Context_Scope.id == bia_id).all()
     consequences=app_db.session.query(Consequences).filter(Context_Scope.id == bia_id).all()
     availability=app_db.session.query(Availability_Requirements).filter(Context_Scope.id == bia_id).all()
+    cons_choices=app_db.session.query(ConsequenceChoices).all()
+    references=app_db.session.query(References).all()
     directory_name = secure_filename(CSV_Name)
     #directory_name = CSV_Name
     if not os.path.exists(directory_name):
@@ -292,7 +294,25 @@ def bia_export(bia_id):
 
     }for f in summary]
     df_summary = pd.DataFrame(summary_dicts)
+
+    cons_choices_dicts = [{
+        'Ergste geval consequentie' : g.consequence_worstcase,
+        'Realistisch geval consequentie' : g.consequence_realisticcase,
+
+    }for g in cons_choices]
+    df_cons_choices = pd.DataFrame(cons_choices_dicts) 
    
+    references_dicts = [{
+        'Consequentie categorie' : h.consequence_category,
+        'Consequentie klein' : h.consequence_small,
+        'Consequentie gemiddeld' : h.consequence_medium,
+        'Consequentie groot' : h.consequence_large,
+        'Consequentie enorm' : h.consequence_huge,
+
+    }for h in references]
+    df_references = pd.DataFrame(references_dicts) 
+   
+
     if not df_bias.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
         df_bias.to_csv(os.path.join(directory_name,f'{CSV_Name}_bia.csv'), index=False)
@@ -308,6 +328,12 @@ def bia_export(bia_id):
     if not df_summary.empty:
         #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
         df_summary.to_csv(os.path.join(directory_name,f'{CSV_Name}_summary.csv'), index=False)
+    if not df_cons_choices.empty:
+        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
+        df_cons_choices.to_csv(os.path.join(directory_name,f'{CSV_Name}_choices.csv'), index=False)
+    if not df_references.empty:
+        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
+        df_references.to_csv(os.path.join(directory_name,f'{CSV_Name}_references.csv'), index=False)
     #return "Export Successfull", 200
     flash('Export geslaagd!')
     return redirect(url_for('manage_data.bia_list'))
