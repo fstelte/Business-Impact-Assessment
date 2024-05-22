@@ -74,6 +74,7 @@ class CompDeleteForm(FlaskForm):
 # References
 class ReferenceNewEditFormMixin():
     consequence_category = StringField('Category for reference ', validators=[InputRequired()])
+    consequence_insignificant = StringField('What does the insignificant consequence entail? ', validators=[InputRequired()])
     consequence_small = StringField('What does the small consequence entail? ', validators=[InputRequired()])
     consequence_medium = StringField('What does the medium consequence entail? ', validators=[InputRequired()])
     consequence_large = StringField('What does the large consequence entail? ', validators=[InputRequired()])

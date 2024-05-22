@@ -17,8 +17,16 @@
                         {% for tbody_td_item in tbody_tr_item %}
                             <td>
                                 {% if tbody_td_item.url %}
-                                    {% if tbody_td_item.col_value == 'delete' %}
+                                    {% if tbody_td_item.col_value == 'Delete' %}
                                         <a class="btn btn-danger" href="{{ tbody_td_item.url }}" role="button">
+                                            {{ tbody_td_item.col_value }}
+                                        </a>
+                                        {% elif tbody_td_item.col_value == 'Export' %}
+                                        <a class="btn btn-success" href="{{ tbody_td_item.url }}" role="button">
+                                            {{ tbody_td_item.col_value }}
+                                        </a>
+                                        {% elif tbody_td_item.col_value == 'Add' %}
+                                        <a class="btn button-primary" href="{{ tbody_td_item.url }}" role="button">
                                             {{ tbody_td_item.col_value }}
                                         </a>
                                     {% else %}

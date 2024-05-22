@@ -1,6 +1,7 @@
 # factory.py
 
 from flask import Flask, request, g, url_for, current_app, render_template
+from markupsafe import Markup
 from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap5
 
@@ -34,11 +35,16 @@ def create_app():
 
     @app.route('/')
     def index():
-        #hours = app_db.session.query(Hours).order_by(Hours.id).all()
-        return render_template(
-            'home.html',
-            welcome_message='Hello world',
-            #hours=hours,
-        )
+        welcome_message = Markup("""
+    <h1>Business Impact Assessment</h1>
+    <p>Via de ze app kunnen Business Impact Assessment uitgevoerd worden. Begin bij het kopje BIA.</p>
+    <p>Aan een BIA moeten componenten gekoppeld worden.</p>
+    <p>Componenten krijgen weer consequenties toegewezen.</p>
+    <p>Per component zullen de beschikbaarheidsvereisten op gegeven worden</p>
+    <p>Gebruik het laatste tabblad om de impact te bepalen per component.</p>
+    """)
+        return render_template('home.html',welcome_message=welcome_message)
+   
+
 
     return app

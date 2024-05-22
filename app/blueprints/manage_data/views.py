@@ -147,7 +147,7 @@ def bia_list():
                 'url': url_for('manage_data.bia_export', bia_id=bia.id),
             },
             {
-                'col_value': 'delete',
+                'col_value': 'Delete',
                 'url': url_for('manage_data.bia_delete', bia_id=bia.id),
             }
             ])
@@ -304,6 +304,7 @@ def bia_export(bia_id):
    
     references_dicts = [{
         'Consequentie categorie' : h.consequence_category,
+        'Consequentie onbeduidend' : h.consequence_insignificant,
         'Consequentie klein' : h.consequence_small,
         'Consequentie gemiddeld' : h.consequence_medium,
         'Consequentie groot' : h.consequence_large,
@@ -394,7 +395,7 @@ def component_list():
                 'col_value': component.info_type
             },
             {
-                'col_value': 'delete',
+                'col_value': 'Delete',
                 'url': url_for('manage_data.component_delete', component_id=component.id),
             }
             ])
@@ -493,6 +494,9 @@ def reference_list():
             'col_title': 'Category',
         },
         {
+            'col_title': 'Insignificant'
+        },
+        {
             'col_title': 'Low'
         },
         {
@@ -527,6 +531,10 @@ def reference_list():
                 'url': url_for('manage_data.reference_edit', reference_id=reference.id),
             },
             {
+                'col_value': reference.consequence_insignificant
+                
+            },
+            {
                 'col_value': reference.consequence_small
                 
             },
@@ -543,7 +551,7 @@ def reference_list():
                 'col_value': reference.consequence_huge
             },
             {
-                'col_value': 'delete',
+                'col_value': 'Delete',
                 'url': url_for('manage_data.reference_delete', reference_id=reference.id),
             }
             ])
@@ -662,7 +670,7 @@ def consequence_list():
                 'col_value': consequence.consequence_realisticcase,
             },
             {
-                'col_value': 'delete',
+                'col_value': 'Delete',
                 'url': url_for('manage_data.consequence_delete', consequence_id=consequence.id),
             }
             ])
@@ -945,7 +953,7 @@ def summary_list():
                 'col_value': summary.summary_text
             },
             {
-                'col_value': 'delete',
+                'col_value': 'Delete',
                 'url': url_for('manage_data.summary_delete', summary_id=summary.id),
             }
             ])

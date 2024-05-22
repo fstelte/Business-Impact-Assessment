@@ -55,6 +55,7 @@ class References(Base):
     __tablename__ = 'references'
     id = Column(Integer, primary_key=True)
     consequence_category = Column(String)
+    consequence_insignificant = Column(String)
     consequence_small = Column(String)
     consequence_medium = Column(String)
     consequence_large = Column(String)
