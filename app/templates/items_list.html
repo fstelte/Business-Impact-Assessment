@@ -24,7 +24,7 @@
 				{% for tbody_td_item in tbody_tr_item %}
 				<td>
 					{% if tbody_td_item.url %}
-						<a href="{{ tbody_td_item.url }}">
+						<a class="btn btn-outline-light" href="{{ tbody_td_item.url }}" role="button">
 							{{ tbody_td_item.col_value }}
 						</a>
 					{% else %}
