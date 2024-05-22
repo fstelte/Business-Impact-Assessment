@@ -1,72 +1,46 @@
-{# items_list.html #}
-
 {% extends "base.html" %}
 
 {% block content %}
-
-	<h1>
-		{{ title }}
-	</h1>
-	{% if tbody_tr_items %}
-	<table class="table table-dark">
-		<thead>
-		<tr>
-			{% for thead_th_item in thead_th_items %}
-			<th scope="col">
-				{{ thead_th_item.col_title }}
-			</th>
-			{% endfor %}
-		</tr>
-		</thead>
-		<tbody>
-			{% for tbody_tr_item in tbody_tr_items %}
-			<tr>
-				{% for tbody_td_item in tbody_tr_item %}
-				<td>
-					{% if tbody_td_item.url %}
-						<a class="btn btn-outline-light" href="{{ tbody_td_item.url }}" role="button">
-							{{ tbody_td_item.col_value }}
-						</a>
-					{% else %}
-						{% if tbody_td_item.col_value %}
-							{{ tbody_td_item.col_value }}
-						{% else %}
-							-
-						{% endif %}
-					{% endif %}
-				</td>
-				{% endfor %}
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	{% else %}
-		<p>
-		No items found
-		</p>
-	{% endif %}
-	<a class="btn btn-outline-light" href="{{ item_new_url }}" role="button">
-		{{ item_new_text }}
-	</a>
-
+    <h1>{{ title }}</h1>
+    {% if tbody_tr_items %}
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    {% for thead_th_item in thead_th_items %}
+                        <th scope="col">{{ thead_th_item.col_title }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for tbody_tr_item in tbody_tr_items %}
+                    <tr>
+                        {% for tbody_td_item in tbody_tr_item %}
+                            <td>
+                                {% if tbody_td_item.url %}
+                                    {% if tbody_td_item.col_value == 'delete' %}
+                                        <a class="btn btn-danger" href="{{ tbody_td_item.url }}" role="button">
+                                            {{ tbody_td_item.col_value }}
+                                        </a>
+                                    {% else %}
+                                        <a class="btn btn-outline-light" href="{{ tbody_td_item.url }}" role="button">
+                                            {{ tbody_td_item.col_value }}
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    {% if tbody_td_item.col_value %}
+                                        {{ tbody_td_item.col_value }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No items found</p>
+    {% endif %}
+    <a class="btn btn-outline-light" href="{{ item_new_url }}" role="button">{{ item_new_text }}</a>
 {% endblock %}
-
-<style>
-    @media (prefers-color-scheme: dark) {
-        body {
-            background-color: #343a40;
-            color: #f8f9fa;
-        }
-        .table {
-            color: #f8f9fa;
-        }
-        .btn-outline-dark {
-            color: #f8f9fa;
-            border-color: #f8f9fa;
-        }
-        .btn-outline-dark:hover {
-            background-color: #f8f9fa;
-            color: #343a40;
-        }
-    }
-</style>
