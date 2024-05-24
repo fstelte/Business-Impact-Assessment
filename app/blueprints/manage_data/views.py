@@ -840,7 +840,7 @@ def availability_list():
                 'col_value': availability.masl,
             },
             {
-                'col_value': 'delete',
+                'col_value': 'Delete',
                 'url': url_for('manage_data.availability_delete', availability_id=availability.id),
             }
             ])
