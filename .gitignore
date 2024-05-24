@@ -11,3 +11,4 @@ env/*
 *backup/*
 *.csv
 *bia_venv/*
+.DS_Store
