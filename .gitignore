@@ -12,3 +12,4 @@ env/*
 *.csv
 *bia_venv/*
 .DS_Store
+.aider*

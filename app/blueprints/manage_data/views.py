@@ -215,10 +215,10 @@ def bia_delete(bia_id):
 def bia_export(bia_id):
     bias = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).all()
     CSV_Name = bias[0].name
-    summary=app_db.session.query(Summary).filter(Context_Scope.id == bia_id).all()
-    components=app_db.session.query(Components).filter(Context_Scope.id == bia_id).all()
-    consequences=app_db.session.query(Consequences).filter(Context_Scope.id == bia_id).all()
-    availability=app_db.session.query(Availability_Requirements).filter(Context_Scope.id == bia_id).all()
+    summary=app_db.session.query(Summary).filter(Summary.name == bias[0].name).all()
+    components=app_db.session.query(Components).filter(Components.id == bia_id).all()
+    consequences=app_db.session.query(Consequences).filter(Consequences.id == bia_id).all()
+    availability=app_db.session.query(Availability_Requirements).filter(Availability_Requirements.id == bia_id).all()
     cons_choices=app_db.session.query(ConsequenceChoices).all()
     references=app_db.session.query(References).all()
     directory_name = secure_filename(CSV_Name)
