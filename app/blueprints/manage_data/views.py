@@ -211,20 +211,22 @@ def bia_delete(bia_id):
         return redirect(url_for('manage_data.bia_list'))
 
     return render_template('item_delete.html', title='Delete BIA', item_name=item_name, form=form)
+
+
 @manage_data_blueprint.route('/bia/export/<int:bia_id>', methods=['GET', 'POST'])
 def bia_export(bia_id):
     bias = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).all()
     CSV_Name = bias[0].name
-    summary=app_db.session.query(Summary).filter(Summary.name == bias[0].name).all()
-    components=app_db.session.query(Components).filter(Components.id == bia_id).all()
-    consequences=app_db.session.query(Consequences).filter(Consequences.id == bia_id).all()
-    availability=app_db.session.query(Availability_Requirements).filter(Availability_Requirements.id == bia_id).all()
-    cons_choices=app_db.session.query(ConsequenceChoices).all()
-    references=app_db.session.query(References).all()
+    summary = app_db.session.query(Summary).filter(Summary.name == bias[0].name).all()
+    components = app_db.session.query(Components).filter(Components.name == bias[0].name).all()
+    consequences = app_db.session.query(Consequences).filter(Consequences.component_name.in_([c.component_name for c in components])).all()
+    availability = app_db.session.query(Availability_Requirements).filter(Availability_Requirements.component_name.in_([c.component_name for c in components])).all()
+    cons_choices = app_db.session.query(ConsequenceChoices).all()
+    references = app_db.session.query(References).all()
     directory_name = secure_filename(CSV_Name)
-    #directory_name = CSV_Name
+    
     if not os.path.exists(directory_name):
-            os.makedirs(directory_name)
+        os.makedirs(directory_name)
 
     bias_dicts = [{
         'BIA Name': b.name, 
@@ -255,87 +257,73 @@ def bia_export(bia_id):
     df_bias = pd.DataFrame(bias_dicts)
 
     comp_dicts = [{
-        'Gerelateerd aan BIA' : c.name,
-        'Component name' : c.component_name,
-        'Process Dependencies' : c.processes_dependencies,
-        'Type of information' : c.info_type,
-        'Information Owner' : c.info_owner,
-        'Types of users' : c.user_type,
-        'Description of the component' : c.description,
-
-    }for c in components]
+        'Gerelateerd aan BIA': c.name,
+        'Component name': c.component_name,
+        'Process Dependencies': c.processes_dependencies,
+        'Type of information': c.info_type,
+        'Information Owner': c.info_owner,
+        'Types of users': c.user_type,
+        'Description of the component': c.description,
+    } for c in components]
     df_components = pd.DataFrame(comp_dicts)
     
     cons_dicts = [{
-        'Gerelateerd aan Component' : d.component_name,
-        'Category of consequence' : d.consequence_category,
-        'Property of Security' : d.security_property,
-        'Worstcase consequence' : d.consequence_worstcase,
-        'Justification for worst consequence' : d.justification_worstcase,
-        'Realistic consequence' : d.consequence_realisticcase,
-        'Justification for realistic consequence' : d.justification_realisticcase,
-
-    }for d in consequences]
+        'Gerelateerd aan Component': d.component_name,
+        'Category of consequence': d.consequence_category,
+        'Property of Security': d.security_property,
+        'Worstcase consequence': d.consequence_worstcase,
+        'Justification for worst consequence': d.justification_worstcase,
+        'Realistic consequence': d.consequence_realisticcase,
+        'Justification for realistic consequence': d.justification_realisticcase,
+    } for d in consequences]
     df_consequences = pd.DataFrame(cons_dicts)
 
     avail_dicts = [{
-        'Gerelateerd aan Component' : e.component_name,
-        'Maximum Tolerable Downtime' : e.mtd,
-        'Recovery Time Objective ' : e.rto,
-        'WRecovery Point Objective' : e.rpo,
-        'Minimum Acceptable Service Level' : e.masl,
-
-    }for e in availability]
+        'Gerelateerd aan Component': e.component_name,
+        'Maximum Tolerable Downtime': e.mtd,
+        'Recovery Time Objective': e.rto,
+        'Recovery Point Objective': e.rpo,
+        'Minimum Acceptable Service Level': e.masl,
+    } for e in availability]
     df_availability = pd.DataFrame(avail_dicts)
 
     summary_dicts = [{
-        'Gerelateerd aan BIA' : f.name,
-        'Summary Test' : f.summary_text,
-
-    }for f in summary]
+        'Gerelateerd aan BIA': f.name,
+        'Summary Test': f.summary_text,
+    } for f in summary]
     df_summary = pd.DataFrame(summary_dicts)
 
     cons_choices_dicts = [{
-        'Ergste geval consequentie' : g.consequence_worstcase,
-        'Realistisch geval consequentie' : g.consequence_realisticcase,
-
-    }for g in cons_choices]
+        'Ergste geval consequentie': g.consequence_worstcase,
+        'Realistisch geval consequentie': g.consequence_realisticcase,
+    } for g in cons_choices]
     df_cons_choices = pd.DataFrame(cons_choices_dicts) 
    
     references_dicts = [{
-        'Consequentie categorie' : h.consequence_category,
-        'Consequentie onbeduidend' : h.consequence_insignificant,
-        'Consequentie klein' : h.consequence_small,
-        'Consequentie gemiddeld' : h.consequence_medium,
-        'Consequentie groot' : h.consequence_large,
-        'Consequentie enorm' : h.consequence_huge,
-
-    }for h in references]
+        'Consequentie categorie': h.consequence_category,
+        'Consequentie onbeduidend': h.consequence_insignificant,
+        'Consequentie klein': h.consequence_small,
+        'Consequentie gemiddeld': h.consequence_medium,
+        'Consequentie groot': h.consequence_large,
+        'Consequentie enorm': h.consequence_huge,
+    } for h in references]
     df_references = pd.DataFrame(references_dicts) 
    
-
     if not df_bias.empty:
-        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_bias.to_csv(os.path.join(directory_name,f'{CSV_Name}_bia.csv'), index=False)
+        df_bias.to_csv(os.path.join(directory_name, f'{CSV_Name}_bia.csv'), index=False)
     if not df_components.empty:
-        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_components.to_csv(os.path.join(directory_name,f'{CSV_Name}_components.csv'), index=False)
+        df_components.to_csv(os.path.join(directory_name, f'{CSV_Name}_components.csv'), index=False)
     if not df_consequences.empty:
-        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_consequences.to_csv(os.path.join(directory_name,f'{CSV_Name}_consequences.csv'), index=False)
+        df_consequences.to_csv(os.path.join(directory_name, f'{CSV_Name}_consequences.csv'), index=False)
     if not df_availability.empty:
-        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_availability.to_csv(os.path.join(directory_name,f'{CSV_Name}_availability.csv'), index=False)
+        df_availability.to_csv(os.path.join(directory_name, f'{CSV_Name}_availability.csv'), index=False)
     if not df_summary.empty:
-        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_summary.to_csv(os.path.join(directory_name,f'{CSV_Name}_summary.csv'), index=False)
+        df_summary.to_csv(os.path.join(directory_name, f'{CSV_Name}_summary.csv'), index=False)
     if not df_cons_choices.empty:
-        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_cons_choices.to_csv(os.path.join(directory_name,f'{CSV_Name}_choices.csv'), index=False)
+        df_cons_choices.to_csv(os.path.join(directory_name, f'{CSV_Name}_choices.csv'), index=False)
     if not df_references.empty:
-        #df_bias.to_csv(f'{df_bias.iloc[0]["name"]}_bias.csv', index=False)
-        df_references.to_csv(os.path.join(directory_name,f'{CSV_Name}_references.csv'), index=False)
-    #return "Export Successfull", 200
+        df_references.to_csv(os.path.join(directory_name, f'{CSV_Name}_references.csv'), index=False)
+
     flash('Export geslaagd!')
     return redirect(url_for('manage_data.bia_list'))
    
