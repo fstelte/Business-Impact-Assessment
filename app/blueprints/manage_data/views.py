@@ -182,6 +182,7 @@ def bia_list():
         item_new_url=url_for('manage_data.bia_new'),
         item_new_text='New BIA',
         item_import_url=url_for('manage_data.bia_import'),
+        show_import=True,
         item_import_text='Import BIA',
     )
 
