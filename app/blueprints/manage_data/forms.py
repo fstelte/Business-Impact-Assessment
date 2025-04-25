@@ -1,7 +1,7 @@
 # forms.py
 
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField, TextAreaField
+from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField, TextAreaField, BooleanField
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import InputRequired, Length
 
@@ -24,10 +24,11 @@ class BIANewEditFormMixin():
     security_supplier = StringField('Who is the security supplier ', validators=[InputRequired()])
     user_amount = IntegerField('How many users are there ', validators=[InputRequired()])
     scope_description = StringField('Describe the scope of the BIA ', validators=[InputRequired()])
-    risk_assessment_human = StringField('Would a risk assessment on the human factor be necassery ', validators=[InputRequired()])
-    risk_assessment_process = StringField('Would a risk assessment on the process factor be necassery ', validators=[InputRequired()])
-    risk_assessment_technological = StringField('Would a risk assessment on the technilogical factor be necassery ', validators=[InputRequired()])
-    project_leader = StringField('Who is the project leader ', validators=[InputRequired()])
+    risk_assessment_human = SelectField('Would a risk assessment on the human factor be necassery ', choices=[('yes', 'Yes'), ('no', 'No')], validators=[InputRequired()])
+    risk_assessment_process = SelectField('Would a risk assessment on the process factor be necassery ',choices=[('yes', 'Yes'), ('no', 'No')],  validators=[InputRequired()])
+    risk_assessment_technological = SelectField('Would a risk assessment on the technilogical factor be necassery ',choices=[('yes', 'Yes'), ('no', 'No')],  validators=[InputRequired()])
+    ai_model= SelectField('Does the system use AI or an algorithm? ',choices=[('yes', 'Yes'), ('no', 'No')],  validators=[InputRequired()])
+    project_leader = StringField('Who is the project leader or Product Owner?', validators=[InputRequired()])
     risk_owner = StringField('Who is the risk owner ', validators=[InputRequired()])
     product_owner = StringField('Who is the product owner ', validators=[InputRequired()])
     technical_administrator = StringField('Who is the technical administrator ', validators=[InputRequired()])

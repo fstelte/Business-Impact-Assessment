@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, ForeignKey, Integer, String, Date
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Boolean
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -24,6 +24,7 @@ class Context_Scope(Base):
     risk_assessment_human = Column(String)
     risk_assessment_process = Column(String)
     risk_assessment_technological = Column(String)
+    ai_model = Column(String)
     project_leader = Column(String)
     risk_owner = Column(String)
     product_owner = Column(String)
