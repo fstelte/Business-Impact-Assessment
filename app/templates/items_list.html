@@ -50,5 +50,11 @@
     {% else %}
         <p>No items found</p>
     {% endif %}
-    <a class="btn btn-primary" href="{{ item_new_url }}" role="button">{{ item_new_text }}</a>
+    
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary" href="{{ item_new_url }}" role="button">{{ item_new_text }}</a>
+        <a class="btn btn-info" href="{{ url_for('manage_data.bia_import') }}" role="button">
+            <i class="fas fa-file-import"></i> Importeren
+        </a>
+    </div>
 {% endblock %}

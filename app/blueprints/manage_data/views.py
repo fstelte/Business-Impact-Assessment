@@ -1,9 +1,13 @@
 # views.py
 import os
+import tempfile
+import zipfile
+import shutil
 import pandas as pd
 
+
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
-    render_template, flash, abort
+    render_template, flash, abort, send_file, after_this_request
 
 from app.services import app_db
 from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
@@ -15,6 +19,24 @@ from .forms import (
     SummaryNewForm, SummaryEditForm, SummaryDeleteForm
 )
 from werkzeug.utils import secure_filename
+
+# Functie om datumstrings om te zetten naar Python date objecten
+import datetime
+def parse_date(date_str):
+    if pd.isna(date_str) or date_str == '' or date_str == 'None' or date_str is None:
+        return None
+    try:
+        # Probeer verschillende datumformaten
+        formats = ['%Y-%m-%d', '%d-%m-%Y', '%m/%d/%Y', '%d/%m/%Y', '%Y/%m/%d']
+        for fmt in formats:
+            try:
+                return datetime.datetime.strptime(str(date_str), fmt).date()
+            except ValueError:
+                continue
+        # Als geen van de formats werkt, return None
+        return None
+    except Exception:
+        return None
 
 def choices_maken(klas, tagg, items):
         lijst = []
@@ -159,6 +181,8 @@ def bia_list():
         tbody_tr_items=tbody_tr_items,
         item_new_url=url_for('manage_data.bia_new'),
         item_new_text='New BIA',
+        item_import_url=url_for('manage_data.bia_import'),
+        item_import_text='Import BIA',
     )
 
 @manage_data_blueprint.route('/bia/new', methods=['GET', 'POST'])
@@ -211,7 +235,6 @@ def bia_delete(bia_id):
         return redirect(url_for('manage_data.bia_list'))
 
     return render_template('item_delete.html', title='Delete BIA', item_name=item_name, form=form)
-
 
 @manage_data_blueprint.route('/bia/export/<int:bia_id>', methods=['GET', 'POST'])
 def bia_export(bia_id):
@@ -1020,3 +1043,316 @@ def summary_delete(summary_id):
 
     return render_template('item_delete.html', title='Delete Summary', item_name=item_name, form=form)
 
+@manage_data_blueprint.route('/bia/import', methods=['GET', 'POST'])
+def bia_import():
+    if request.method == 'POST':
+        # Bepaal welke importmethode gebruikt wordt (ZIP of losse bestanden)
+        import_type = request.form.get('import_type', 'files')
+        temp_dir = tempfile.mkdtemp()
+        csv_files = {}
+        
+        try:
+            # Methode 1: Via ZIP bestand
+            if import_type == 'zip':
+                if 'zip_file' not in request.files:
+                    flash('Geen ZIP bestand geselecteerd')
+                    return redirect(request.url)
+                
+                zip_file = request.files['zip_file']
+                if zip_file.filename == '':
+                    flash('Geen ZIP bestand geselecteerd')
+                    return redirect(request.url)
+                
+                # Sla het ZIP bestand op en pak het uit
+                zip_path = os.path.join(temp_dir, secure_filename(zip_file.filename))
+                zip_file.save(zip_path)
+                
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(temp_dir)
+                
+                # Zoek alle CSV bestanden in het uitgepakte ZIP bestand
+                for root, _, files in os.walk(temp_dir):
+                    for file in files:
+                        if file.endswith(".csv"):
+                            file_path = os.path.join(root, file)
+                            if "_bia.csv" in file:
+                                csv_files['bia'] = file_path
+                            elif "_components.csv" in file:
+                                csv_files['components'] = file_path
+                            elif "_consequences.csv" in file:
+                                csv_files['consequences'] = file_path
+                            elif "_availability.csv" in file:
+                                csv_files['availability'] = file_path
+                            elif "_summary.csv" in file:
+                                csv_files['summary'] = file_path
+                            elif "_choices.csv" in file:
+                                csv_files['choices'] = file_path
+                            elif "_references.csv" in file:
+                                csv_files['references'] = file_path
+            
+            # Methode 2: Via losse bestanden
+            else:
+                # BIA bestand is verplicht
+                if 'bia_file' not in request.files:
+                    flash('Geen BIA bestand geselecteerd')
+                    return redirect(request.url)
+                
+                bia_file = request.files['bia_file']
+                if bia_file.filename == '':
+                    flash('Geen BIA bestand geselecteerd')
+                    return redirect(request.url)
+                
+                # Sla BIA bestand op
+                bia_path = os.path.join(temp_dir, secure_filename(bia_file.filename))
+                bia_file.save(bia_path)
+                csv_files['bia'] = bia_path
+                
+                # Sla Components bestand op
+                components_file = request.files.get('components_file')
+                if components_file and components_file.filename != '':
+                    components_path = os.path.join(temp_dir, secure_filename(components_file.filename))
+                    components_file.save(components_path)
+                    csv_files['components'] = components_path
+                
+                # Sla Consequences bestand op
+                consequences_file = request.files.get('consequences_file')
+                if consequences_file and consequences_file.filename != '':
+                    consequences_path = os.path.join(temp_dir, secure_filename(consequences_file.filename))
+                    consequences_file.save(consequences_path)
+                    csv_files['consequences'] = consequences_path
+                
+                # Sla Availability bestand op
+                availability_file = request.files.get('availability_file')
+                if availability_file and availability_file.filename != '':
+                    availability_path = os.path.join(temp_dir, secure_filename(availability_file.filename))
+                    availability_file.save(availability_path)
+                    csv_files['availability'] = availability_path
+                
+                # Sla Summary bestand op
+                summary_file = request.files.get('summary_file')
+                if summary_file and summary_file.filename != '':
+                    summary_path = os.path.join(temp_dir, secure_filename(summary_file.filename))
+                    summary_file.save(summary_path)
+                    csv_files['summary'] = summary_path
+                
+                # Sla Choices bestand op (indien van toepassing)
+                choices_file = request.files.get('choices_file')
+                if choices_file and choices_file.filename != '':
+                    choices_path = os.path.join(temp_dir, secure_filename(choices_file.filename))
+                    choices_file.save(choices_path)
+                    csv_files['choices'] = choices_path
+                
+                # Sla References bestand op (indien van toepassing)
+                references_file = request.files.get('references_file')
+                if references_file and references_file.filename != '':
+                    references_path = os.path.join(temp_dir, secure_filename(references_file.filename))
+                    references_file.save(references_path)
+                    csv_files['references'] = references_path
+            
+            # Controleer of we alle verplichte bestanden hebben
+            required_files = ['bia', 'components']
+            missing_files = [f for f in required_files if f not in csv_files]
+            if missing_files:
+                flash(f'Ontbrekende verplichte bestanden: {", ".join(missing_files)}')
+                return redirect(request.url)
+            
+            # Importeer BIA
+            df_bia = pd.read_csv(csv_files['bia'])
+            
+            # Functie om datumstrings om te zetten naar Python date objecten
+            import datetime
+            def parse_date(date_str):
+                if pd.isna(date_str) or date_str == '' or date_str == 'None' or date_str is None:
+                    return None
+                try:
+                    # Probeer verschillende datumformaten
+                    formats = ['%Y-%m-%d', '%d-%m-%Y', '%m/%d/%Y', '%d/%m/%Y', '%Y/%m/%d']
+                    for fmt in formats:
+                        try:
+                            return datetime.datetime.strptime(str(date_str), fmt).date()
+                        except ValueError:
+                            continue
+                    # Als geen van de formats werkt, return None
+                    return None
+                except Exception:
+                    return None
+            
+            for _, row in df_bia.iterrows():
+                # Controleer of BIA al bestaat
+                existing_bia = app_db.session.query(Context_Scope).filter(Context_Scope.name == row['BIA Name']).first()
+                
+                # Converteer datum velden naar Python date objecten
+                start_date = parse_date(row.get('BIA Start Date'))
+                end_date = parse_date(row.get('BIA End Date'))
+                last_update = parse_date(row.get('BIA Last Update'))
+                
+                if existing_bia:
+                    # Update bestaande BIA
+                    existing_bia.responsible = row.get('BIA Responsible', '')
+                    existing_bia.coordinator = row.get('BIA Coordinator', '')
+                    existing_bia.start_date = start_date
+                    existing_bia.end_date = end_date
+                    existing_bia.last_update = last_update
+                    existing_bia.service_description = row.get('Service Description', '')
+                    existing_bia.knowledge = row.get('Knowledge', '')
+                    existing_bia.interfaces = row.get('Interfaces', '')
+                    existing_bia.mission_critical = row.get('mission_critical', '')
+                    existing_bia.support_contracts = row.get('support_contracts', '')
+                    existing_bia.security_supplier = row.get('security_supplier', '')
+                    existing_bia.user_amount = row.get('user_amount', '')
+                    existing_bia.scope_description = row.get('scope_description', '')
+                    existing_bia.risk_assessment_human = row.get('risk_assessment_human', '')
+                    existing_bia.risk_assessment_process = row.get('risk_assessment_process', '')
+                    existing_bia.risk_assessment_technological = row.get('risk_assessment_technological', '')
+                    existing_bia.project_leader = row.get('project_leader', '')
+                    existing_bia.risk_owner = row.get('risk_owner', '')
+                    existing_bia.product_owner = row.get('product_owner', '')
+                    existing_bia.technical_administrator = row.get('technical_administrator', '')
+                    existing_bia.security_manager = row.get('security_manager', '')
+                    existing_bia.incident_contact = row.get('incident_contact', '')
+                else:
+                    # Maak nieuwe BIA
+                    new_bia = Context_Scope(
+                        name=row['BIA Name'],
+                        responsible=row.get('BIA Responsible', ''),
+                        coordinator=row.get('BIA Coordinator', ''),
+                        start_date=start_date,
+                        end_date=end_date,
+                        last_update=last_update,
+                        service_description=row.get('Service Description', ''),
+                        knowledge=row.get('Knowledge', ''),
+                        interfaces=row.get('Interfaces', ''),
+                        mission_critical=row.get('mission_critical', ''),
+                        support_contracts=row.get('support_contracts', ''),
+                        security_supplier=row.get('security_supplier', ''),
+                        user_amount=row.get('user_amount', ''),
+                        scope_description=row.get('scope_description', ''),
+                        risk_assessment_human=row.get('risk_assessment_human', ''),
+                        risk_assessment_process=row.get('risk_assessment_process', ''),
+                        risk_assessment_technological=row.get('risk_assessment_technological', ''),
+                        project_leader=row.get('project_leader', ''),
+                        risk_owner=row.get('risk_owner', ''),
+                        product_owner=row.get('product_owner', ''),
+                        technical_administrator=row.get('technical_administrator', ''),
+                        security_manager=row.get('security_manager', ''),
+                        incident_contact=row.get('incident_contact', '')
+                    )
+                    app_db.session.add(new_bia)
+            
+            # Commit BIA changes
+            app_db.session.commit()
+            
+            # Verder gaan met de rest van de import...
+            bia_name = df_bia['BIA Name'].iloc[0]
+            
+            # Importeer Components
+            if 'components' in csv_files:
+                df_components = pd.read_csv(csv_files['components'])
+                # Verwijder bestaande componenten voor deze BIA
+                app_db.session.query(Components).filter(Components.name == bia_name).delete()
+                
+                for _, row in df_components.iterrows():
+                    new_component = Components(
+                        name=bia_name,
+                        component_name=row['Component name'],
+                        processes_dependencies=row.get('Process Dependencies', ''),
+                        info_type=row.get('Type of information', ''),
+                        info_owner=row.get('Information Owner', ''),
+                        user_type=row.get('Types of users', ''),
+                        description=row.get('Description of the component', '')
+                    )
+                    app_db.session.add(new_component)
+            
+            # Importeer Consequences
+            if 'consequences' in csv_files:
+                df_consequences = pd.read_csv(csv_files['consequences'])
+                # Verwijder bestaande consequences voor deze componenten
+                component_names = df_components['Component name'].tolist()
+                app_db.session.query(Consequences).filter(Consequences.component_name.in_(component_names)).delete()
+                
+                for _, row in df_consequences.iterrows():
+                    new_consequence = Consequences(
+                        component_name=row['Gerelateerd aan Component'],
+                        consequence_category=row.get('Category of consequence', ''),
+                        security_property=row.get('Property of Security', ''),
+                        consequence_worstcase=row.get('Worstcase consequence', ''),
+                        justification_worstcase=row.get('Justification for worst consequence', ''),
+                        consequence_realisticcase=row.get('Realistic consequence', ''),
+                        justification_realisticcase=row.get('Justification for realistic consequence', '')
+                    )
+                    app_db.session.add(new_consequence)
+            
+            # Importeer Availability Requirements
+            if 'availability' in csv_files:
+                df_availability = pd.read_csv(csv_files['availability'])
+                # Verwijder bestaande availability vereisten voor deze componenten
+                component_names = df_components['Component name'].tolist()
+                app_db.session.query(Availability_Requirements).filter(Availability_Requirements.component_name.in_(component_names)).delete()
+                
+                for _, row in df_availability.iterrows():
+                    new_availability = Availability_Requirements(
+                        component_name=row['Gerelateerd aan Component'],
+                        mtd=row.get('Maximum Tolerable Downtime', ''),
+                        rto=row.get('Recovery Time Objective', ''),
+                        rpo=row.get('Recovery Point Objective', ''),
+                        masl=row.get('Minimum Acceptable Service Level', '')
+                    )
+                    app_db.session.add(new_availability)
+            
+            # Importeer Summary
+            if 'summary' in csv_files:
+                df_summary = pd.read_csv(csv_files['summary'])
+                # Verwijder bestaande summary voor deze BIA
+                app_db.session.query(Summary).filter(Summary.name == bia_name).delete()
+                
+                for _, row in df_summary.iterrows():
+                    new_summary = Summary(
+                        name=bia_name,
+                        summary_text=row.get('Summary Test', '')
+                    )
+                    app_db.session.add(new_summary)
+            
+            # Importeer Consequence Choices als die beschikbaar zijn
+            if 'choices' in csv_files:
+                df_choices = pd.read_csv(csv_files['choices'])
+                # Alleen importeren als de tabel leeg is, anders niet overschrijven
+                if app_db.session.query(ConsequenceChoices).count() == 0:
+                    for _, row in df_choices.iterrows():
+                        new_choice = ConsequenceChoices(
+                            consequence_worstcase=row.get('Ergste geval consequentie', ''),
+                            consequence_realisticcase=row.get('Realistisch geval consequentie', '')
+                        )
+                        app_db.session.add(new_choice)
+            
+            # Importeer References als die beschikbaar zijn
+            if 'references' in csv_files:
+                df_references = pd.read_csv(csv_files['references'])
+                # Alleen importeren als de tabel leeg is, anders niet overschrijven
+                if app_db.session.query(References).count() == 0:
+                    for _, row in df_references.iterrows():
+                        new_reference = References(
+                            consequence_category=row.get('Consequentie categorie', ''),
+                            consequence_insignificant=row.get('Consequentie onbeduidend', ''),
+                            consequence_small=row.get('Consequentie klein', ''),
+                            consequence_medium=row.get('Consequentie gemiddeld', ''),
+                            consequence_large=row.get('Consequentie groot', ''),
+                            consequence_huge=row.get('Consequentie enorm', '')
+                        )
+                        app_db.session.add(new_reference)
+            
+            # Commit alle wijzigingen
+            app_db.session.commit()
+            
+            flash('BIA succesvol geïmporteerd!')
+            return redirect(url_for('manage_data.bia_list'))
+            
+        except Exception as e:
+            app_db.session.rollback()
+            flash(f'Fout bij importeren: {str(e)}')
+            return redirect(request.url)
+        finally:
+            # Verwijder tijdelijke directory
+            shutil.rmtree(temp_dir)
+    
+    # GET request toont het upload formulier
+    return render_template('bia_import.html')

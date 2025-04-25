@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>BIA Importeren</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label for="bia_file" class="form-label"><strong>BIA bestand</strong> (verplicht)</label>
+                    <input type="file" class="form-control" id="bia_file" name="bia_file" accept=".csv" required>
+                    <div class="form-text">Upload het *_bia.csv bestand</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="components_file" class="form-label"><strong>Components bestand</strong> (verplicht)</label>
+                    <input type="file" class="form-control" id="components_file" name="components_file" accept=".csv" required>
+                    <div class="form-text">Upload het *_components.csv bestand</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="consequences_file" class="form-label">Consequences bestand (optioneel)</label>
+                    <input type="file" class="form-control" id="consequences_file" name="consequences_file" accept=".csv">
+                    <div class="form-text">Upload het *_consequences.csv bestand indien beschikbaar</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="availability_file" class="form-label">Availability bestand (optioneel)</label>
+                    <input type="file" class="form-control" id="availability_file" name="availability_file" accept=".csv">
+                    <div class="form-text">Upload het *_availability.csv bestand indien beschikbaar</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="summary_file" class="form-label">Summary bestand (optioneel)</label>
+                    <input type="file" class="form-control" id="summary_file" name="summary_file" accept=".csv">
+                    <div class="form-text">Upload het *_summary.csv bestand indien beschikbaar</div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Importeren</button>
+                <a href="{{ url_for('manage_data.bia_list') }}" class="btn btn-secondary">Annuleren</a>
+            </form>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <h3>Importeer instructies</h3>
+        <ul>
+            <li>BIA en Components bestanden zijn verplicht</li>
+            <li>Overige bestanden zijn optioneel</li>
+            <li>Bestaande BIA's met dezelfde naam worden bijgewerkt</li>
+            <li>Bestaande componenten, gevolgen en beschikbaarheidseisen worden vervangen</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
