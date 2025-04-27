@@ -4,10 +4,11 @@ import tempfile
 import zipfile
 import shutil
 import pandas as pd
+import io
 
 
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
-    render_template, flash, abort, send_file, after_this_request
+    render_template, flash, abort, send_file, after_this_request, make_response
 
 from app.services import app_db
 from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
@@ -19,7 +20,15 @@ from .forms import (
     SummaryNewForm, SummaryEditForm, SummaryDeleteForm
 )
 from werkzeug.utils import secure_filename
-
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from io import BytesIO
+def calculate_cia_score(consequence):
+    score_map = {'Low': 1, 'Medium': 2, 'High': 3, 'Huge': 4}
+    return score_map.get(consequence, 0)
 # Functie om datumstrings om te zetten naar Python date objecten
 import datetime
 def parse_date(date_str):
@@ -133,6 +142,12 @@ def bia_list():
         },
         {
             'col_title' : 'Delete BIA'
+        },
+        {
+            'col_title': 'Generate Report'
+        },
+        {
+            'col_title': 'Generate PDF Report'
         }
     ]
 
@@ -171,7 +186,16 @@ def bia_list():
             {
                 'col_value': 'Delete',
                 'url': url_for('manage_data.bia_delete', bia_id=bia.id),
-            }
+            },
+            {
+                'col_value': 'Generate Report',
+                'url': url_for('manage_data.bia_report', bia_id=bia.id),
+            },
+            {
+                'col_value': 'Generate PDF Report',
+                'url': url_for('manage_data.bia_pdf_report', bia_id=bia.id),
+            },
+
             ])
 
     return render_template(
@@ -350,7 +374,288 @@ def bia_export(bia_id):
 
     flash('Export geslaagd!')
     return redirect(url_for('manage_data.bia_list'))
-   
+
+import logging
+
+@manage_data_blueprint.route('/bia/report/<int:bia_id>', methods=['GET'])
+def bia_report(bia_id):
+    bia = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).first()
+    components = app_db.session.query(Components).filter(Components.name == bia.name).all()
+    
+    consequences = app_db.session.query(Consequences).filter(
+        Consequences.component_name.in_([c.component_name for c in components])
+    ).all()
+    
+    availability = app_db.session.query(Availability_Requirements).filter(
+        Availability_Requirements.component_name.in_([c.component_name for c in components])
+    ).all()
+    
+    summary = app_db.session.query(Summary).filter(Summary.name == bia.name).first()
+
+    consequences_by_component = {}
+    cia_scores = {}
+    for component in components:
+        consequences_by_component[component.component_name] = []
+        cia_scores[component.component_name] = {'C': [], 'I': [], 'A': []}
+
+    for consequence in consequences:
+        consequences_by_component[consequence.component_name].append(consequence)
+        cia_map = {'Confidentiality': 'C', 'Integrity': 'I', 'Availability': 'A'}
+        cia_key = cia_map.get(consequence.security_property, '')
+        if cia_key:
+            score = calculate_cia_score(consequence.consequence_realisticcase)
+            cia_scores[consequence.component_name][cia_key].append({
+                'score': score,
+                'consequence': consequence.consequence_realisticcase,
+                'category': consequence.consequence_category
+            })
+
+    # Debug logging
+    print(f"Number of components: {len(components)}")
+    print(f"Number of consequences: {len(consequences)}")
+    for component_name, cons_list in consequences_by_component.items():
+        print(f"Component {component_name} has {len(cons_list)} consequences")
+        print(f"CIA scores for {component_name}: {cia_scores[component_name]}")
+
+    # Debug logging
+    for component_name, scores in cia_scores.items():
+        print(f"CIA scores for {component_name}:")
+        for cia, score_list in scores.items():
+            for score in score_list:
+                print(f"  {cia}: {score['consequence']} -> {score['score']}")
+
+    html_content = render_template('bia_report.html',
+                           bia=bia,
+                           components=components,
+                           consequences=consequences_by_component,
+                           availability=availability,
+                           summary=summary,
+                           cia_scores=cia_scores)
+
+    # Create a BytesIO object
+    buffer = io.BytesIO()
+    buffer.write(html_content.encode('utf-8'))
+    buffer.seek(0)
+
+    # Send the file
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"BIA_Report_{bia.name}.html",
+        mimetype='text/html'
+    )
+
+
+def calculate_cia_score(consequence):
+    score_map = {
+        'Insignificant': 0,
+        'Low': 1,
+        'Small': 1,
+        'Medium': 2,
+        'High': 3,
+        'Large': 3,
+        'Huge': 4
+    }
+    return score_map.get(consequence, 0)
+
+@manage_data_blueprint.route('/bia/pdf_report/<int:bia_id>', methods=['GET'])
+def bia_pdf_report(bia_id):
+    bia = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).first()
+    components = app_db.session.query(Components).filter(Components.name == bia.name).all()
+    
+    consequences = app_db.session.query(Consequences).filter(
+        Consequences.component_name.in_([c.component_name for c in components])
+    ).all()
+    
+    availability = app_db.session.query(Availability_Requirements).filter(
+        Availability_Requirements.component_name.in_([c.component_name for c in components])
+    ).all()
+    
+    summary = app_db.session.query(Summary).filter(Summary.name == bia.name).first()
+
+    # Prepare CIA scores and consequences
+    consequences_by_component = {}
+    cia_scores = {}
+    for component in components:
+        consequences_by_component[component.component_name] = []
+        cia_scores[component.component_name] = {'C': [], 'I': [], 'A': []}
+
+    for consequence in consequences:
+        consequences_by_component[consequence.component_name].append(consequence)
+        cia_map = {'Confidentiality': 'C', 'Integrity': 'I', 'Availability': 'A'}
+        cia_key = cia_map.get(consequence.security_property, '')
+        if cia_key:
+            score = calculate_cia_score(consequence.consequence_realisticcase)
+            cia_scores[component.component_name][cia_key].append({
+                'score': score,
+                'consequence': consequence.consequence_realisticcase,
+                'category': consequence.consequence_category
+            })
+
+    # Create a PDF
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter), rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+    elements = []
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('Title', fontSize=16, alignment=1, spaceAfter=12)
+    heading_style = ParagraphStyle('Heading', fontSize=14, spaceAfter=6)
+    subheading_style = ParagraphStyle('SubHeading', fontSize=12, spaceAfter=6)
+    normal_style = styles['Normal']
+
+    # Title
+    elements.append(Paragraph(f"BIA Report for {bia.name}", title_style))
+    elements.append(Spacer(1, 12))
+
+    # BIA Information
+    elements.append(Paragraph("BIA Information", heading_style))
+    bia_data = [
+        ["Name", bia.name],
+        ["Responsible", bia.responsible],
+        ["Coordinator", bia.coordinator],
+        ["Start Date", str(bia.start_date)],
+        ["End Date", str(bia.end_date)],
+        ["Last Update", str(bia.last_update)],
+        ["Service Description", bia.service_description],
+        ["Knowledge", bia.knowledge],
+        ["Interfaces", bia.interfaces],
+        ["Mission Critical", bia.mission_critical],
+        ["Support Contracts", bia.support_contracts],
+        ["Security Supplier", bia.security_supplier],
+        ["User Amount", bia.user_amount],
+        ["Scope Description", bia.scope_description],
+        ["Risk Assessment Human", bia.risk_assessment_human],
+        ["Risk Assessment Process", bia.risk_assessment_process],
+        ["Risk Assessment Technological", bia.risk_assessment_technological],
+        ["Project Leader", bia.project_leader],
+        ["Risk Owner", bia.risk_owner],
+        ["Product Owner", bia.product_owner],
+        ["Technical Administrator", bia.technical_administrator],
+        ["Security Manager", bia.security_manager],
+        ["Incident Contact", bia.incident_contact]
+    ]
+    bia_table = Table(bia_data, colWidths=[2*inch, 5*inch])
+    bia_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    elements.append(bia_table)
+    elements.append(Spacer(1, 12))
+
+    # Components, CIA Scores, and Consequences
+    elements.append(Paragraph("Components, CIA Scores, and Consequences", heading_style))
+    for component in components:
+        elements.append(Paragraph(component.component_name, subheading_style))
+        elements.append(Paragraph(f"Number of consequences: {len(consequences_by_component[component.component_name])}", normal_style))
+        
+        # CIA Scores
+        elements.append(Paragraph("CIA Scores", subheading_style))
+        cia_data = [["Confidentiality", "Integrity", "Availability"]]
+        cia_row = []
+        for cia in ['C', 'I', 'A']:
+            if cia_scores[component.component_name][cia]:
+                max_score = max(cia_scores[component.component_name][cia], key=lambda x: x['score'])
+                cia_row.append(f"{max_score['score']} - {max_score['consequence']}")
+            else:
+                cia_row.append("-")
+        cia_data.append(cia_row)
+        
+        cia_table = Table(cia_data)
+        cia_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('TOPPADDING', (0, 1), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        elements.append(cia_table)
+        elements.append(Spacer(1, 12))
+
+        # Consequences
+        elements.append(Paragraph("Consequences", subheading_style))
+        consequences_data = [["Category", "Confidentiality", "Integrity", "Availability"]]
+        for category in ['Financial', 'Operational', 'Regulatory', 'Reputation and Trust', 'Human and Safety', 'Privacy']:
+            row = [category]
+            for cia in ['C', 'I', 'A']:
+                cia_category = [score for score in cia_scores[component.component_name][cia] if score['category'] == category]
+                if cia_category:
+                    max_score = max(cia_category, key=lambda x: x['score'])
+                    row.append(max_score['consequence'])
+                else:
+                    row.append("-")
+            consequences_data.append(row)
+        
+        consequences_table = Table(consequences_data)
+        consequences_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('TOPPADDING', (0, 1), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        elements.append(consequences_table)
+        elements.append(Spacer(1, 12))
+
+    # Availability Requirements
+    elements.append(Paragraph("Availability Requirements", heading_style))
+    availability_data = [["Component", "MTD", "RTO", "RPO", "MASL"]]
+    for req in availability:
+        availability_data.append([req.component_name, req.mtd, req.rto, req.rpo, req.masl])
+    
+    availability_table = Table(availability_data)
+    availability_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('TOPPADDING', (0, 1), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    elements.append(availability_table)
+    elements.append(Spacer(1, 0.25*inch))
+
+# Build the PDF
+    doc.build(elements)
+    buffer.seek(0)
+
+    # Send the PDF
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"BIA_Report_{bia.name}.pdf",
+        mimetype='application/pdf'
+    )
 # Components
 @manage_data_blueprint.route('/component/list', methods=['GET', 'POST'])
 def component_list():
