@@ -1,0 +1,41 @@
+{# report_base.html #}
+
+
+{% from 'bootstrap/utils.html' import render_messages %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no body-dark">
+    <title>Business Impact Assessment</title>
+    {{ bootstrap.load_css() }}   
+    <!--DarkMode begin-->
+    <style>
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #343a40;
+                color: #fff;
+            }
+        
+            .button-primary {
+                background-color: #0d6efd;
+                border-color: #0d6efd;
+            }
+        }
+    </style>
+    <!--DarkMode end-->
+</head>
+<body class="d-flex flex-column min-vh-100">
+  
+        <!--Body-->
+       
+            <main class="container bg-dark min-h-100 d-inline-block flex-grow-1 mb-4 border rounded">
+                <div class="p-4">
+                {{ render_messages(container=False, dismissible=True) }}
+                {% block content %}{% endblock %}
+                </div>
+            </main>
+
+    {{ bootstrap.load_js() }}
+</body>
+</html>
