@@ -9,6 +9,9 @@ import io
 
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
     render_template, flash, abort, send_file, after_this_request, make_response
+from sqlalchemy import func
+from flask_paginate import Pagination, get_page_parameter
+
 
 from app.services import app_db
 from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
@@ -114,6 +117,19 @@ app = Flask(__name__)
 #BIA / Context_Scope
 @manage_data_blueprint.route('/bia/list', methods=['GET', 'POST'])
 def bia_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Number of items per page
+
+    query = app_db.session.query(Context_Scope).order_by(Context_Scope.name)
+    total = query.count()
+    bias = query.offset((page - 1) * per_page).limit(per_page).all()
+
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
     bias = app_db.session.query(Context_Scope).order_by(Context_Scope.name).all()
 
     thead_th_items = [
@@ -196,6 +212,7 @@ def bia_list():
         item_import_url=url_for('manage_data.bia_import'),
         show_import=True,
         item_import_text='Import BIA',
+        pagination=pagination
     )
 
 @manage_data_blueprint.route('/bia/new', methods=['GET', 'POST'])
@@ -448,63 +465,41 @@ def calculate_cia_score(consequence):
 # Components
 @manage_data_blueprint.route('/component/list', methods=['GET', 'POST'])
 def component_list():
-    comps = app_db.session.query(Components).order_by(Components.id).all()
-    bias = app_db.session.query(Context_Scope).order_by(Context_Scope.id).all()
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Aantal items per pagina
+
+    query = app_db.session.query(Components).order_by(Components.id)
+    total = query.count()
+    
+    offset = (page - 1) * per_page
+    comps = query.offset(offset).limit(per_page).all()
+    
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
 
     thead_th_items = [
-        {
-            'col_title': '#',
-        },
-        {
-            'col_title': 'Name',
-        },
-        {
-            'col_title': 'Linked to BIA'
-        },
-        {
-            'col_title': 'Description'
-        },
-        {
-            'col_title': 'Information type'
-        },
-        {
-            'col_title': 'Delete'
-        }
+        {'col_title': '#'},
+        {'col_title': 'Name'},
+        {'col_title': 'Linked to BIA'},
+        {'col_title': 'Description'},
+        {'col_title': 'Information type'},
+        {'col_title': 'Delete'}
     ]
 
     tbody_tr_items = []
     for component in comps:
-
- #       Customers_name = '-'
- #       if friend.Customers:
- #           Customers_name = friend.Customers.name
- #       Months_names = '-'
- #       if friend.hobbies:
- #           Months_names = ', '.join([x.name for x in friend.hobbies])
-
         tbody_tr_items.append([
-            {
-                'col_value': component.id,
-            },
-            {
-                'col_value': component.component_name,
-                'url': url_for('manage_data.component_edit', component_id=component.id),
-            },
-            {
-                'col_value': component.name
-            },
-            {
-                'col_value': component.description
-                
-            },
-            {
-                'col_value': component.info_type
-            },
-            {
-                'col_value': 'Delete',
-                'url': url_for('manage_data.component_delete', component_id=component.id),
-            }
-            ])
+            {'col_value': component.id},
+            {'col_value': component.component_name, 'url': url_for('manage_data.component_edit', component_id=component.id)},
+            {'col_value': component.name},
+            {'col_value': component.description},
+            {'col_value': component.info_type},
+            {'col_value': 'Delete', 'url': url_for('manage_data.component_delete', component_id=component.id)}
+        ])
 
     return render_template(
         'items_list.html',
@@ -513,6 +508,7 @@ def component_list():
         tbody_tr_items=tbody_tr_items,
         item_new_url=url_for('manage_data.component_new'),
         item_new_text='New Component',
+        pagination=pagination
     )
 
 @manage_data_blueprint.route('/component/new', methods=['GET', 'POST'])
@@ -723,63 +719,41 @@ def reference_delete(reference_id):
 # Consequences
 @manage_data_blueprint.route('/consequence/list', methods=['GET', 'POST'])
 def consequence_list():
-    consequences = app_db.session.query(Consequences).order_by(Consequences.id).all()
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Aantal items per pagina
+
+    query = app_db.session.query(Consequences).order_by(Consequences.id)
+    total = query.count()
+    
+    offset = (page - 1) * per_page
+    consequences = query.offset(offset).limit(per_page).all()
+    
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
 
     thead_th_items = [
-        {
-            'col_title': '#',
-        },
-        {
-            'col_title': 'Linked to component',
-        },
-        {
-            'col_title': 'Security Property',
-        },
-        {
-            'col_title': 'Category',
-        },
-       
-       {
-            'col_title': 'Consequence realistic',
-        },
-        {
-            'col_title': 'Delete'
-        },
-
+        {'col_title': '#'},
+        {'col_title': 'Linked to component'},
+        {'col_title': 'Security Property'},
+        {'col_title': 'Category'},
+        {'col_title': 'Consequence realistic'},
+        {'col_title': 'Delete'}
     ]
 
     tbody_tr_items = []
     for consequence in consequences:
- #       Customers_name = '-'
- #       if friend.Customers:
- #           Customers_name = friend.Customers.name
- #       Months_names = '-'
- #       if friend.hobbies:
- #           Months_names = ', '.join([x.name for x in friend.hobbies])
-
         tbody_tr_items.append([
-            {
-                'col_value': consequence.id,
-            },
-            {
-                'col_value': consequence.component_name,
-                'url': url_for('manage_data.consequence_edit', consequence_id=consequence.id),
-            },
-            {
-                'col_value': consequence.security_property,
-            },
-            {
-                'col_value': consequence.consequence_category,
-            },
-
-            {
-                'col_value': consequence.consequence_realisticcase,
-            },
-            {
-                'col_value': 'Delete',
-                'url': url_for('manage_data.consequence_delete', consequence_id=consequence.id),
-            }
-            ])
+            {'col_value': consequence.id},
+            {'col_value': consequence.component_name, 'url': url_for('manage_data.consequence_edit', consequence_id=consequence.id)},
+            {'col_value': consequence.security_property},
+            {'col_value': consequence.consequence_category},
+            {'col_value': consequence.consequence_realisticcase},
+            {'col_value': 'Delete', 'url': url_for('manage_data.consequence_delete', consequence_id=consequence.id)}
+        ])
 
     return render_template(
         'items_list.html',
@@ -788,6 +762,7 @@ def consequence_list():
         tbody_tr_items=tbody_tr_items,
         item_new_url=url_for('manage_data.consequence_new'),
         item_new_text='New Consequence',
+        pagination=pagination
     )
 
 @manage_data_blueprint.route('/consequence/new', methods=['GET', 'POST'])
@@ -890,66 +865,43 @@ def consequence_delete(consequence_id):
 # Availability
 @manage_data_blueprint.route('/availability/list', methods=['GET', 'POST'])
 def availability_list():
-    availabilities = app_db.session.query(Availability_Requirements).order_by(Availability_Requirements.id).all()
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Aantal items per pagina
+
+    query = app_db.session.query(Availability_Requirements).order_by(Availability_Requirements.id)
+    total = query.count()
+    
+    offset = (page - 1) * per_page
+    availabilities = query.offset(offset).limit(per_page).all()
+    
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
 
     thead_th_items = [
-        {
-            'col_title': '#',
-        },
-                {
-            'col_title': 'Linked to component',
-        },
-        {
-            'col_title': 'Maximum Tolerable Downtime (MTD)',
-        },
-        {
-            'col_title': 'Recovery Time Objective (RTO)',
-        },
-        {
-            'col_title': 'Recovery Point Objective (RPO)',
-        },
-        {
-            'col_title': 'Minimal Acceptable Service Level (MASL)',
-        },
-        {
-            'col_title': 'Delete'
-        },
-
+        {'col_title': '#'},
+        {'col_title': 'Linked to component'},
+        {'col_title': 'Maximum Tolerable Downtime (MTD)'},
+        {'col_title': 'Recovery Time Objective (RTO)'},
+        {'col_title': 'Recovery Point Objective (RPO)'},
+        {'col_title': 'Minimal Acceptable Service Level (MASL)'},
+        {'col_title': 'Delete'}
     ]
+
     tbody_tr_items = []
     for availability in availabilities:
- #       Customers_name = '-'
- #       if friend.Customers:
- #           Customers_name = friend.Customers.name
- #       Months_names = '-'
- #       if friend.hobbies:
- #           Months_names = ', '.join([x.name for x in friend.hobbies])
-
         tbody_tr_items.append([
-            {
-                'col_value': availability.id,
-            },
-            {
-                'col_value': availability.component_name,
-                'url': url_for('manage_data.availability_edit', availability_id=availability.id),
-            },
-            {
-                'col_value': availability.mtd,
-            },
-            {
-                'col_value': availability.rto,
-            },
-            {
-                'col_value': availability.rpo,
-            },
-            {
-                'col_value': availability.masl,
-            },
-            {
-                'col_value': 'Delete',
-                'url': url_for('manage_data.availability_delete', availability_id=availability.id),
-            }
-            ])
+            {'col_value': availability.id},
+            {'col_value': availability.component_name, 'url': url_for('manage_data.availability_edit', availability_id=availability.id)},
+            {'col_value': availability.mtd},
+            {'col_value': availability.rto},
+            {'col_value': availability.rpo},
+            {'col_value': availability.masl},
+            {'col_value': 'Delete', 'url': url_for('manage_data.availability_delete', availability_id=availability.id)}
+        ])
 
     return render_template(
         'items_list.html',
@@ -958,6 +910,7 @@ def availability_list():
         tbody_tr_items=tbody_tr_items,
         item_new_url=url_for('manage_data.availability_new'),
         item_new_text='New availability requirement',
+        pagination=pagination
     )
 
 @manage_data_blueprint.route('/availability/new', methods=['GET', 'POST'])
@@ -1019,50 +972,37 @@ def availability_delete(availability_id):
 
 @manage_data_blueprint.route('/summary/list', methods=['GET', 'POST'])
 def summary_list():
-    summarys = app_db.session.query(Summary).order_by(Summary.id).all()
-    bias = app_db.session.query(Context_Scope).order_by(Context_Scope.id).all()
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Aantal items per pagina
+
+    query = app_db.session.query(Summary).order_by(Summary.id)
+    total = query.count()
+    
+    offset = (page - 1) * per_page
+    summarys = query.offset(offset).limit(per_page).all()
+    
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
 
     thead_th_items = [
-        {
-            'col_title': '#',
-        },
-        {
-            'col_title': 'Linked to BIA'
-        },
-        {
-            'col_title': 'Summary'
-        },
-        {
-            'col_title': 'Delete'
-        }
+        {'col_title': '#'},
+        {'col_title': 'Linked to BIA'},
+        {'col_title': 'Summary'},
+        {'col_title': 'Delete'}
     ]
 
     tbody_tr_items = []
     for summary in summarys:
-
- #       Customers_name = '-'
- #       if friend.Customers:
- #           Customers_name = friend.Customers.name
- #       Months_names = '-'
- #       if friend.hobbies:
- #           Months_names = ', '.join([x.name for x in friend.hobbies])
-
         tbody_tr_items.append([
-            {
-                'col_value': summary.id,
-            },
-            {
-                'col_value': summary.name,
-                'url': url_for('manage_data.summary_edit', summary_id=summary.id),
-            },
-            {
-                'col_value': summary.summary_text
-            },
-            {
-                'col_value': 'Delete',
-                'url': url_for('manage_data.summary_delete', summary_id=summary.id),
-            }
-            ])
+            {'col_value': summary.id},
+            {'col_value': summary.name, 'url': url_for('manage_data.summary_edit', summary_id=summary.id)},
+            {'col_value': summary.summary_text},
+            {'col_value': 'Delete', 'url': url_for('manage_data.summary_delete', summary_id=summary.id)}
+        ])
 
     return render_template(
         'items_list.html',
@@ -1071,6 +1011,7 @@ def summary_list():
         tbody_tr_items=tbody_tr_items,
         item_new_url=url_for('manage_data.summary_new'),
         item_new_text='New Summary',
+        pagination=pagination
     )
 
 @manage_data_blueprint.route('/summary/new', methods=['GET', 'POST'])

@@ -50,7 +50,38 @@
     {% else %}
         <p>No items found</p>
     {% endif %}
+    {% if pagination %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination pagination-dark justify-content-center">
+            {% if pagination.page > 1 %}
+                <li class="page-item">
+                    <a class="page-link text-light bg-dark" href="{{ url_for(request.endpoint, page=pagination.page - 1) }}">&laquo; Previous</a>
+                </li>
+            {% endif %}
     
+            {% set start_page = [pagination.page - 2, 1] | max %}
+            {% set end_page = [start_page + 4, pagination.pages] | min %}
+            
+            {% for page_num in range(start_page, end_page + 1) %}
+                {% if page_num != pagination.page %}
+                    <li class="page-item">
+                        <a class="page-link text-light bg-dark" href="{{ url_for(request.endpoint, page=page_num) }}">{{ page_num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item active">
+                        <span class="page-link bg-secondary text-light">{{ page_num }}</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+    
+            {% if pagination.page < pagination.pages %}
+                <li class="page-item">
+                    <a class="page-link text-light bg-dark" href="{{ url_for(request.endpoint, page=pagination.page + 1) }}">Next &raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
     <div class="d-flex gap-2">
         <a class="btn btn-primary" href="{{ item_new_url }}" role="button">{{ item_new_text }}</a>
         {% if show_import is defined and show_import %}

@@ -15,3 +15,5 @@ werkzeug>=3.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 reportlab
 pillow>=10.3.0 # not directly required, pinned by Snyk to avoid a vulnerability
+Flask-SQLAlchemy
+flask-paginate
