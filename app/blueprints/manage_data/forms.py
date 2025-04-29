@@ -28,7 +28,7 @@ class BIANewEditFormMixin():
     risk_assessment_process = SelectField('Would a risk assessment on the process factor be necassery ',choices=[('yes', 'Yes'), ('no', 'No')],  validators=[InputRequired()])
     risk_assessment_technological = SelectField('Would a risk assessment on the technilogical factor be necassery ',choices=[('yes', 'Yes'), ('no', 'No')],  validators=[InputRequired()])
     ai_model= SelectField('Does the system use AI or an algorithm? ',choices=[('yes', 'Yes'), ('no', 'No')],  validators=[InputRequired()])
-    project_leader = StringField('Who is the project leader or Product Owner?', validators=[InputRequired()])
+    project_leader = StringField('Who is the project leader?', validators=[InputRequired()])
     risk_owner = StringField('Who is the risk owner ', validators=[InputRequired()])
     product_owner = StringField('Who is the product owner ', validators=[InputRequired()])
     technical_administrator = StringField('Who is the technical administrator ', validators=[InputRequired()])
