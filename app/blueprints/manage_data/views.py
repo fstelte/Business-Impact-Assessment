@@ -19,14 +19,8 @@ from .forms import (
     AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm,
     SummaryNewForm, SummaryEditForm, SummaryDeleteForm
 )
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
-from reportlab.lib.units import inch
-import html
+from werkzeug.utils import secure_filename
 
-from io import BytesIO
 def calculate_cia_score(consequence):
     score_map = {'Low': 1, 'Medium': 2, 'High': 3, 'Huge': 4}
     return score_map.get(consequence, 0)
