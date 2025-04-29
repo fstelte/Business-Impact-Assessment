@@ -29,6 +29,10 @@
                                         <a class="btn button-primary" href="{{ tbody_td_item.url }}" role="button">
                                             {{ tbody_td_item.col_value }}
                                         </a>
+                                        {% elif tbody_td_item.col_value == 'Generate Report' %}
+                                        <a class="btn btn-info" href="{{ tbody_td_item.url }}" role="button">
+                                            {{ tbody_td_item.col_value }}
+                                        </a>
                                     {% else %}
                                         <a class="btn btn-outline-light" href="{{ tbody_td_item.url }}" role="button">
                                             {{ tbody_td_item.col_value }}
