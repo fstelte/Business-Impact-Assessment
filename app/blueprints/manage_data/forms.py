@@ -1,9 +1,9 @@
 # forms.py
 
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField, TextAreaField, BooleanField
+from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField, TextAreaField, BooleanField, PasswordField
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
-from wtforms.validators import InputRequired, Length
+from wtforms.validators import InputRequired, Length, DataRequired, Email, EqualTo
 
 from app.services import app_db
 from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences, ConsequenceChoices, SecurityProperties, Summary
@@ -155,3 +155,35 @@ class SummaryEditForm(FlaskForm, SummaryNewEditFormMixin):
 
 class SummaryDeleteForm(FlaskForm):
     submit = SubmitField('Confirm delete')
+
+class ConsequenceChoicesNewForm(FlaskForm):
+    consequence_realisticcase = StringField('Consequence Realisticcase', validators=[InputRequired()])
+    consequence_worstcase = StringField('Consequence Worstcase', validators=[InputRequired()])
+    submit = SubmitField('Add', render_kw={'class': 'mt-2'})
+
+class ConsequenceChoicesEditForm(FlaskForm):
+    consequence_realisticcase = StringField('Consequence Realisticcase', validators=[InputRequired()])
+    cconsequence_worstcase = StringField('Consequence Worstcase', validators=[InputRequired()])
+    submit = SubmitField('Update', render_kw={'class': 'mt-2'})
+
+class ConsequenceChoicesDeleteForm(FlaskForm):
+    submit = SubmitField('Confirm delete', render_kw={'class': 'mt-2'})
+
+class SecurityPropertyNewForm(FlaskForm):
+    security_property = StringField('Security Property', validators=[InputRequired()])
+    submit = SubmitField('Add', render_kw={'class': 'mt-2'})
+
+class SecurityPropertyEditForm(FlaskForm):
+    security_property = StringField('Security Property', validators=[InputRequired()])
+    submit = SubmitField('Update', render_kw={'class': 'mt-2'})
+
+class SecurityPropertyDeleteForm(FlaskForm):
+    submit = SubmitField('Confirm delete', render_kw={'class': 'mt-2'})
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')

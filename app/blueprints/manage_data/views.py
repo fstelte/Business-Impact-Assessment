@@ -10,6 +10,7 @@ import io
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
     render_template, flash, abort, send_file, after_this_request, make_response
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 from flask_paginate import Pagination, get_page_parameter
 
 
@@ -20,7 +21,10 @@ from .forms import (
     ReferenceNewForm, ReferenceEditForm, ReferenceDeleteForm,
     ConsequenceNewForm, ConsequenceEditForm, ConsequenceDeleteForm,
     AvailabilityNewForm, AvailabilityEditForm, AvailabilityDeleteForm,
-    SummaryNewForm, SummaryEditForm, SummaryDeleteForm
+    SummaryNewForm, SummaryEditForm, SummaryDeleteForm,
+    ConsequenceChoicesNewForm, ConsequenceChoicesEditForm, ConsequenceChoicesDeleteForm,
+    SecurityPropertyNewForm, SecurityPropertyEditForm, SecurityPropertyDeleteForm,
+    RegistrationForm
 )
 from werkzeug.utils import secure_filename
 
@@ -1392,3 +1396,193 @@ def bia_import():
     
     # GET request toont het upload formulier
     return render_template('bia_import.html')
+@manage_data_blueprint.route('/consequence_choices/list', methods=['GET', 'POST'])
+def consequence_choices_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Aantal items per pagina
+
+    query = app_db.session.query(ConsequenceChoices).order_by(ConsequenceChoices.id)
+    total = query.count()
+    
+    offset = (page - 1) * per_page
+    choices = query.offset(offset).limit(per_page).all()
+    
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
+
+    thead_th_items = [
+        {'col_title': '#'},
+        {'col_title': 'Realistic Case'},
+        {'col_title': 'Worst Case'},
+        {'col_title': 'Delete'}
+    ]
+
+    tbody_tr_items = []
+    for choice in choices:
+        tbody_tr_items.append([
+            {'col_value': choice.id},
+            {'col_value': choice.consequence_realisticcase},
+            {'col_value': choice.consequence_worstcase},
+            {'col_value': 'Delete', 'url': url_for('manage_data.consequence_choices_delete', choices_id=choice.id)}
+        ])
+
+    return render_template(
+        'items_list.html',
+        title='Consequence Choices',
+        thead_th_items=thead_th_items,
+        tbody_tr_items=tbody_tr_items,
+        item_new_url=url_for('manage_data.consequence_choices_new'),
+        item_new_text='New Consequence Choice',
+        pagination=pagination
+    )
+@manage_data_blueprint.route('/consequence_choices/new', methods=['GET', 'POST'])
+def consequence_choices_new():
+    item = ConsequenceChoices()
+    form = ConsequenceChoicesNewForm()
+
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        app_db.session.add(item)
+        app_db.session.commit()
+        flash('Consequence choice added: ' + item.consequence_realisticcase, 'info')
+        return redirect(url_for('manage_data.consequence_choices_list'))
+
+    return render_template('item_new_edit.html', title='New Consequence Choice', form=form)
+
+@manage_data_blueprint.route('/consequence_choices/edit/<int:choices_id>', methods=['GET', 'POST'])
+def consequence_choices_edit(choices_id):
+    item = app_db.session.query(ConsequenceChoices).filter(ConsequenceChoices.id == choices_id).first()
+    if item is None:
+        abort(403)
+
+    form = ConsequenceChoicesEditForm(obj=item)
+
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        app_db.session.commit()
+        flash('Consequence choice updated: ' + item.consequence_realisticcase, 'info')
+        return redirect(url_for('manage_data.consequence_choices_list'))
+
+    return render_template('item_new_edit.html', title='Edit Consequence Choice', form=form)
+
+@manage_data_blueprint.route('/consequence_choices/delete/<int:choices_id>', methods=['GET', 'POST'])
+def consequence_choices_delete(choices_id):
+    item = app_db.session.query(ConsequenceChoices).filter(ConsequenceChoices.id == choices_id).first()
+    if item is None:
+        abort(403)
+
+    form = ConsequenceChoicesDeleteForm(obj=item)
+
+    item_name = f"{item.consequence_realisticcase} - {item.consequence_worstcase}"
+    if form.validate_on_submit():
+        app_db.session.delete(item)
+        app_db.session.commit()
+        flash('Deleted consequence choice: ' + item_name, 'info')
+        return redirect(url_for('manage_data.consequence_choices_list'))
+
+    return render_template('item_delete.html', title='Delete Consequence Choice', item_name=item_name, form=form)
+
+@manage_data_blueprint.route('/security_property/list', methods=['GET', 'POST'])
+def security_property_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Aantal items per pagina
+
+    query = app_db.session.query(SecurityProperties).order_by(SecurityProperties.id)
+    total = query.count()
+    
+    offset = (page - 1) * per_page
+    properties = query.offset(offset).limit(per_page).all()
+    
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
+
+    thead_th_items = [
+        {'col_title': '#'},
+        {'col_title': 'Security Property'},
+        {'col_title': 'Delete'}
+    ]
+
+    tbody_tr_items = []
+    for prop in properties:
+        tbody_tr_items.append([
+            {'col_value': prop.id},
+            {'col_value': prop.security_property, 'url': url_for('manage_data.security_property_edit', property_id=prop.id)},
+            {'col_value': 'Delete', 'url': url_for('manage_data.security_property_delete', property_id=prop.id)}
+        ])
+
+    return render_template(
+        'items_list.html',
+        title='Security Properties',
+        thead_th_items=thead_th_items,
+        tbody_tr_items=tbody_tr_items,
+        item_new_url=url_for('manage_data.security_property_new'),
+        item_new_text='New Security Property',
+        pagination=pagination
+    )
+
+@manage_data_blueprint.route('/security_property/new', methods=['GET', 'POST'])
+def security_property_new():
+    item = SecurityProperties()
+    form = SecurityPropertyNewForm()
+
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        app_db.session.add(item)
+        app_db.session.commit()
+        flash('Security property added: ' + item.security_property, 'info')
+        return redirect(url_for('manage_data.security_property_list'))
+
+    return render_template('item_new_edit.html', title='New Security Property', form=form)
+
+@manage_data_blueprint.route('/security_property/edit/<int:property_id>', methods=['GET', 'POST'])
+def security_property_edit(property_id):
+    item = app_db.session.query(SecurityProperties).filter(SecurityProperties.id == property_id).first()
+    if item is None:
+        abort(403)
+
+    form = SecurityPropertyEditForm(obj=item)
+
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        app_db.session.commit()
+        flash('Security property updated: ' + item.security_property, 'info')
+        return redirect(url_for('manage_data.security_property_list'))
+
+    return render_template('item_new_edit.html', title='Edit Security Property', form=form)
+
+@manage_data_blueprint.route('/security_property/delete/<int:property_id>', methods=['GET', 'POST'])
+def security_property_delete(property_id):
+    item = app_db.session.query(SecurityProperties).filter(SecurityProperties.id == property_id).first()
+    if item is None:
+        abort(403)
+
+    form = SecurityPropertyDeleteForm(obj=item)
+
+    item_name = item.security_property
+    if form.validate_on_submit():
+        app_db.session.delete(item)
+        app_db.session.commit()
+        flash('Deleted security property: ' + item_name, 'info')
+        return redirect(url_for('manage_data.security_property_list'))
+
+    return render_template('item_delete.html', title='Delete Security Property', item_name=item_name, form=form)
+
+@manage_data_blueprint.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        app_db.session.add(user)
+        app_db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('manage_data.login'))  # Assuming you have a login route
+    return render_template('register.html', title='Register', form=form)
