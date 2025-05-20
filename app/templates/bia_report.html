@@ -1,137 +1,157 @@
 {% extends "report_base.html" %}
 
 {% block content %}
-<h1>BIA Report for {{ bia.name }}</h1>
-<h2>BIA Information</h2>
-<table class="table">
-    <tr>
-        <th>Name</th>
-        <td>{{ bia.name }}</td>
-    </tr>
-    <tr>
-        <th>Responsible</th>
-        <td>{{ bia.responsible }}</td>
-    </tr>
-    <tr>
-        <th>Coordinator</th>
-        <td>{{ bia.coordinator }}</td>
-    </tr>
-    <tr>
-        <th>Start Date</th>
-        <td>{{ bia.start_date }}</td>
-    </tr>
-    <tr>
-        <th>End Date</th>
-        <td>{{ bia.end_date }}</td>
-    </tr>
-    <tr>
-        <th>Last Update</th>
-        <td>{{ bia.last_update }}</td>
-    </tr>
-    <tr>
-        <th>Service Description</th>
-        <td>{{ bia.service_description }}</td>
-    </tr>
-    <tr>
-        <th>Knowledge</th>
-        <td>{{ bia.knowledge }}</td>
-    </tr>
-    <tr>
-        <th>Interfaces</th>
-        <td>{{ bia.interfaces }}</td>
-    </tr>
-    <tr>
-        <th>Mission Critical</th>
-        <td>{{ bia.mission_critical }}</td>
-    </tr>
-    <tr>
-        <th>Support Contracts</th>
-        <td>{{ bia.support_contracts }}</td>
-    </tr>
-    <tr>
-        <th>Security Supplier</th>
-        <td>{{ bia.security_supplier }}</td>
-    </tr>
-    <tr>
-        <th>User Amount</th>
-        <td>{{ bia.user_amount }}</td>
-    </tr>
-    <tr>
-        <th>Scope Description</th>
-        <td>{{ bia.scope_description }}</td>
-    </tr>
-    <tr>
-        <th>Risk Assessment Human</th>
-        <td>{{ bia.risk_assessment_human }}</td>
-    </tr>
-    <tr>
-        <th>Risk Assessment Process</th>
-        <td>{{ bia.risk_assessment_process }}</td>
-    </tr>
-    <tr>
-        <th>Risk Assessment Technological</th>
-        <td>{{ bia.risk_assessment_technological }}</td>
-    </tr>
-    <tr>
-        <th>One of the components has AI or uses an algorithm</th>
-        <td>{{ bia.ai_model }}</td>
-    </tr>
-    <tr>
-        <th>Project Leader</th>
-        <td>{{ bia.project_leader }}</td>
-    </tr>
-    <tr>
-        <th>Risk Owner</th>
-        <td>{{ bia.risk_owner }}</td>
-    </tr>
-    <tr>
-        <th>Product Owner</th>
-        <td>{{ bia.product_owner }}</td>
-    </tr>
-    <tr>
-        <th>Technical Administrator</th>
-        <td>{{ bia.technical_administrator }}</td>
-    </tr>
-    <tr>
-        <th>Security Manager</th>
-        <td>{{ bia.security_manager }}</td>
-    </tr>
-    <tr>
-        <th>Incident Contact</th>
-        <td>{{ bia.incident_contact }}</td>
-    </tr>
+<h1 class="mb-4">BIA Report for {{ bia.name }}</h1>
+<h2 class="mb-3">Table of Contents</h2>
+<div class="d-grid gap-2 col-md-6 mx-auto mb-4">
+    <a href="#summary" class="btn btn-primary">Summary</a>
+    <a href="#bia-info" class="btn btn-primary">BIA Information</a>
+    <a href="#components" class="btn btn-primary">Components, CIA Scores, and Consequences</a>
+    <a href="#availability" class="btn btn-primary">Availability Requirements</a>
+</div>
+
+<h2 id="summary" class="mb-3">Summary</h2>
+{% if summary %}
+<p>{{ summary.summary_text }}</p>
+{% else %}
+<p>No summary available.</p>
+{% endif %}
+<h2 id="bia-info" class="mb-3">BIA Information</h2>
+<table class="table table-dark table-striped">
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>{{ bia.name }}</td>
+        </tr>
+        <tr>
+            <th>Responsible</th>
+            <td>{{ bia.responsible }}</td>
+        </tr>
+        <tr>
+            <th>Coordinator</th>
+            <td>{{ bia.coordinator }}</td>
+        </tr>
+        <tr>
+            <th>Start Date</th>
+            <td>{{ bia.start_date }}</td>
+        </tr>
+        <tr>
+            <th>End Date</th>
+            <td>{{ bia.end_date }}</td>
+        </tr>
+        <tr>
+            <th>Last Update</th>
+            <td>{{ bia.last_update }}</td>
+        </tr>
+        <tr>
+            <th>Service Description</th>
+            <td>{{ bia.service_description }}</td>
+        </tr>
+        <tr>
+            <th>Knowledge</th>
+            <td>{{ bia.knowledge }}</td>
+        </tr>
+        <tr>
+            <th>Interfaces</th>
+            <td>{{ bia.interfaces }}</td>
+        </tr>
+        <tr>
+            <th>Mission Critical</th>
+            <td>{{ bia.mission_critical }}</td>
+        </tr>
+        <tr>
+            <th>Support Contracts</th>
+            <td>{{ bia.support_contracts }}</td>
+        </tr>
+        <tr>
+            <th>Security Supplier</th>
+            <td>{{ bia.security_supplier }}</td>
+        </tr>
+        <tr>
+            <th>User Amount</th>
+            <td>{{ bia.user_amount }}</td>
+        </tr>
+        <tr>
+            <th>Scope Description</th>
+            <td>{{ bia.scope_description }}</td>
+        </tr>
+        <tr>
+            <th>Risk Assessment Human</th>
+            <td>{{ bia.risk_assessment_human }}</td>
+        </tr>
+        <tr>
+            <th>Risk Assessment Process</th>
+            <td>{{ bia.risk_assessment_process }}</td>
+        </tr>
+        <tr>
+            <th>Risk Assessment Technological</th>
+            <td>{{ bia.risk_assessment_technological }}</td>
+        </tr>
+        <tr>
+            <th>One of the components has AI or uses an algorithm</th>
+            <td>{{ bia.ai_model }}</td>
+        </tr>
+        <tr>
+            <th>Project Leader</th>
+            <td>{{ bia.project_leader }}</td>
+        </tr>
+        <tr>
+            <th>Risk Owner</th>
+            <td>{{ bia.risk_owner }}</td>
+        </tr>
+        <tr>
+            <th>Product Owner</th>
+            <td>{{ bia.product_owner }}</td>
+        </tr>
+        <tr>
+            <th>Technical Administrator</th>
+            <td>{{ bia.technical_administrator }}</td>
+        </tr>
+        <tr>
+            <th>Security Manager</th>
+            <td>{{ bia.security_manager }}</td>
+        </tr>
+        <tr>
+            <th>Incident Contact</th>
+            <td>{{ bia.incident_contact }}</td>
+        </tr>
+    </tbody>
 </table>
 
-<h2>Components, CIA Scores, and Consequences</h2>
+<h2 id="components" class="mb-3">Components, CIA Scores, and Consequences</h2>
 {% for component in components %}
-    <h3>{{ component.component_name }}</h3>
+    <h3 class="mt-4">{{ component.component_name }}</h3>
     <p>Number of consequences: {{ consequences[component.component_name]|length }}</p>
     
-    <h4>CIA Scores</h4>
-    <table class="table">
-        <tr>
-            <th>Confidentiality</th>
-            <th>Integrity</th>
-            <th>Availability</th>
-        </tr>
-        <tr>
-            {% for cia in ['C', 'I', 'A'] %}
-                <td>
-                    {% if cia_scores[component.component_name][cia] %}
-                        {% set max_score = cia_scores[component.component_name][cia] | max(attribute='score') %}
-                        <span class="badge bg-{{ ['success', 'success', 'warning', 'danger', 'danger'][max_score.score] }}">
-                            {{ max_score.score }} - {{ max_score.consequence }}
-                        </span>
-                    {% else %}
-                        <span class="badge bg-secondary">-</span>
-                    {% endif %}
-                </td>
-            {% endfor %}
-        </tr>
+    <h4 class="mt-3">CIA Scores</h4>
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Confidentiality</th>
+                <th>Integrity</th>
+                <th>Availability</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for cia in ['C', 'I', 'A'] %}
+                    <td>
+                        {% if cia_scores[component.component_name][cia] %}
+                            {% set max_score = cia_scores[component.component_name][cia] | max(attribute='score') %}
+                            <span class="badge bg-{{ ['success', 'success', 'warning', 'danger', 'danger'][max_score.score] }}">
+                                {{ max_score.score }} - {{ max_score.consequence }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">-</span>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        </tbody>
     </table>
 
-    <h4>Consequences</h4>
-    <table class="table">
+    <h4 class="mt-3">Consequences</h4>
+    <table class="table table-dark table-striped">
         <thead>
             <tr>
                 <th>Category</th>
@@ -163,8 +183,8 @@
     </table>
 {% endfor %}
 
-<h2>Availability Requirements</h2>
-<table class="table">
+<h2 id="availability" class="mb-3">Availability Requirements</h2>
+<table class="table table-dark table-striped">
     <thead>
         <tr>
             <th>Component</th>
@@ -186,10 +206,5 @@
         {% endfor %}
     </tbody>
 </table>
-
-{% if summary %}
-<h2>Summary</h2>
-<p>{{ summary.summary_text }}</p>
-{% endif %}
 
 {% endblock %}
