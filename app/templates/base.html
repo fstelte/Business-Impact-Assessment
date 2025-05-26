@@ -9,72 +9,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Business Impact Assessment</title>
     {{ bootstrap.load_css() }}   
-    <style>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+<style>
+    body {
+        background-color: #ffffff;
+        color: #000000;
+    }
+    
+    .button-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: #ffffff;
+    }
+        .select2-container--bootstrap4 .select2-selection {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #ced4da;
+    }
+
+    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+        background-color: #e9ecef;
+        color: #000000;
+        border: 1px solid #ced4da;
+    }
+
+    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
+        color: #000000;
+    }
+
+    .select2-container--bootstrap4 .select2-dropdown {
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+    }
+
+    .select2-container--bootstrap4 .select2-results__option {
+        color: #000000;
+    }
+
+    .select2-container--bootstrap4 .select2-results__option[aria-selected=true] {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+
+    .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+        .select2-search.select2-search--inline {
+        display: none !important;
+    }
+
+    .select2-search.select2-search--inline .select2-search__field {
+        display: none !important;
+    }
+
+    /* Zorg ervoor dat de geselecteerde items de volledige breedte innemen */
+    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    @media (prefers-color-scheme: dark) {
         body {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #343a40;
+            color: #ffffff;
         }
-        
+    
         .button-primary {
             background-color: #0d6efd;
             border-color: #0d6efd;
             color: #ffffff;
         }
 
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #343a40;
-                color: #ffffff;
-            }
-        
-            .button-primary {
-                background-color: #0d6efd;
-                border-color: #0d6efd;
-                color: #ffffff;
-            }
+        /* Stijlen voor Select2 in dark mode */
+            .select2-container--bootstrap4 .select2-selection,
+        .select2-container--bootstrap4 .select2-dropdown,
+        .select2-container--bootstrap4 .select2-results__option {
+            background-color: #ffffff !important;
+            color: #000000 !important;
         }
-    </style>
+
+        .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+            background-color: #e9ecef !important;
+            color: #000000 !important;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option[aria-selected=true],
+        .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+            background-color: #007bff !important;
+            color: #ffffff !important;
+        }
+                } 
+</style>
 </head>
 <body class="d-flex flex-column min-vh-100">
   
-<!--Navbar-->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container d-flex justify-content-center">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-            <ul class="navbar-nav fw-semibold hov">
-                {{ render_nav_item('index', 'Home', use_li=True) }}
-                {{ render_nav_item('manage_data.bia_list', 'BIA', use_li=True) }}
-                {{ render_nav_item('manage_data.component_list', 'Components', use_li=True) }}
-                {{ render_nav_item('manage_data.consequence_list', 'Consequences', use_li=True) }}
-                {{ render_nav_item('manage_data.availability_list', 'Availability Requirements', use_li=True) }}
-                {{ render_nav_item('manage_data.summary_list', 'BIA Summaries', use_li=True) }}
-                {{ render_nav_item('manage_data.reference_list', 'Consequence references', use_li=True) }}
-            </ul>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container d-flex justify-content-center">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                <ul class="navbar-nav fw-semibold hov">
+                    {{ render_nav_item('index', 'Home', use_li=True) }}
+                    {{ render_nav_item('manage_data.bia_list', 'BIA', use_li=True) }}
+                    {{ render_nav_item('manage_data.component_list', 'Components', use_li=True) }}
+                    {{ render_nav_item('manage_data.consequence_list', 'Consequences', use_li=True) }}
+                    {{ render_nav_item('manage_data.availability_list', 'Availability Requirements', use_li=True) }}
+                    {{ render_nav_item('manage_data.summary_list', 'BIA Summaries', use_li=True) }}
+                    {{ render_nav_item('manage_data.reference_list', 'Consequence references', use_li=True) }}
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-
-        <!--Body-->
-       
-            <main class="container bg-dark min-h-100 d-inline-block flex-grow-1 mb-4 border rounded">
-                <div class="p-4">
-                {{ render_messages(container=False, dismissible=True) }}
-                {% block content %}{% endblock %}
-                </div>
-            </main>
+    <!--Body-->
+    <main class="container bg-dark min-h-100 d-inline-block flex-grow-1 mb-4 border rounded">
+        <div class="p-4">
+            {{ render_messages(container=False, dismissible=True) }}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
    
-   
-        <!--Footer-->
-        <footer class="text-center text-lg-start bg-dark text-light mt-auto text-white">
-            <span class="text-light">{% include "incl_footer.html" %}</span>
-        </footer>
+    <!--Footer-->
+    <footer class="text-center text-lg-start bg-dark text-light mt-auto text-white">
+        <span class="text-light">{% include "incl_footer.html" %}</span>
+    </footer>
  
-
     {{ bootstrap.load_js() }}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%',
+            minimumResultsForSearch: Infinity,  // Dit schakelt de zoekfunctionaliteit uit
+            dropdownCssClass: 'select2-dropdown-no-search'  // We gebruiken deze klasse om extra CSS-stijlen toe te passen indien nodig
+        });
+    });
+</script>
+    {% block scripts %}
+    {% endblock %}
 </body>
 </html>

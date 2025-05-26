@@ -771,79 +771,85 @@ def consequence_list():
 
 @manage_data_blueprint.route('/consequence/new', methods=['GET', 'POST'])
 def consequence_new():
-
-    item = Consequences()
     form = ConsequenceNewForm()
 
-    lijst = choices_maken(Components, 'component_name', item)
-    form.component_name.choices = lijst
+    # Haal alle componenten op en maak een lijst van tuples (id, component_name)
+    components = app_db.session.query(Components).all()
+    form.component_name.choices = [(c.component_name, c.component_name) for c in components]
 
-    sec_prop = get_choices(SecurityProperties, 'security_property', item)
-    form.security_property.choices = sec_prop
+    # Haal alle security properties op
+    security_properties = app_db.session.query(SecurityProperties).all()
+    form.security_property.choices = [(sp.security_property, sp.security_property) for sp in security_properties]
 
-    con_cat = get_references(References, 'consequence_category', item)
-    form.consequence_category.choices = con_cat
+    # Haal alle referenties (categorieën) op
+    references = app_db.session.query(References).all()
+    form.consequence_category.choices = [(r.consequence_category, r.consequence_category) for r in references]
 
-    con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
-    form.consequence_worstcase.choices = con_wc
-
-    con_rc = get_consequences_rc(ConsequenceChoices, 'consequence_realisticcase', item)
-    form.consequence_realisticcase.choices = con_rc
+    # Haal alle consequence choices op
+    consequence_choices = app_db.session.query(ConsequenceChoices).all()
+    form.consequence_worstcase.choices = [(cc.consequence_worstcase, cc.consequence_worstcase) for cc in consequence_choices]
+    form.consequence_realisticcase.choices = [(cc.consequence_realisticcase, cc.consequence_realisticcase) for cc in consequence_choices]
 
     if form.validate_on_submit():
-        form.populate_obj(item)
-        # Map form fields to object attributes
-        item.component_name = form.component_name.data #.component_name
-        item.security_property = form.security_property.data
-        item.consequence_category = form.consequence_category.data
-        item.consequence_worstcase = form.consequence_worstcase.data
-        item.justification_worstcase = form.justification_worstcase.data
-        item.consequence_realisticcase = form.consequence_realisticcase.data
-        item.justification_realisticcase = form.justification_realisticcase.data
-        #item.component_name = form.name.data.name
-        app_db.session.add(item)
+        categories = form.consequence_category.data
+        for category in categories:
+            new_consequence = Consequences(
+                component_name=form.component_name.data,
+                security_property=form.security_property.data,
+                consequence_category=category,  # Gebruik één categorie per consequence
+                consequence_worstcase=form.consequence_worstcase.data,
+                justification_worstcase=form.justification_worstcase.data,
+                consequence_realisticcase=form.consequence_realisticcase.data,
+                justification_realisticcase=form.justification_realisticcase.data
+            )
+            app_db.session.add(new_consequence)
+        
         app_db.session.commit()
-        flash('Consequence added: ' + item.consequence_category, 'info')
-        return redirect(url_for('manage_data.consequence_list'))
+        flash(f'{len(categories)} consequence(s) added successfully', 'success')
+        
+        if form.submit_and_new.data:
+            return redirect(url_for('manage_data.consequence_new', component_name=form.component_name.data))
+        else:
+            return redirect(url_for('manage_data.consequence_list'))
+    # Pre-select component_name if provided in URL parameters
+    if request.args.get('component_name'):
+        form.component_name.data = request.args.get('component_name')
 
     return render_template('item_new_edit.html', title='New Consequence', form=form)
-
 @manage_data_blueprint.route('/consequence/edit/<int:consequence_id>', methods=['GET', 'POST'])
 def consequence_edit(consequence_id):
+    consequence = app_db.session.query(Consequences).filter(Consequences.id == consequence_id).first()
+    if consequence is None:
+        abort(404)
 
-    item = app_db.session.query(Consequences).filter(Consequences.id == consequence_id).first()
-    if item is None:
-        abort(403)
+    form = ConsequenceEditForm(obj=consequence)
 
-    form = ConsequenceEditForm(obj=item)
-
-    lijst = choices_maken(Components, 'component_name', item)
-    form.component_name.choices = lijst
-
-    sec_prop = get_choices(SecurityProperties, 'security_property', item)
-    form.security_property.choices = sec_prop
-
-    con_cat = get_references(References, 'consequence_category', item)
-    form.consequence_category.choices = con_cat
-
-    con_wc = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', item)
-    form.consequence_worstcase.choices = con_wc
-
-    con_rc = get_consequences_rc(ConsequenceChoices, 'consequence_realisticcase', item)
-    form.consequence_realisticcase.choices = con_rc
+    # Populate form choices
+    form.component_name.choices = choices_maken(Components, 'component_name', consequence)
+    form.security_property.choices = get_choices(SecurityProperties, 'security_property', consequence)
+    # If it's a GET request, populate the form with existing data
+    if request.method == 'GET':
+        form.consequence_category.data = consequence.consequence_category
+    form.consequence_category.choices = get_references(References, 'consequence_category', consequence)
+    form.consequence_worstcase.choices = get_consequences_wc(ConsequenceChoices, 'consequence_worstcase', consequence)
+    form.consequence_realisticcase.choices = get_consequences_rc(ConsequenceChoices, 'consequence_realisticcase', consequence)
 
     if form.validate_on_submit():
-        form.populate_obj(item)
-        item.component_name = form.component_name.data
-        item.security_property = form.security_property.data
-        item.consequence_category = form.consequence_category.data
-        item.consequence_worstcase = form.consequence_worstcase.data
-        item.justification_worstcase = form.justification_worstcase.data
-        item.consequence_realisticcase = form.consequence_realisticcase.data
-        item.justification_realisticcase = form.justification_realisticcase.data
+        consequence.component_name = form.component_name.data
+        consequence.security_property = form.security_property.data
+        consequence.consequence_category = form.consequence_category.data
+        consequence.consequence_worstcase = form.consequence_worstcase.data
+        consequence.justification_worstcase = form.justification_worstcase.data
+        consequence.consequence_realisticcase = form.consequence_realisticcase.data
+        consequence.justification_realisticcase = form.justification_realisticcase.data
+
         app_db.session.commit()
-        flash('Consequences updated: ' + item.component_name + item.consequence_category, 'info')
+        flash('Consequence updated successfully', 'success')
         return redirect(url_for('manage_data.consequence_list'))
+
+    # If it's a GET request, populate the form with existing data
+   # if request.method == 'GET':
+    #    form.consequence_category.data = consequence.consequence_category
 
     return render_template('item_new_edit.html', title='Edit Consequence', form=form)
 

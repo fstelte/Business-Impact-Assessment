@@ -1,7 +1,7 @@
 # forms.py
 
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField, TextAreaField, BooleanField, PasswordField
+from wtforms import IntegerField, StringField, SubmitField, DateField, SelectField, SelectMultipleField, TextAreaField, BooleanField, PasswordField
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import InputRequired, Length, DataRequired, Email, EqualTo
 
@@ -98,8 +98,8 @@ class ConsequenceNewEditFormMixin:
                            render_kw={'size': 1})
     security_property = SelectField('Where does the consequence interfere with',
                            render_kw={'size': 1})
-    consequence_category = SelectField('Consequence Category',
-                           render_kw={'size': 1})
+    consequence_category = SelectMultipleField('Consequence Category')
+                           #render_kw={'size': 1})
     consequence_worstcase = SelectField('Worstcase consequence',
                            render_kw={'size': 1})
     justification_worstcase = TextAreaField('Justification for worstcase consequence', render_kw={"rows": 6, "cols": 6})
@@ -110,10 +110,11 @@ class ConsequenceNewEditFormMixin:
 
 class ConsequenceNewForm(FlaskForm, ConsequenceNewEditFormMixin):
     submit = SubmitField('Add', render_kw={'class': 'mt-2'})
+    submit_and_new = SubmitField('Add and New', render_kw={'class': 'mt-2'})
 
 class ConsequenceEditForm(FlaskForm, ConsequenceNewEditFormMixin):
+    consequence_category = SelectField('Category', validators=[DataRequired()])
     submit = SubmitField('Update', render_kw={'class': 'mt-2'})
-
 
 class ConsequenceDeleteForm(FlaskForm):
 
