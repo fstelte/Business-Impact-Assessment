@@ -37,6 +37,12 @@ def create_app():
     def index():
         welcome_message = Markup("""
     <h1>Business Impact Assessment</h1>
+    <p>This app allows you to conduct Business Impact Assessments. Start under the **BIA** section.</p>
+    <p>**Components** must be linked to a BIA.</p>
+    <p>Components are then assigned **consequences**.</p>
+    <p>**Availability requirements** will be specified for each component.</p>
+    <p>Use the last tab to determine the **impact** per component.</p>
+    <h1>Business Impact Assessment</h1>
     <p>Via de ze app kunnen Business Impact Assessment uitgevoerd worden. Begin bij het kopje BIA.</p>
     <p>Aan een BIA moeten componenten gekoppeld worden.</p>
     <p>Componenten krijgen weer consequenties toegewezen.</p>
