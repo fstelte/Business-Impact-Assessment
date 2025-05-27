@@ -517,8 +517,6 @@ def component_list():
 
 @manage_data_blueprint.route('/component/new', methods=['GET', 'POST'])
 def component_new():
-
-    
     form = CompNewForm()
     form.name.query = app_db.session.query(Context_Scope).order_by(Context_Scope.id)
 
@@ -528,21 +526,21 @@ def component_new():
     form.name.choices = lijst
 
     if form.validate_on_submit():
-        
         form.populate_obj(item)
-        item.bia_name = form.name.data
-        #bia_name = form.name.data 
-        #component_name = form.component_name.data
-        #processes_dependencies = form.processes_dependencies.data
-        #info_type = form.info_type.data
-        #user_type = form.user_type.data
-        #description = form.description.data
-        #new_data = Components(bia_name=bia_name, component_name=component_name, processes_dependencies=processes_dependencies, info_type=info_type, user_type=user_type, description=description)
+        item.name = form.name.data
         app_db.session.add(item)
-        #app_db.session.add(new_data)
         app_db.session.commit()
         flash('Component added: ' + item.component_name, 'info')
-        return redirect(url_for('manage_data.component_list'))
+        
+        if form.submit_and_new.data:
+            # Als op "Add and New" is geklikt, redirect naar nieuwe component met dezelfde BIA
+            return redirect(url_for('manage_data.component_new', bia_name=item.name))
+        else:
+            return redirect(url_for('manage_data.component_list'))
+
+    # Als er een bia_name in de URL parameters staat, selecteer deze
+    if request.args.get('bia_name'):
+        form.name.data = request.args.get('bia_name')
 
     return render_template('item_new_edit.html', title='New Component', form=form)
 

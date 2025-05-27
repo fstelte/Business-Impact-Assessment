@@ -62,6 +62,7 @@ class CompNewEditFormMixin():
 
 class CompNewForm(FlaskForm, CompNewEditFormMixin):
     submit = SubmitField('Add', render_kw={'class': 'mt-2'})
+    submit_and_new = SubmitField('Add and New', render_kw={'class': 'mt-2'})
 
 class CompEditForm(FlaskForm, CompNewEditFormMixin):
 
