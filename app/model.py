@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Boolean, Enum
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -90,3 +90,22 @@ class Summary(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, ForeignKey('context_scope.name'))
     summary_text = Column(String)
+
+class AIIdentificatie(Base):
+    __tablename__ = 'ai_identificatie'
+    id = Column(Integer, primary_key=True)
+    component_name = Column(String, ForeignKey('components.component_name'))
+    category = Column(Enum(
+        'No AI',
+        'Unacceptable arisk',
+        'High risk',
+        'Limited risk',
+        'Minimal risk',
+        name='ai_category'
+    ), default='Geen AI')
+    motivatie = Column(String)
+
+    component = relationship("Components", back_populates="ai_identificaties")
+
+# Update the Components class to add the relationship
+Components.ai_identificaties = relationship("AIIdentificatie", back_populates="component")

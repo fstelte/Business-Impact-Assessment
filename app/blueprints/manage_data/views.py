@@ -8,14 +8,15 @@ import io
 
 
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
-    render_template, flash, abort, send_file, after_this_request, make_response
+    render_template, flash, abort, send_file, abort, after_this_request, make_response
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from flask_paginate import Pagination, get_page_parameter
+from sqlalchemy.orm import joinedload
 
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary, AIIdentificatie
 from .forms import (
     BIANewForm, BIAEditForm, BIADeleteForm, CompNewForm, CompEditForm, CompDeleteForm,
     ReferenceNewForm, ReferenceEditForm, ReferenceDeleteForm,
@@ -24,7 +25,8 @@ from .forms import (
     SummaryNewForm, SummaryEditForm, SummaryDeleteForm,
     ConsequenceChoicesNewForm, ConsequenceChoicesEditForm, ConsequenceChoicesDeleteForm,
     SecurityPropertyNewForm, SecurityPropertyEditForm, SecurityPropertyDeleteForm,
-    RegistrationForm
+    RegistrationForm,
+    AIIdentificatieNewForm, AIIdentificatieEditForm, AIIdentificatieDeleteForm
 )
 from werkzeug.utils import secure_filename
 
@@ -390,6 +392,7 @@ import logging
 def bia_report(bia_id):
     bia = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).first()
     components = app_db.session.query(Components).filter(Components.name == bia.name).all()
+    components = app_db.session.query(Components).filter(Components.name == bia.name).options(joinedload(Components.ai_identificaties)).all()
     
     consequences = app_db.session.query(Consequences).filter(
         Consequences.component_name.in_([c.component_name for c in components])
@@ -406,6 +409,11 @@ def bia_report(bia_id):
     for component in components:
         consequences_by_component[component.component_name] = []
         cia_scores[component.component_name] = {'C': [], 'I': [], 'A': []}
+        # Set default AI category to "No AI" if no AI identification exists
+        if not component.ai_identificaties:
+            component.ai_category = "No AI"
+        else:
+            component.ai_category = component.ai_identificaties[0].category
 
     for consequence in consequences:
         consequences_by_component[consequence.component_name].append(consequence)
@@ -1579,6 +1587,101 @@ def security_property_delete(property_id):
 
     return render_template('item_delete.html', title='Delete Security Property', item_name=item_name, form=form)
 
+@manage_data_blueprint.route('/ai_identificatie/list', methods=['GET', 'POST'])
+def ai_identificatie_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Number of items per page
+
+    query = app_db.session.query(AIIdentificatie).order_by(AIIdentificatie.component_name)
+    total = query.count()
+    ai_identificaties = query.offset((page - 1) * per_page).limit(per_page).all()
+
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
+
+    thead_th_items = [
+        {'col_title': '#'},
+        {'col_title': 'Component'},
+        {'col_title': 'AI Category'},
+        {'col_title': 'Motivation'},
+        {'col_title': 'Delete'}
+    ]
+
+    tbody_tr_items = []
+    for ai in ai_identificaties:
+        tbody_tr_items.append([
+            {'col_value': ai.id},
+            {'col_value': ai.component_name, 'url': url_for('manage_data.ai_identificatie_edit', ai_id=ai.id)},
+            {'col_value': ai.category},
+            {'col_value': ai.motivatie[:50] + '...' if len(ai.motivatie) > 50 else ai.motivatie},
+            {'col_value': 'Delete', 'url': url_for('manage_data.ai_identificatie_delete', ai_id=ai.id)}
+        ])
+
+    return render_template(
+        'items_list.html',
+        title='AI Identifications',
+        thead_th_items=thead_th_items,
+        tbody_tr_items=tbody_tr_items,
+        item_new_url=url_for('manage_data.ai_identificatie_new'),
+        item_new_text='New AI Identification',
+        pagination=pagination
+    )
+@manage_data_blueprint.route('/ai_identificatie/new', methods=['GET', 'POST'])
+def ai_identificatie_new():
+    form = AIIdentificatieNewForm()
+    form.component_name.choices = [(c.component_name, c.component_name) for c in app_db.session.query(Components).all()]
+
+    if form.validate_on_submit():
+        ai_identificatie = AIIdentificatie(
+            component_name=form.component_name.data,
+            category=form.category.data,
+            motivatie=form.motivatie.data
+        )
+        app_db.session.add(ai_identificatie)
+        app_db.session.commit()
+        flash('AI Identificatie toegevoegd', 'success')
+        return redirect(url_for('manage_data.ai_identificatie_list'))
+
+    return render_template('item_new_edit.html', title='Nieuwe AI Identificatie', form=form)
+
+@manage_data_blueprint.route('/ai_identificatie/edit/<int:ai_id>', methods=['GET', 'POST'])
+def ai_identificatie_edit(ai_id):
+    ai_identificatie = app_db.session.query(AIIdentificatie).filter_by(id=ai_id).first()
+    if ai_identificatie is None:
+        abort(404)
+    
+    form = AIIdentificatieEditForm(obj=ai_identificatie)
+    form.component_name.choices = [(c.component_name, c.component_name) for c in app_db.session.query(Components).all()]
+
+    if form.validate_on_submit():
+        form.populate_obj(ai_identificatie)
+        app_db.session.commit()
+        flash('AI Identificatie bijgewerkt', 'success')
+        return redirect(url_for('manage_data.ai_identificatie_list'))
+
+    return render_template('item_new_edit.html', title='AI Identificatie Bewerken', form=form)
+
+@manage_data_blueprint.route('/ai_identificatie/delete/<int:ai_id>', methods=['GET', 'POST'])
+def ai_identificatie_delete(ai_id):
+    ai_identificatie = app_db.session.query(AIIdentificatie).filter_by(id=ai_id).first()
+    if ai_identificatie is None:
+        abort(404)
+    
+    form = AIIdentificatieDeleteForm()
+
+    if form.validate_on_submit():
+        app_db.session.delete(ai_identificatie)
+        app_db.session.commit()
+        flash('AI Identificatie verwijderd', 'success')
+        return redirect(url_for('manage_data.ai_identificatie_list'))
+
+    return render_template('item_delete.html', title='AI Identificatie Verwijderen', 
+                           item_name=f"AI Identificatie voor {ai_identificatie.component_name}", 
+                           form=form)
 @manage_data_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
