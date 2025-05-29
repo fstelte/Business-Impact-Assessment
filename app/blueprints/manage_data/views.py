@@ -282,6 +282,7 @@ def bia_export(bia_id):
     availability = app_db.session.query(Availability_Requirements).filter(Availability_Requirements.component_name.in_([c.component_name for c in components])).all()
     cons_choices = app_db.session.query(ConsequenceChoices).all()
     references = app_db.session.query(References).all()
+    ai_identifications = app_db.session.query(AIIdentificatie).filter(AIIdentificatie.component_name.in_([c.component_name for c in components])).all()
     directory_name = secure_filename(CSV_Name)
     
     if not os.path.exists(directory_name):
@@ -368,6 +369,15 @@ def bia_export(bia_id):
     } for h in references]
     df_references = pd.DataFrame(references_dicts) 
    
+       # Voeg AI identificatie export toe
+    ai_dicts = [{
+        'Gerelateerd aan Component': ai.component_name,
+        'AI Category': ai.category,
+        'AI Justification': ai.motivatie,
+    } for ai in ai_identifications]
+    df_ai = pd.DataFrame(ai_dicts)
+
+   
     if not df_bias.empty:
         df_bias.to_csv(os.path.join(directory_name, f'{CSV_Name}_bia.csv'), index=False)
     if not df_components.empty:
@@ -382,6 +392,8 @@ def bia_export(bia_id):
         df_cons_choices.to_csv(os.path.join(directory_name, f'{CSV_Name}_choices.csv'), index=False)
     if not df_references.empty:
         df_references.to_csv(os.path.join(directory_name, f'{CSV_Name}_references.csv'), index=False)
+    if not df_ai.empty:
+        df_ai.to_csv(os.path.join(directory_name, f'{CSV_Name}_ai_identification.csv'), index=False)
 
     flash('Export geslaagd!')
     return redirect(url_for('manage_data.bia_list'))
@@ -1200,6 +1212,12 @@ def bia_import():
                     references_path = os.path.join(temp_dir, secure_filename(references_file.filename))
                     references_file.save(references_path)
                     csv_files['references'] = references_path
+               # Sla AI Identification bestand op (indien van toepassing)
+                ai_identification_file = request.files.get('ai_identification_file')
+                if ai_identification_file and ai_identification_file.filename != '':
+                    ai_identification_path = os.path.join(temp_dir, secure_filename(ai_identification_file.filename))
+                    ai_identification_file.save(ai_identification_path)
+                    csv_files['ai_identification'] = ai_identification_path
             
             # Controleer of we alle verplichte bestanden hebben
             required_files = ['bia', 'components']
@@ -1391,6 +1409,20 @@ def bia_import():
                             consequence_huge=row.get('Consequentie enorm', '')
                         )
                         app_db.session.add(new_reference)
+            # Importeer AI Identification
+            if 'ai_identification' in csv_files:
+                df_ai_identification = pd.read_csv(csv_files['ai_identification'])
+                # Verwijder bestaande AI identificaties voor deze componenten
+                component_names = df_components['Component name'].tolist()
+                app_db.session.query(AIIdentificatie).filter(AIIdentificatie.component_name.in_(component_names)).delete()
+    
+                for _, row in df_ai_identification.iterrows():
+                    new_ai_identification = AIIdentificatie(
+                    component_name=row['Gerelateerd aan Component'],
+                    category=row.get('AI Category', ''),
+                    motivatie=row.get('AI Justification', '')
+                )
+                app_db.session.add(new_ai_identification)
             
             # Commit alle wijzigingen
             app_db.session.commit()
