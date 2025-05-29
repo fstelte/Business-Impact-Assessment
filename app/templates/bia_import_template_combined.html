@@ -65,7 +65,11 @@
                             <label for="references_file" class="form-label">References bestand (optioneel)</label>
                             <input type="file" class="form-control" id="references_file" name="references_file" accept=".csv">
                         </div>
-                        
+                        <div class="mb-3">
+                        <label for="ai_identification_file" class="form-label">AI Identification bestand (optioneel)</label>
+                        <input type="file" class="form-control" id="ai_identification_file" name="ai_identification_file" accept=".csv">
+                        <div class="form-text">Upload het *_ai_identification.csv bestand</div>
+                        </div>
                         <button type="submit" class="btn btn-primary">Importeren</button>
                         <a href="{{ url_for('manage_data.bia_list') }}" class="btn btn-secondary">Annuleren</a>
                     </form>

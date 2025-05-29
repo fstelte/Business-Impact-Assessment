@@ -145,8 +145,6 @@ class SummaryNewEditFormMixin():
                            render_kw={'size': 1})
         summary_text = TextAreaField('Type your summary', render_kw={"rows": 30, "cols": 11})
         
-
-
 class SummaryNewForm(FlaskForm, SummaryNewEditFormMixin):
 
     submit = SubmitField('Add', render_kw={'class': 'mt-2'})
@@ -189,3 +187,23 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
+
+class AIIdentificatieNewEditFormMixin:
+    component_name = SelectField('Component', validators=[DataRequired()])
+    category = SelectField('AI Category', choices=[
+        ('No AI', 'No AI'),
+        ('Unacceptable risk', 'Unaccaptable risk'),
+        ('High risk', 'High risk'),
+        ('Limited risk', 'Limited risk'),
+        ('Minimal risk', 'Minimal risk')
+    ], validators=[DataRequired()])
+    motivatie = TextAreaField('Motivation', validators=[DataRequired()])
+
+class AIIdentificatieNewForm(FlaskForm, AIIdentificatieNewEditFormMixin):
+    submit = SubmitField('Add', render_kw={'class': 'mt-2'})
+
+class AIIdentificatieEditForm(FlaskForm, AIIdentificatieNewEditFormMixin):
+    submit = SubmitField('Update', render_kw={'class': 'mt-2'})
+
+class AIIdentificatieDeleteForm(FlaskForm):
+    submit = SubmitField('Delete', render_kw={'class': 'mt-2'})

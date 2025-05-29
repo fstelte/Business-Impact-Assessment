@@ -8,14 +8,15 @@ import io
 
 
 from flask import Flask, Blueprint, current_app, g, session, request, url_for, redirect, \
-    render_template, flash, abort, send_file, after_this_request, make_response
+    render_template, flash, abort, send_file, abort, after_this_request, make_response
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from flask_paginate import Pagination, get_page_parameter
+from sqlalchemy.orm import joinedload
 
 
 from app.services import app_db
-from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary
+from app.model import Context_Scope, Components, Availability_Requirements, References, Consequences,  ConsequenceChoices, SecurityProperties, Summary, AIIdentificatie
 from .forms import (
     BIANewForm, BIAEditForm, BIADeleteForm, CompNewForm, CompEditForm, CompDeleteForm,
     ReferenceNewForm, ReferenceEditForm, ReferenceDeleteForm,
@@ -24,7 +25,8 @@ from .forms import (
     SummaryNewForm, SummaryEditForm, SummaryDeleteForm,
     ConsequenceChoicesNewForm, ConsequenceChoicesEditForm, ConsequenceChoicesDeleteForm,
     SecurityPropertyNewForm, SecurityPropertyEditForm, SecurityPropertyDeleteForm,
-    RegistrationForm
+    RegistrationForm,
+    AIIdentificatieNewForm, AIIdentificatieEditForm, AIIdentificatieDeleteForm
 )
 from werkzeug.utils import secure_filename
 
@@ -254,7 +256,6 @@ def bia_edit(bia_id):
 
 @manage_data_blueprint.route('/bia/delete/<int:bia_id>', methods=['GET', 'POST'])
 def bia_delete(bia_id):
-
     item = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).first()
     if item is None:
         abort(403)
@@ -263,9 +264,27 @@ def bia_delete(bia_id):
 
     item_name = item.name
     if form.validate_on_submit():
+        # Verwijder alle gerelateerde gegevens
+        components = app_db.session.query(Components).filter(Components.name == item.name).all()
+        for component in components:
+            # Verwijder consequences
+            app_db.session.query(Consequences).filter(Consequences.component_name == component.component_name).delete()
+            # Verwijder availability requirements
+            app_db.session.query(Availability_Requirements).filter(Availability_Requirements.component_name == component.component_name).delete()
+            # Verwijder AI identification
+            app_db.session.query(AIIdentificatie).filter(AIIdentificatie.component_name == component.component_name).delete()
+
+        # Verwijder components
+        app_db.session.query(Components).filter(Components.name == item.name).delete()
+        
+        # Verwijder summary
+        app_db.session.query(Summary).filter(Summary.name == item.name).delete()
+
+        # Verwijder de BIA zelf
         app_db.session.delete(item)
+        
         app_db.session.commit()
- #       flash('Deleted hours: ' + item_name, 'info')
+        flash('Deleted BIA and all related data: ' + item_name, 'info')
         return redirect(url_for('manage_data.bia_list'))
 
     return render_template('item_delete.html', title='Delete BIA', item_name=item_name, form=form)
@@ -280,6 +299,7 @@ def bia_export(bia_id):
     availability = app_db.session.query(Availability_Requirements).filter(Availability_Requirements.component_name.in_([c.component_name for c in components])).all()
     cons_choices = app_db.session.query(ConsequenceChoices).all()
     references = app_db.session.query(References).all()
+    ai_identifications = app_db.session.query(AIIdentificatie).filter(AIIdentificatie.component_name.in_([c.component_name for c in components])).all()
     directory_name = secure_filename(CSV_Name)
     
     if not os.path.exists(directory_name):
@@ -366,6 +386,15 @@ def bia_export(bia_id):
     } for h in references]
     df_references = pd.DataFrame(references_dicts) 
    
+       # Voeg AI identificatie export toe
+    ai_dicts = [{
+        'Gerelateerd aan Component': ai.component_name,
+        'AI Category': ai.category,
+        'AI Justification': ai.motivatie,
+    } for ai in ai_identifications]
+    df_ai = pd.DataFrame(ai_dicts)
+
+   
     if not df_bias.empty:
         df_bias.to_csv(os.path.join(directory_name, f'{CSV_Name}_bia.csv'), index=False)
     if not df_components.empty:
@@ -380,6 +409,8 @@ def bia_export(bia_id):
         df_cons_choices.to_csv(os.path.join(directory_name, f'{CSV_Name}_choices.csv'), index=False)
     if not df_references.empty:
         df_references.to_csv(os.path.join(directory_name, f'{CSV_Name}_references.csv'), index=False)
+    if not df_ai.empty:
+        df_ai.to_csv(os.path.join(directory_name, f'{CSV_Name}_ai_identification.csv'), index=False)
 
     flash('Export geslaagd!')
     return redirect(url_for('manage_data.bia_list'))
@@ -390,6 +421,7 @@ import logging
 def bia_report(bia_id):
     bia = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).first()
     components = app_db.session.query(Components).filter(Components.name == bia.name).all()
+    components = app_db.session.query(Components).filter(Components.name == bia.name).options(joinedload(Components.ai_identificaties)).all()
     
     consequences = app_db.session.query(Consequences).filter(
         Consequences.component_name.in_([c.component_name for c in components])
@@ -406,6 +438,11 @@ def bia_report(bia_id):
     for component in components:
         consequences_by_component[component.component_name] = []
         cia_scores[component.component_name] = {'C': [], 'I': [], 'A': []}
+        # Set default AI category to "No AI" if no AI identification exists
+        if not component.ai_identificaties:
+            component.ai_category = "No AI"
+        else:
+            component.ai_category = component.ai_identificaties[0].category
 
     for consequence in consequences:
         consequences_by_component[consequence.component_name].append(consequence)
@@ -1192,6 +1229,12 @@ def bia_import():
                     references_path = os.path.join(temp_dir, secure_filename(references_file.filename))
                     references_file.save(references_path)
                     csv_files['references'] = references_path
+               # Sla AI Identification bestand op (indien van toepassing)
+                ai_identification_file = request.files.get('ai_identification_file')
+                if ai_identification_file and ai_identification_file.filename != '':
+                    ai_identification_path = os.path.join(temp_dir, secure_filename(ai_identification_file.filename))
+                    ai_identification_file.save(ai_identification_path)
+                    csv_files['ai_identification'] = ai_identification_path
             
             # Controleer of we alle verplichte bestanden hebben
             required_files = ['bia', 'components']
@@ -1383,6 +1426,20 @@ def bia_import():
                             consequence_huge=row.get('Consequentie enorm', '')
                         )
                         app_db.session.add(new_reference)
+            # Importeer AI Identification
+            if 'ai_identification' in csv_files:
+                df_ai_identification = pd.read_csv(csv_files['ai_identification'])
+                # Verwijder bestaande AI identificaties voor deze componenten
+                component_names = df_components['Component name'].tolist()
+                app_db.session.query(AIIdentificatie).filter(AIIdentificatie.component_name.in_(component_names)).delete()
+    
+                for _, row in df_ai_identification.iterrows():
+                    new_ai_identification = AIIdentificatie(
+                    component_name=row['Gerelateerd aan Component'],
+                    category=row.get('AI Category', ''),
+                    motivatie=row.get('AI Justification', '')
+                )
+                app_db.session.add(new_ai_identification)
             
             # Commit alle wijzigingen
             app_db.session.commit()
@@ -1579,6 +1636,101 @@ def security_property_delete(property_id):
 
     return render_template('item_delete.html', title='Delete Security Property', item_name=item_name, form=form)
 
+@manage_data_blueprint.route('/ai_identificatie/list', methods=['GET', 'POST'])
+def ai_identificatie_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Number of items per page
+
+    query = app_db.session.query(AIIdentificatie).order_by(AIIdentificatie.component_name)
+    total = query.count()
+    ai_identificaties = query.offset((page - 1) * per_page).limit(per_page).all()
+
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page
+    }
+
+    thead_th_items = [
+        {'col_title': '#'},
+        {'col_title': 'Component'},
+        {'col_title': 'AI Category'},
+        {'col_title': 'Motivation'},
+        {'col_title': 'Delete'}
+    ]
+
+    tbody_tr_items = []
+    for ai in ai_identificaties:
+        tbody_tr_items.append([
+            {'col_value': ai.id},
+            {'col_value': ai.component_name, 'url': url_for('manage_data.ai_identificatie_edit', ai_id=ai.id)},
+            {'col_value': ai.category},
+            {'col_value': ai.motivatie[:50] + '...' if len(ai.motivatie) > 50 else ai.motivatie},
+            {'col_value': 'Delete', 'url': url_for('manage_data.ai_identificatie_delete', ai_id=ai.id)}
+        ])
+
+    return render_template(
+        'items_list.html',
+        title='AI Identifications',
+        thead_th_items=thead_th_items,
+        tbody_tr_items=tbody_tr_items,
+        item_new_url=url_for('manage_data.ai_identificatie_new'),
+        item_new_text='New AI Identification',
+        pagination=pagination
+    )
+@manage_data_blueprint.route('/ai_identificatie/new', methods=['GET', 'POST'])
+def ai_identificatie_new():
+    form = AIIdentificatieNewForm()
+    form.component_name.choices = [(c.component_name, c.component_name) for c in app_db.session.query(Components).all()]
+
+    if form.validate_on_submit():
+        ai_identificatie = AIIdentificatie(
+            component_name=form.component_name.data,
+            category=form.category.data,
+            motivatie=form.motivatie.data
+        )
+        app_db.session.add(ai_identificatie)
+        app_db.session.commit()
+        flash('AI Identificatie toegevoegd', 'success')
+        return redirect(url_for('manage_data.ai_identificatie_list'))
+
+    return render_template('item_new_edit.html', title='Nieuwe AI Identificatie', form=form)
+
+@manage_data_blueprint.route('/ai_identificatie/edit/<int:ai_id>', methods=['GET', 'POST'])
+def ai_identificatie_edit(ai_id):
+    ai_identificatie = app_db.session.query(AIIdentificatie).filter_by(id=ai_id).first()
+    if ai_identificatie is None:
+        abort(404)
+    
+    form = AIIdentificatieEditForm(obj=ai_identificatie)
+    form.component_name.choices = [(c.component_name, c.component_name) for c in app_db.session.query(Components).all()]
+
+    if form.validate_on_submit():
+        form.populate_obj(ai_identificatie)
+        app_db.session.commit()
+        flash('AI Identificatie bijgewerkt', 'success')
+        return redirect(url_for('manage_data.ai_identificatie_list'))
+
+    return render_template('item_new_edit.html', title='AI Identificatie Bewerken', form=form)
+
+@manage_data_blueprint.route('/ai_identificatie/delete/<int:ai_id>', methods=['GET', 'POST'])
+def ai_identificatie_delete(ai_id):
+    ai_identificatie = app_db.session.query(AIIdentificatie).filter_by(id=ai_id).first()
+    if ai_identificatie is None:
+        abort(404)
+    
+    form = AIIdentificatieDeleteForm()
+
+    if form.validate_on_submit():
+        app_db.session.delete(ai_identificatie)
+        app_db.session.commit()
+        flash('AI Identificatie verwijderd', 'success')
+        return redirect(url_for('manage_data.ai_identificatie_list'))
+
+    return render_template('item_delete.html', title='AI Identificatie Verwijderen', 
+                           item_name=f"AI Identificatie voor {ai_identificatie.component_name}", 
+                           form=form)
 @manage_data_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
