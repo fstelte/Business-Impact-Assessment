@@ -256,7 +256,6 @@ def bia_edit(bia_id):
 
 @manage_data_blueprint.route('/bia/delete/<int:bia_id>', methods=['GET', 'POST'])
 def bia_delete(bia_id):
-
     item = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).first()
     if item is None:
         abort(403)
@@ -265,9 +264,27 @@ def bia_delete(bia_id):
 
     item_name = item.name
     if form.validate_on_submit():
+        # Verwijder alle gerelateerde gegevens
+        components = app_db.session.query(Components).filter(Components.name == item.name).all()
+        for component in components:
+            # Verwijder consequences
+            app_db.session.query(Consequences).filter(Consequences.component_name == component.component_name).delete()
+            # Verwijder availability requirements
+            app_db.session.query(Availability_Requirements).filter(Availability_Requirements.component_name == component.component_name).delete()
+            # Verwijder AI identification
+            app_db.session.query(AIIdentificatie).filter(AIIdentificatie.component_name == component.component_name).delete()
+
+        # Verwijder components
+        app_db.session.query(Components).filter(Components.name == item.name).delete()
+        
+        # Verwijder summary
+        app_db.session.query(Summary).filter(Summary.name == item.name).delete()
+
+        # Verwijder de BIA zelf
         app_db.session.delete(item)
+        
         app_db.session.commit()
- #       flash('Deleted hours: ' + item_name, 'info')
+        flash('Deleted BIA and all related data: ' + item_name, 'info')
         return redirect(url_for('manage_data.bia_list'))
 
     return render_template('item_delete.html', title='Delete BIA', item_name=item_name, form=form)
