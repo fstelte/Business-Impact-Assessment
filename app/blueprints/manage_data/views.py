@@ -808,49 +808,59 @@ def consequence_list():
 def consequence_new():
     form = ConsequenceNewForm()
 
-    # Haal alle componenten op en maak een lijst van tuples (id, component_name)
-    components = app_db.session.query(Components).all()
-    form.component_name.choices = [(c.component_name, c.component_name) for c in components]
+    # Populate form choices
+    try:
+        components = app_db.session.query(Components).all()
+        form.component_name.choices = [(c.component_name, c.component_name) for c in components]
 
-    # Haal alle security properties op
-    security_properties = app_db.session.query(SecurityProperties).all()
-    form.security_property.choices = [(sp.security_property, sp.security_property) for sp in security_properties]
+        security_properties = app_db.session.query(SecurityProperties).all()
+        form.security_property.choices = [(sp.security_property, sp.security_property) for sp in security_properties]
 
-    # Haal alle referenties (categorieën) op
-    references = app_db.session.query(References).all()
-    form.consequence_category.choices = [(r.consequence_category, r.consequence_category) for r in references]
+        references = app_db.session.query(References).all()
+        form.consequence_category.choices = [(r.consequence_category, r.consequence_category) for r in references]
 
-    # Haal alle consequence choices op
-    consequence_choices = app_db.session.query(ConsequenceChoices).all()
-    form.consequence_worstcase.choices = [(cc.consequence_worstcase, cc.consequence_worstcase) for cc in consequence_choices]
-    form.consequence_realisticcase.choices = [(cc.consequence_realisticcase, cc.consequence_realisticcase) for cc in consequence_choices]
+        consequence_choices = app_db.session.query(ConsequenceChoices).all()
+        form.consequence_worstcase.choices = [(cc.consequence_worstcase, cc.consequence_worstcase) for cc in consequence_choices]
+        form.consequence_realisticcase.choices = [(cc.consequence_realisticcase, cc.consequence_realisticcase) for cc in consequence_choices]
+    except SQLAlchemyError as e:
+        logging.error(f"Error populating form choices: {str(e)}")
+        flash("Er is een fout opgetreden bij het laden van de formulieropties.", "error")
+        return redirect(url_for('manage_data.consequence_list'))
 
     if form.validate_on_submit():
-        categories = form.consequence_category.data
-        for category in categories:
-            new_consequence = Consequences(
-                component_name=form.component_name.data,
-                security_property=form.security_property.data,
-                consequence_category=category,  # Gebruik één categorie per consequence
-                consequence_worstcase=form.consequence_worstcase.data,
-                justification_worstcase=form.justification_worstcase.data,
-                consequence_realisticcase=form.consequence_realisticcase.data,
-                justification_realisticcase=form.justification_realisticcase.data
-            )
-            app_db.session.add(new_consequence)
-        
-        app_db.session.commit()
-        flash(f'{len(categories)} consequence(s) added successfully', 'success')
-        
-        if form.submit_and_new.data:
-            return redirect(url_for('manage_data.consequence_new', component_name=form.component_name.data))
-        else:
-            return redirect(url_for('manage_data.consequence_list'))
+        try:
+            categories = form.consequence_category.data
+            for category in categories:
+                new_consequence = Consequences(
+                    component_name=form.component_name.data,
+                    security_property=form.security_property.data,
+                    consequence_category=category,
+                    consequence_worstcase=form.consequence_worstcase.data,
+                    justification_worstcase=form.justification_worstcase.data,
+                    consequence_realisticcase=form.consequence_realisticcase.data,
+                    justification_realisticcase=form.justification_realisticcase.data
+                )
+                app_db.session.add(new_consequence)
+                logging.info(f"Adding new consequence: {new_consequence}")
+            
+            app_db.session.commit()
+            flash(f'{len(categories)} consequence(s) added successfully', 'success')
+            
+            if form.submit_and_new.data:
+                return redirect(url_for('manage_data.consequence_new', component_name=form.component_name.data))
+            else:
+                return redirect(url_for('manage_data.consequence_list'))
+        except SQLAlchemyError as e:
+            app_db.session.rollback()
+            logging.error(f"Error adding new consequence: {str(e)}")
+            flash("Er is een fout opgetreden bij het toevoegen van de consequence(s).", "error")
+
     # Pre-select component_name if provided in URL parameters
     if request.args.get('component_name'):
         form.component_name.data = request.args.get('component_name')
 
     return render_template('item_new_edit.html', title='New Consequence', form=form)
+
 @manage_data_blueprint.route('/consequence/edit/<int:consequence_id>', methods=['GET', 'POST'])
 def consequence_edit(consequence_id):
     consequence = app_db.session.query(Consequences).filter(Consequences.id == consequence_id).first()
