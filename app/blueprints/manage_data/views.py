@@ -13,6 +13,8 @@ from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from flask_paginate import Pagination, get_page_parameter
 from sqlalchemy.orm import joinedload
+from docx import Document
+from docx.shared import Inches
 
 
 from app.services import app_db
@@ -162,6 +164,9 @@ def bia_list():
         },
         {
             'col_title': 'Generate Report'
+        },
+        {
+            'col_title': 'Word report'
         }
     ]
 
@@ -204,6 +209,10 @@ def bia_list():
             {
                 'col_value': 'Generate Report',
                 'url': url_for('manage_data.bia_report', bia_id=bia.id),
+            },
+            {
+                'col_value': 'Generate Word Report',
+                'url': url_for('manage_data.bia_report_word', bia_id=bia.id),
             }
 
             ])
@@ -1731,6 +1740,118 @@ def ai_identificatie_delete(ai_id):
     return render_template('item_delete.html', title='AI Identificatie Verwijderen', 
                            item_name=f"AI Identificatie voor {ai_identificatie.component_name}", 
                            form=form)
+
+@manage_data_blueprint.route('/bia/<int:bia_id>/report/word', methods=['GET'])
+def bia_report_word(bia_id):
+    bia = app_db.session.query(Context_Scope).filter(Context_Scope.id == bia_id).first()
+    components = app_db.session.query(Components).filter(Components.name == bia.name).all()
+    components = app_db.session.query(Components).filter(Components.name == bia.name).options(joinedload(Components.ai_identificaties)).all()
+    
+    consequences = app_db.session.query(Consequences).filter(
+        Consequences.component_name.in_([c.component_name for c in components])
+    ).all()
+    
+    availability = app_db.session.query(Availability_Requirements).filter(
+        Availability_Requirements.component_name.in_([c.component_name for c in components])
+    ).all()
+    
+    summary = app_db.session.query(Summary).filter(Summary.name == bia.name).first()
+
+    consequences_by_component = {}
+    cia_scores = {}
+    for component in components:
+        consequences_by_component[component.component_name] = []
+        cia_scores[component.component_name] = {'C': [], 'I': [], 'A': []}
+        # Set default AI category to "No AI" if no AI identification exists
+        if not component.ai_identificaties:
+            component.ai_category = "No AI"
+        else:
+            component.ai_category = component.ai_identificaties[0].category
+
+    for consequence in consequences:
+        consequences_by_component[consequence.component_name].append(consequence)
+        cia_map = {'Confidentiality': 'C', 'Integrity': 'I', 'Availability': 'A'}
+        cia_key = cia_map.get(consequence.security_property, '')
+        if cia_key:
+            score = calculate_cia_score(consequence.consequence_realisticcase)
+            cia_scores[consequence.component_name][cia_key].append({
+                'score': score,
+                'consequence': consequence.consequence_realisticcase,
+                'category': consequence.consequence_category
+            })
+
+    # Generate Word document
+    document = Document()
+    
+    document.add_heading(f'BIA Report for {bia.name}', 0)
+    
+    document.add_heading('Summary', level=1)
+    if summary:
+        document.add_paragraph(summary.summary_text)
+    else:
+        document.add_paragraph('No summary available.')
+    
+    document.add_heading('BIA Information', level=1)
+    table = document.add_table(rows=1, cols=2)
+    table.style = 'Table Grid'
+    row = table.rows[0].cells
+    row[0].text = 'Name'
+    row[1].text = bia.name
+    for field, value in [
+        ('Responsible', bia.responsible),
+        ('Start Date', str(bia.start_date)),
+        ('End Date', str(bia.end_date)),
+        ('Coordinator', bia.coordinator),
+        ('Service Description', bia.service_description),
+    ]:
+        row = table.add_row().cells
+        row[0].text = field
+        row[1].text = str(value)
+    
+    document.add_heading('Components and Consequences', level=1)
+    for component in components:
+        document.add_heading(component.component_name, level=2)
+        document.add_paragraph(f"Description: {component.description}")
+        document.add_paragraph(f"Process Dependencies: {component.processes_dependencies}")
+        document.add_paragraph(f"Information Type: {component.info_type}")
+        document.add_paragraph(f"Information Owner: {component.info_owner}")
+        document.add_paragraph(f"User Type: {component.user_type}")
+        
+        comp_consequences = [c for c in consequences if c.component_name == component.component_name]
+        if comp_consequences:
+            document.add_heading('Consequences', level=3)
+            for cons in comp_consequences:
+                document.add_paragraph(f"Category: {cons.consequence_category}")
+                document.add_paragraph(f"Security Property: {cons.security_property}")
+                document.add_paragraph(f"Worst Case: {cons.consequence_worstcase}")
+                document.add_paragraph(f"Realistic Case: {cons.consequence_realisticcase}")
+    
+    document.add_heading('Availability Requirements', level=1)
+    table = document.add_table(rows=1, cols=5)
+    table.style = 'Table Grid'
+    row = table.rows[0].cells
+    row[0].text = 'Component'
+    row[1].text = 'MTD'
+    row[2].text = 'RTO'
+    row[3].text = 'RPO'
+    row[4].text = 'MASL'
+    for req in availability:
+        row = table.add_row().cells
+        row[0].text = req.component_name
+        row[1].text = req.mtd
+        row[2].text = req.rto
+        row[3].text = req.rpo
+        row[4].text = req.masl
+    
+    # Save the document to a BytesIO object
+    f = io.BytesIO()
+    document.save(f)
+    f.seek(0)
+    
+    return send_file(f, 
+                     as_attachment=True, 
+                     download_name=f'{bia.name}_report.docx',  # Gebruik download_name in plaats van attachment_filename
+                     mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 @manage_data_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()

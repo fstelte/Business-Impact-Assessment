@@ -17,3 +17,4 @@ reportlab
 pillow>=10.3.0 # not directly required, pinned by Snyk to avoid a vulnerability
 Flask-SQLAlchemy
 flask-paginate
+python-docx==0.8.11
