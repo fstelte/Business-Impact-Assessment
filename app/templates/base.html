@@ -1,37 +1,142 @@
-{# base.html #}
-
-{% from 'bootstrap/nav.html' import render_nav_item %}
-{% from 'bootstrap/utils.html' import render_messages %}
+<!-- app/templates/base.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl" data-bs-theme="dark"> <!-- Standaard op donker thema -->
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Business Impact Assessment</title>
-    {{ bootstrap.load_css() }}   
-       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons for theme toggle -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <!-- Font Awewsome icoontjes-->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    {% if title %}
+        <title>BIA Tool - {{ title }}</title>
+    {% else %}
+        <title>BIA Tool</title>
+    {% endif %}
+
+    <style>
+        /* Extra styling voor betere look & feel */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex-grow: 1;
+        }
+        .card {
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .form-control, .form-select, .btn {
+             border-radius: 0.5rem;
+        }
+
+        .bg-orange {background-color: #fd7e14 !important;}
+        .bg-danger { background-color: #dc3545 !important; }
+        .bg-warning { background-color: #ffc107 !important; }
+        .bg-info { background-color: #17a2b8 !important; }
+        .bg-success { background-color: #28a745 !important; }
+        .text-white { color: #ffffff !important; }
+        .text-dark { color: #343a40 !important; }
+
+    </style>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/badge-colors.js') }}"></script>
 
 </head>
-<body class="d-flex flex-column min-vh-100">
-  
-    <!--Navbar-->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Business Impact Assessment</a>
+<body>
 
-                <button id="theme-switcher" class="btn" type="button">
-                    <i class="bi bi-sun-fill"></i>
-                    <i class="bi bi-moon-stars-fill" style="display: none;"></i>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">BIA Tool</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Links aan de linkerkant -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        {% if current_user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.index') }}">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.new_item') }}">New BIA</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.view_components') }}">Components</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <!-- Links aan de rechterkant -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Theme Toggler -->
+                         <li class="nav-item dropdown">
+                            <button class="btn nav-link dropdown-toggle" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                                <i class="bi bi-circle-half theme-icon-active"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                                        <i class="bi bi-sun-fill me-2 opacity-50 theme-icon"></i> Light
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="dark">
+                                        <i class="bi bi-moon-stars-fill me-2 opacity-50 theme-icon"></i> Dark
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto">
+                                        <i class="bi bi-circle-half me-2 opacity-50 theme-icon"></i> Auto
+                                    </button>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <!-- User Actions -->
+                        {% if current_user.is_authenticated %}
+                             <!-- Admin-only link (HIER GEPLAATST) -->
+                            {% if current_user.is_admin() %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin.list_users') }}">User management</a>
+                            </li>
+                            {% endif %}
+                        
+                             <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ current_user.username }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
-
-    <!--Body-->
-    <main class="container mt-4">
+        </nav>
+    </header>
+    
+    <main class="container mt-4 main-content">
+        <!-- Flash berichten -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -42,19 +147,80 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        
+
+        <!-- Content Block -->
         {% block content %}{% endblock %}
     </main>
-   
-    <!--Footer-->
-    <footer class="text-center text-lg-start bg-dark text-light mt-auto text-white">
-        <span class="text-light">{% include "incl_footer.html" %}</span>
+
+    <footer class="bg-body-tertiary text-center text-secondary py-3 mt-auto border-top">
+        <div class="container">
+            <p class="mb-0">&copy; {{ "now"|date("Ferry Stelte") }} :  BIA Tool. All rights preserved.</p>
+        </div>
     </footer>
- 
-</script>
-    {% block scripts %}
-    {% endblock %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Theme Toggler Script -->
+    <script>
+    (() => {
+        'use strict'
+        const getStoredTheme = () => localStorage.getItem('theme')
+        const setStoredTheme = theme => localStorage.setItem('theme', theme)
+        const getPreferredTheme = () => {
+            const storedTheme = getStoredTheme()
+            if (storedTheme) {
+                return storedTheme
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        const setTheme = theme => {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-bs-theme', 'dark')
+            } else {
+                document.documentElement.setAttribute('data-bs-theme', theme)
+            }
+        }
+        const showActiveTheme = (theme, focus = false) => {
+            const themeSwitcher = document.querySelector('#bd-theme')
+            if (!themeSwitcher) {
+                return
+            }
+            const activeThemeIcon = document.querySelector('.theme-icon-active')
+            const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+            if (!btnToActive) {
+                return
+            }
+            const svgOfActiveBtn = btnToActive.querySelector('i').className
+            document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+                element.classList.remove('active')
+                element.setAttribute('aria-pressed', 'false')
+            })
+            btnToActive.classList.add('active')
+            btnToActive.setAttribute('aria-pressed', 'true')
+            activeThemeIcon.className = `${svgOfActiveBtn} theme-icon-active`
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            const storedTheme = getStoredTheme()
+            if (storedTheme !== 'light' && storedTheme !== 'dark') {
+                setTheme(getPreferredTheme())
+            }
+        })
+        window.addEventListener('DOMContentLoaded', () => {
+            const preferredTheme = getPreferredTheme()
+            setTheme(preferredTheme)
+            showActiveTheme(preferredTheme)
+            document.querySelectorAll('[data-bs-theme-value]')
+                .forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        const theme = toggle.getAttribute('data-bs-theme-value')
+                        setStoredTheme(theme)
+                        setTheme(theme)
+                        showActiveTheme(theme, true)
+                    })
+                })
+        })
+    })()
+    </script>
 </body>
 </html>
