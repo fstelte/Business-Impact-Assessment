@@ -158,15 +158,21 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><span class="{{ get_impact_color(max_cia_impact['confidentiality']) }}">
-                                {{ max_cia_impact['confidentiality'] }}
-                            </span></td>
-                            <td><span class="{{ get_impact_color(max_cia_impact['integrity']) }}">
-                                {{ max_cia_impact['integrity'] }}
-                            </span></td>
-                            <td><span class="{{ get_impact_color(max_cia_impact['availability']) }}">
-                                {{ max_cia_impact['availability'] }}
-                            </span></td>
+                            <td class="text-center">
+                                <span class="badge cia-impact-badge">
+                                    {{ max_cia_impact['confidentiality'] }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge cia-impact-badge">
+                                    {{ max_cia_impact['integrity'] }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge cia-impact-badge">
+                                    {{ max_cia_impact['availability'] }}
+                                </span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -248,11 +254,81 @@
     </div>
   </div>
 </div>
-    <script>
-        // Roep de functie aan nadat de specifieke content is geladen
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wacht een kort moment om er zeker van te zijn dat alle elementen zijn gerenderd
-            setTimeout(applyBadgeColors, 100);
-        });
-    </script>
+    function setBadgeColor(badge, category) {
+        switch(category.toLowerCase()) {
+            case 'no ai':
+            case 'insignificant':
+                badge.classList.add('bg-green');
+                break;
+            case 'unacceptable risk':
+            case 'catastrophic':
+                badge.classList.add('bg-dark-red');
+                break;
+            case 'high risk':
+            case 'major':
+                badge.classList.add('bg-red');
+                break;
+            case 'limited risk':
+            case 'moderate':
+                badge.classList.add('bg-orange');
+                break;
+            case 'minimal risk':
+            case 'minor':
+                badge.classList.add('bg-yellow');
+                break;
+            default:
+                badge.classList.add('bg-secondary');
+        }
+    }
+<script>
+function setBadgeColor(badge, category) {
+    switch(category.toLowerCase()) {
+        case 'no ai':
+        case 'insignificant':
+            badge.classList.add('bg-green');
+            break;
+        case 'unacceptable risk':
+        case 'catastrophic':
+            badge.classList.add('bg-dark-red');
+            break;
+        case 'high risk':
+        case 'major':
+            badge.classList.add('bg-red');
+            break;
+        case 'limited risk':
+        case 'moderate':
+            badge.classList.add('bg-orange');
+            break;
+        case 'minimal risk':
+        case 'minor':
+            badge.classList.add('bg-yellow');
+            break;
+        default:
+            badge.classList.add('bg-secondary');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // AI Risk badges
+    const aiRiskBadges = document.querySelectorAll('.ai-risk-badge');
+    aiRiskBadges.forEach(function(badge) {
+        const category = badge.textContent.trim();
+        setBadgeColor(badge, category);
+    });
+
+    // Consequence badges
+    const consequenceBadges = document.querySelectorAll('.consequence-badge');
+    consequenceBadges.forEach(function(badge) {
+        const category = badge.textContent.trim();
+        setBadgeColor(badge, category);
+    });
+
+    // CIA Impact Overview badges
+    const ciaImpactBadges = document.querySelectorAll('.cia-impact-badge');
+    ciaImpactBadges.forEach(function(badge) {
+        const impact = badge.textContent.trim();
+        setBadgeColor(badge, impact);
+    });
+});
+</script>
 {% endblock %}

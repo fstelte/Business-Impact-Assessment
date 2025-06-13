@@ -1,5 +1,4 @@
 <script>
-document.addEventListener('DOMContentLoaded', function() {
     function setBadgeColor(badge, category) {
         switch(category.toLowerCase()) {
             case 'no ai':
@@ -26,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 badge.classList.add('bg-secondary');
         }
     }
-
+document.addEventListener('DOMContentLoaded', function() {
     // AI Risk badges
     const aiRiskBadges = document.querySelectorAll('.ai-risk-badge');
     aiRiskBadges.forEach(function(badge) {
@@ -40,5 +39,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const category = badge.textContent.trim();
         setBadgeColor(badge, category);
     });
+
+    // CIA Impact Overview badges
+    const ciaImpactBadges = document.querySelectorAll('.cia-impact-badge');
+    ciaImpactBadges.forEach(function(badge) {
+        const impact = badge.textContent.trim();
+        setCIAImpactBadgeColor(badge, impact);
+    });
 });
-</script>
