@@ -1,171 +1,226 @@
-{# base.html #}
-
-{% from 'bootstrap/nav.html' import render_nav_item %}
-{% from 'bootstrap/utils.html' import render_messages %}
+<!-- app/templates/base.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl" data-bs-theme="dark"> <!-- Standaard op donker thema -->
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Business Impact Assessment</title>
-    {{ bootstrap.load_css() }}   
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
-<style>
-    body {
-        background-color: #ffffff;
-        color: #000000;
-    }
-    
-    .button-primary {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-        color: #ffffff;
-    }
-        .select2-container--bootstrap4 .select2-selection {
-        background-color: #ffffff;
-        color: #000000;
-        border: 1px solid #ced4da;
-    }
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
-        background-color: #e9ecef;
-        color: #000000;
-        border: 1px solid #ced4da;
-    }
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons for theme toggle -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Font Awewsome icoontjes-->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    {% if title %}
+        <title>BIA Tool - {{ title }}</title>
+    {% else %}
+        <title>BIA Tool</title>
+    {% endif %}
 
-    .select2-container--bootstrap4 .select2-dropdown {
-        background-color: #ffffff;
-        border: 1px solid #ced4da;
-    }
+    <style>
+        /* Extra styling voor betere look & feel */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex-grow: 1;
+        }
+        .card {
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .form-control, .form-select, .btn {
+             border-radius: 0.5rem;
+        }
 
-    .select2-container--bootstrap4 .select2-results__option {
-        color: #000000;
-    }
+        .bg-orange {background-color: #fd7e14 !important;}
+        .bg-danger { background-color: #dc3545 !important; }
+        .bg-warning { background-color: #ffc107 !important; }
+        .bg-info { background-color: #17a2b8 !important; }
+        .bg-success { background-color: #28a745 !important; }
+        .text-white { color: #ffffff !important; }
+        .text-dark { color: #343a40 !important; }
 
-    .select2-container--bootstrap4 .select2-results__option[aria-selected=true] {
-        background-color: #007bff;
-        color: #ffffff;
-    }
+    </style>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/badge-colors.js') }}"></script>
 
-    .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
-        background-color: #007bff;
-        color: #ffffff;
-    }
-        .select2-search.select2-search--inline {
-        display: none !important;
-    }
-
-    .select2-search.select2-search--inline .select2-search__field {
-        display: none !important;
-    }
-
-    /* Zorg ervoor dat de geselecteerde items de volledige breedte innemen */
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
- @media (prefers-color-scheme: dark) {
-    body {
-        background-color: #343a40;
-        color: #ffffff;
-    }
-
-    .button-primary {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-        color: #ffffff;
-    }
-
-    /* Stijlen voor Select2 in dark mode */
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
-        background-color: #0d6efd !important;
-        color: #ffffff !important;
-        border: 1px solid #495057 !important;
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
-        color: #FF0000 !important;
-        opacity: 0.8;
-        font-weight: bold;
-        margin-right: 5px;
-        padding: 0 5px;
-        border-right: 1px solid rgba(179, 7, 7, 0.2) !important;
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove:hover {
-        background-color: rgba(179, 7, 7, 0.2) !important;
-        color: #FF0000 !important;
-        opacity: 1;
-    }
-
-    /* Behoud de lichte achtergrond voor de dropdown en andere elementen */
-    .select2-container--bootstrap4 .select2-selection,
-    .select2-container--bootstrap4 .select2-dropdown,
-    .select2-container--bootstrap4 .select2-results__option {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-
-    .select2-container--bootstrap4 .select2-results__option[aria-selected=true],
-    .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
-        background-color: #007bff !important;
-        color: #ffffff !important;
-    }
-}
-</style>
 </head>
-<body class="d-flex flex-column min-vh-100">
-  
-    <!--Navbar-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container d-flex justify-content-center">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-                <ul class="navbar-nav fw-semibold hov">
-                    {{ render_nav_item('index', 'Home', use_li=True) }}
-                    {{ render_nav_item('manage_data.bia_list', 'BIA', use_li=True) }}
-                    {{ render_nav_item('manage_data.component_list', 'Components', use_li=True) }}
-                    {{ render_nav_item('manage_data.ai_identificatie_list', 'AI Identification', use_li=True) }}
-                    {{ render_nav_item('manage_data.consequence_list', 'Consequences', use_li=True) }}
-                    {{ render_nav_item('manage_data.availability_list', 'Availability Requirements', use_li=True) }}
-                    {{ render_nav_item('manage_data.summary_list', 'BIA Summaries', use_li=True) }}
-                    {{ render_nav_item('manage_data.reference_list', 'Consequence references', use_li=True) }}
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body>
 
-    <!--Body-->
-    <main class="container bg-dark min-h-100 d-inline-block flex-grow-1 mb-4 border rounded">
-        <div class="p-4">
-            {{ render_messages(container=False, dismissible=True) }}
-            {% block content %}{% endblock %}
-        </div>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">BIA Tool</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Links aan de linkerkant -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        {% if current_user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.index') }}">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.new_item') }}">New BIA</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.view_components') }}">Components</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <!-- Links aan de rechterkant -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Theme Toggler -->
+                         <li class="nav-item dropdown">
+                            <button class="btn nav-link dropdown-toggle" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                                <i class="bi bi-circle-half theme-icon-active"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                                        <i class="bi bi-sun-fill me-2 opacity-50 theme-icon"></i> Light
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="dark">
+                                        <i class="bi bi-moon-stars-fill me-2 opacity-50 theme-icon"></i> Dark
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto">
+                                        <i class="bi bi-circle-half me-2 opacity-50 theme-icon"></i> Auto
+                                    </button>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <!-- User Actions -->
+                        {% if current_user.is_authenticated %}
+                             <!-- Admin-only link (HIER GEPLAATST) -->
+                            {% if current_user.is_admin() %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin.list_users') }}">User management</a>
+                            </li>
+                            {% endif %}
+                        
+                             <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ current_user.username }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container mt-4 main-content">
+        <!-- Flash berichten -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Content Block -->
+        {% block content %}{% endblock %}
     </main>
-   
-    <!--Footer-->
-    <footer class="text-center text-lg-start bg-dark text-light mt-auto text-white">
-        <span class="text-light">{% include "incl_footer.html" %}</span>
+
+    <footer class="bg-body-tertiary text-center text-secondary py-3 mt-auto border-top">
+        <div class="container">
+            <p class="mb-0">&copy; {{ "now"|date("Ferry Stelte") }} :  BIA Tool. All rights preserved.</p>
+        </div>
     </footer>
- 
-    {{ bootstrap.load_js() }}
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.select2').select2({
-            theme: 'bootstrap4',
-            width: '100%',
-            minimumResultsForSearch: Infinity,  // Dit schakelt de zoekfunctionaliteit uit
-            dropdownCssClass: 'select2-dropdown-no-search'  // We gebruiken deze klasse om extra CSS-stijlen toe te passen indien nodig
-        });
-    });
-</script>
-    {% block scripts %}
-    {% endblock %}
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Theme Toggler Script -->
+    <script>
+    (() => {
+        'use strict'
+        const getStoredTheme = () => localStorage.getItem('theme')
+        const setStoredTheme = theme => localStorage.setItem('theme', theme)
+        const getPreferredTheme = () => {
+            const storedTheme = getStoredTheme()
+            if (storedTheme) {
+                return storedTheme
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        const setTheme = theme => {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-bs-theme', 'dark')
+            } else {
+                document.documentElement.setAttribute('data-bs-theme', theme)
+            }
+        }
+        const showActiveTheme = (theme, focus = false) => {
+            const themeSwitcher = document.querySelector('#bd-theme')
+            if (!themeSwitcher) {
+                return
+            }
+            const activeThemeIcon = document.querySelector('.theme-icon-active')
+            const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+            if (!btnToActive) {
+                return
+            }
+            const svgOfActiveBtn = btnToActive.querySelector('i').className
+            document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+                element.classList.remove('active')
+                element.setAttribute('aria-pressed', 'false')
+            })
+            btnToActive.classList.add('active')
+            btnToActive.setAttribute('aria-pressed', 'true')
+            activeThemeIcon.className = `${svgOfActiveBtn} theme-icon-active`
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            const storedTheme = getStoredTheme()
+            if (storedTheme !== 'light' && storedTheme !== 'dark') {
+                setTheme(getPreferredTheme())
+            }
+        })
+        window.addEventListener('DOMContentLoaded', () => {
+            const preferredTheme = getPreferredTheme()
+            setTheme(preferredTheme)
+            showActiveTheme(preferredTheme)
+            document.querySelectorAll('[data-bs-theme-value]')
+                .forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        const theme = toggle.getAttribute('data-bs-theme-value')
+                        setStoredTheme(theme)
+                        setTheme(theme)
+                        showActiveTheme(theme, true)
+                    })
+                })
+        })
+    })()
+    </script>
 </body>
 </html>

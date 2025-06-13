@@ -1,0 +1,258 @@
+<!-- app/templates/view_item.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .bg-green { background-color: #28a745; color: white; }
+    .bg-dark-red { background-color: #8b0000; color: white; }
+    .bg-red { background-color: #dc3545; color: white; }
+    .bg-orange { background-color: #fd7e14; color: white; }
+    .bg-yellow { background-color: #ffc107; color: black; }
+</style>
+<div class="card shadow-lg mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">{{ item.name }}</h2>
+        <div>
+            {% if item.author == current_user %}
+                <a href="{{ url_for('main.edit_item', item_id=item.id) }}" class="btn btn-info btn-sm">Edit</a>
+                <a href="{{ url_for('main.export_csv', item_id=item.id) }}" class="btn btn-primary btn-sm" >Export CSV</a>
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    Remove
+                </button>
+                <!-- In view_item.html, voeg dit toe waar je wilt dat de exportknop verschijnt -->
+                <a href="{{ url_for('main.export_item', item_id=item.id) }}" class="btn btn-primary btn-sm">Export as HTML</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-lg-8">
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3>Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if item.summary %}
+                            <p>{{ item.summary.content }}</p>
+                        {% else %}
+                            <p>No summary available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-scope-tab" data-bs-toggle="tab" data-bs-target="#nav-scope" type="button" role="tab">Scope & Details</button>
+                        <button class="nav-link" id="nav-risk-tab" data-bs-toggle="tab" data-bs-target="#nav-risk" type="button" role="tab">Risk assessments</button>
+                        <button class="nav-link" id="nav-components-tab" data-bs-toggle="tab" data-bs-target="#nav-components" type="button" role="tab">Components</button>
+                        <button class="nav-link" id="consequences-tab" data-bs-toggle="tab" data-bs-target="#consequences" type="button" role="tab" aria-controls="consequences" aria-selected="false">Consequences</button>
+                        <button class="nav-link" id="nav-availability-tab" data-bs-toggle="tab" data-bs-target="#nav-availability" type="button" role="tab">Availability requirements</button>
+                    </div>
+                </nav>
+                <div class="tab-content p-3 border border-top-0 rounded-bottom" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-scope" role="tabpanel">
+                        <h5>Service description</h5>
+                        <p>{{ item.service_description or "N/A" }}</p>
+                        <hr>
+                        <h5>Scope</h5>
+                        <p>{{ item.scope_description or "N/A" }}</p>
+                        <hr>
+                        <h5>Details</h5>
+                        <dl class="row">
+                            <dt class="col-sm-4">knowledge</dt>
+                            <dd class="col-sm-8">{{ item.knowledge or "N/A" }}</dd>
+                            <dt class="col-sm-4">Interfaces</dt>
+                            <dd class="col-sm-8">{{ item.interfaces or "N/A" }}</dd>
+                            <dt class="col-sm-4">Mision critical</dt>
+                            <dd class="col-sm-8">{{ item.mission_critical or "N/A" }}</dd>
+                             <dt class="col-sm-4">Uses AI Model</dt>
+                            <dd class="col-sm-8">{% if item.ai_model %}Ja{% else %}Nee{% endif %}</dd>
+                        </dl>
+                    </div>
+                    <div class="tab-pane fade" id="nav-availability" role="tabpanel">
+                    <h5>Availability requirements</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>MTD</th>
+                                <th>RTO</th>
+                                <th>RPO</th>
+                                <th>MASL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for component in item.components %}
+                                <tr>
+                                    <td>{{ component.name }}</td>
+                                    <td>{{ component.availability_requirement.mtd if component.availability_requirement else 'N/A' }}</td>
+                                    <td>{{ component.availability_requirement.rto if component.availability_requirement else 'N/A' }}</td>
+                                    <td>{{ component.availability_requirement.rpo if component.availability_requirement else 'N/A' }}</td>
+                                    <td>{{ component.availability_requirement.masl if component.availability_requirement else 'N/A' }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5">No availability requirements found for any components.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                    <div class="tab-pane fade" id="nav-risk" role="tabpanel">
+                        <h5>Risk assessments</h5>
+                        <ul class="list-group">
+                            <!-- Bestaande risk assessments -->
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Risk assessment people aspect
+                                <span class="badge bg-{% if item.risk_assessment_human %}success{% else %}secondary{% endif %} rounded-pill">{% if item.risk_assessment_human %}Ja{% else %}Nee{% endif %}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Risk assessment proces aspect
+                                <span class="badge bg-{% if item.risk_assessment_process %}success{% else %}secondary{% endif %} rounded-pill">{% if item.risk_assessment_process %}Ja{% else %}Nee{% endif %}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Risk assessment technology aspect
+                                <span class="badge bg-{% if item.risk_assessment_technological %}success{% else %}secondary{% endif %} rounded-pill">{% if item.risk_assessment_technological %}Ja{% else %}Nee{% endif %}</span>
+                            </li>
+                            <h3>AI Risks</h3>
+                            {% if ai_identifications %}
+                                {% for component in item.components %}
+                                    {% if component.id in ai_identifications %}
+                                        <h4>{{ component.name }}</h4>
+                                        <p>AI risk category: 
+                                               <span class="badge ai-risk-badge">{{ ai_identifications[component.id].category }}</span></p>
+                                        <p>Motivation: {{ ai_identifications[component.id].motivatie }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <p>No AI risks identified for any components.</p>
+                            {% endif %}
+                        </ul>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="nav-components" role="tabpanel">
+                         <h5>Related components</h5>
+                         <ul class="list-group">
+                             {% for component in item.components %}
+                                <li class="list-group-item">
+                                    <strong>{{ component.name }}</strong> ({{ component.info_type or 'Onbekend type' }})
+                                    <p class="mb-0 text-secondary">{{ component.description or '' }}</p>
+                                </li>
+                             {% else %}
+                                <li class="list-group-item">No components linked to this BIA.</li>
+                             {% endfor %}
+                         </ul>
+                    </div>
+                    <div class="tab-pane fade" id="consequences" role="tabpanel" aria-labelledby="consequences-tab">
+                <h2>Consequences</h2>
+                
+                <!-- Nieuwe CIA Impact Overzichtstabel -->
+                <h3>CIA Impact Overview</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Confidentiality</th>
+                            <th>Integrity</th>
+                            <th>Availability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="{{ get_impact_color(max_cia_impact['confidentiality']) }}">
+                                {{ max_cia_impact['confidentiality'] }}
+                            </span></td>
+                            <td><span class="{{ get_impact_color(max_cia_impact['integrity']) }}">
+                                {{ max_cia_impact['integrity'] }}
+                            </span></td>
+                            <td><span class="{{ get_impact_color(max_cia_impact['availability']) }}">
+                                {{ max_cia_impact['availability'] }}
+                            </span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Bestaande gedetailleerde consequentietabel -->
+            <h3>Detailed Consequences</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Category</th>
+                        <th>Security Property</th>
+                        <th>Realistic Case</th>
+                        <th>CIA Impact (Based on Realistic Case)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consequence in consequences %}
+                    <tr>
+                        <td>{{ consequence.component.name }}</td>
+                        <td>{{ consequence.consequence_category }}</td>
+                        <td>{{ consequence.security_property }}</td>
+                        <td><span class="badge consequence-badge">{{ consequence.consequence_realisticcase }}</span></td>
+                        <td>
+                            C: <span class="badge consequence-badge">{{ get_cia_impact(consequence, 'confidentiality') }}</span><br>
+                            I: <span class="badge consequence-badge">{{ get_cia_impact(consequence, 'integrity') }}</span><br>
+                            A: <span class="badge consequence-badge">{{ get_cia_impact(consequence, 'availability') }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card mb-3">
+                    <div class="card-header">Contact persons & rolls</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>End responsible:</strong> {{ item.responsible or "N/A" }}</li>
+                        <li class="list-group-item"><strong>Coördinator:</strong> {{ item.coordinator or "N/A" }}</li>
+                        <li class="list-group-item"><strong>Project leader:</strong> {{ item.project_leader or "N/A" }}</li>
+                        <li class="list-group-item"><strong>Product owner:</strong> {{ item.product_owner or "N/A" }}</li>
+                        <li class="list-group-item"><strong>Risk owner:</strong> {{ item.risk_owner or "N/A" }}</li>
+                        <li class="list-group-item"><strong>Technical administrator:</strong> {{ item.technical_administrator or "N/A" }}</li>
+                        <li class="list-group-item"><strong>Security Manager:</strong> {{ item.security_manager or "N/A" }}</li>
+                        <li class="list-group-item"><strong>Incident Contact:</strong> {{ item.incident_contact or "N/A" }}</li>
+                    </ul>
+                </div>
+                 <div class="card">
+                    <div class="card-header">Suppliers & Contracts</div>
+                    <ul class="list-group list-group-flush">
+                         <li class="list-group-item"><strong>Support contracts:</strong> {{ item.support_contracts or "N/A" }}</li>
+                         <li class="list-group-item"><strong>Security supplier:</strong> {{ item.security_supplier or "N/A" }}</li>
+                    </ul>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-center">
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">Back to dashboard</a>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="deleteModalLabel">Confirm deletion</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">Are you sure you want to delete'{{ item.name }}'? This action cannot be undone.</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="POST" action="{{ url_for('main.delete_item', item_id=item.id) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+    <script>
+        // Roep de functie aan nadat de specifieke content is geladen
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wacht een kort moment om er zeker van te zijn dat alle elementen zijn gerenderd
+            setTimeout(applyBadgeColors, 100);
+        });
+    </script>
+{% endblock %}

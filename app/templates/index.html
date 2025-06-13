@@ -1,0 +1,46 @@
+<!-- app/templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">BIA Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('main.new_item') }}" class="btn btn-primary me-2">
+            Add new BIA
+        </a>
+        <a href="{{ url_for('main.import_csv') }}" class="btn btn-secondary">Import BIA</a>
+    </div>
+</div>
+
+    {% if items %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for item in items %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ item.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary">Responsible: {{ item.responsible or 'N/A' }}</h6>
+                            <p class="card-text flex-grow-1">
+                                {{ item.service_description|truncate(100, true) if item.service_description else "No Description" }}
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.view_item', item_id=item.id) }}" class="btn btn-outline-secondary btn-sm">Details</a>
+                                {% if item.author == current_user %}
+                                    <a href="{{ url_for('main.edit_item', item_id=item.id) }}" class="btn btn-outline-info btn-sm">Edit</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer text-body-secondary">
+                           Last edit: {{ item.last_update.strftime('%d-%m-%Y') if item.last_update }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <h3 class="text-secondary">No items found</h3>
+            <p>Click on "New BIA Item" to add a new item".</p>
+        </div>
+    {% endif %}
+{% endblock %}

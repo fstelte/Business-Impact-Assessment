@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Import BIA from CSV</h1>
+    <form method="POST" action="{{ url_for('main.import_csv') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.bia.label(class="form-label") }}
+            {{ form.bia(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.components.label(class="form-label") }}
+            {{ form.components(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.consequences.label(class="form-label") }}
+            {{ form.consequences(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.availability_requirements.label(class="form-label") }}
+            {{ form.availability_requirements(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.ai_identification.label(class="form-label") }}
+            {{ form.ai_identification(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.summary.label(class="form-label") }}
+            {{ form.summary(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %}

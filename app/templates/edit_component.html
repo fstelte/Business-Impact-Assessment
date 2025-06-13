@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Edit Component</h1>
+    <form method="POST" action="{{ url_for('main.edit_component', component_id=component.id) }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.info_type.label(class="form-label") }}
+            {{ form.info_type(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.info_owner.label(class="form-label") }}
+            {{ form.info_owner(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.user_type.label(class="form-label") }}
+            {{ form.user_type(class="form-control") }}
+        </div>
+            {{ form.process_dependencies.label(class="form-label") }}
+            {{ form.process_dependencies(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control", rows=3) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Component</button>
+        <a href="{{ url_for('main.view_components') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIA Report - {{ item.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .bg-green { background-color: #28a745; color: white; }
+        .bg-dark-red { background-color: #8b0000; color: white; }
+        .bg-red { background-color: #dc3545; color: white; }
+        .bg-orange { background-color: #fd7e14; color: white; }
+        .bg-yellow { background-color: #ffc107; color: black; }
+
+        @media print {
+            .nav-tabs .nav-link { color: #000 !important; }
+            .tab-content { border: 1px solid #dee2e6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card shadow-lg mb-4">
+            <div class="card-header">
+                <h2 class="mb-0">{{ item.name }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-lg-8">
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h3>Summary</h3>
+                            </div>
+                            <div class="card-body">
+                                {% if item.summary %}
+                                    <p>{{ item.summary.content }}</p>
+                                {% else %}
+                                    <p>No summary available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <button class="nav-link active" id="nav-scope-tab" data-bs-toggle="tab" data-bs-target="#nav-scope" type="button" role="tab">Scope & Details</button>
+                                <button class="nav-link" id="nav-risk-tab" data-bs-toggle="tab" data-bs-target="#nav-risk" type="button" role="tab">Risk assessments</button>
+                                <button class="nav-link" id="nav-components-tab" data-bs-toggle="tab" data-bs-target="#nav-components" type="button" role="tab">Components</button>
+                                <button class="nav-link" id="consequences-tab" data-bs-toggle="tab" data-bs-target="#consequences" type="button" role="tab">Consequences</button>
+                                <button class="nav-link" id="nav-availability-tab" data-bs-toggle="tab" data-bs-target="#nav-availability" type="button" role="tab">Availability requirements</button>
+                            </div>
+                        </nav>
+                        <div class="tab-content p-3 border border-top-0 rounded-bottom" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-scope" role="tabpanel">
+                                <h5>Service description</h5>
+                                <p>{{ item.service_description or "N/A" }}</p>
+                                <hr>
+                                <h5>Scope</h5>
+                                <p>{{ item.scope_description or "N/A" }}</p>
+                                <hr>
+                                <h5>Details</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-4">Knowledge</dt>
+                                    <dd class="col-sm-8">{{ item.knowledge or "N/A" }}</dd>
+                                    <dt class="col-sm-4">Interfaces</dt>
+                                    <dd class="col-sm-8">{{ item.interfaces or "N/A" }}</dd>
+                                    <dt class="col-sm-4">Mission critical</dt>
+                                    <dd class="col-sm-8">{{ item.mission_critical or "N/A" }}</dd>
+                                    <dt class="col-sm-4">Uses AI Model</dt>
+                                    <dd class="col-sm-8">{% if item.ai_model %}Yes{% else %}No{% endif %}</dd>
+                                </dl>
+                            </div>
+                            <div class="tab-pane fade" id="nav-risk" role="tabpanel">
+                                <h5>Risk assessments</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk assessment people aspect
+                                        <span class="badge bg-{% if item.risk_assessment_human %}success{% else %}secondary{% endif %} rounded-pill">{% if item.risk_assessment_human %}Yes{% else %}No{% endif %}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk assessment process aspect
+                                        <span class="badge bg-{% if item.risk_assessment_process %}success{% else %}secondary{% endif %} rounded-pill">{% if item.risk_assessment_process %}Yes{% else %}No{% endif %}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk assessment technology aspect
+                                        <span class="badge bg-{% if item.risk_assessment_technological %}success{% else %}secondary{% endif %} rounded-pill">{% if item.risk_assessment_technological %}Yes{% else %}No{% endif %}</span>
+                                    </li>
+                                </ul>
+                                <h6 class="mt-3">AI Risks</h6>
+                                                        <h3>AI Risks</h3>
+                            {% if ai_identifications %}
+                                {% for component in item.components %}
+                                    {% if component.id in ai_identifications %}
+                                        <h4>{{ component.name }}</h4>
+                                        <p>AI risk category: 
+                                               <span class="badge ai-risk-badge">{{ ai_identifications[component.id].category }}</span></p>
+                                        <p>Motivation: {{ ai_identifications[component.id].motivatie }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <p>No AI risks identified for any components.</p>
+                            {% endif %}
+                            
+                            </div>
+                            <div class="tab-pane fade" id="nav-components" role="tabpanel">
+                                <h5>Related components</h5>
+                                <ul class="list-group">
+                                    {% for component in item.components %}
+                                        <li class="list-group-item">
+                                            <strong>{{ component.name }}</strong> ({{ component.info_type or 'Unknown type' }})
+                                            <p class="mb-0 text-secondary">{{ component.description or '' }}</p>
+                                        </li>
+                                    {% else %}
+                                        <li class="list-group-item">No components linked to this BIA.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="tab-pane fade" id="consequences" role="tabpanel">
+                                <h5>CIA Impact Overview</h5>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Confidentiality</th>
+                                            <th>Integrity</th>
+                                            <th>Availability</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="{{ get_impact_color(max_cia_impact['confidentiality']) }}">
+                                                {{ max_cia_impact['confidentiality'] }}
+                                            </span></td>
+                                            <td><span class="{{ get_impact_color(max_cia_impact['integrity']) }}">
+                                                {{ max_cia_impact['integrity'] }}
+                                            </span></td>
+                                            <td><span class="{{ get_impact_color(max_cia_impact['availability']) }}">
+                                                {{ max_cia_impact['availability'] }}
+                                            </span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <h3>Detailed Consequences</h3>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Component</th>
+                                                    <th>Category</th>
+                                                    <th>Security Property</th>
+                                                    <th>Realistic Case</th>
+                                                    <th>CIA Impact (Based on Realistic Case)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for consequence in consequences %}
+                                                <tr>
+                                                    <td>{{ consequence.component.name }}</td>
+                                                    <td>{{ consequence.consequence_category }}</td>
+                                                    <td>{{ consequence.security_property }}</td>
+                                                    <td><span class="badge consequence-badge">{{ consequence.consequence_realisticcase }}</span></td>
+                                                    <td>
+                                                        C: <span class="badge consequence-badge">{{ get_cia_impact(consequence, 'confidentiality') }}</span><br>
+                                                        I: <span class="badge consequence-badge">{{ get_cia_impact(consequence, 'integrity') }}</span><br>
+                                                        A: <span class="badge consequence-badge">{{ get_cia_impact(consequence, 'availability') }}</span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                            </div>
+                            <div class="tab-pane fade" id="nav-availability" role="tabpanel">
+                                <h5>Availability requirements</h5>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Component</th>
+                                            <th>MTD</th>
+                                            <th>RTO</th>
+                                            <th>RPO</th>
+                                            <th>MASL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for component in item.components %}
+                                            <tr>
+                                                <td>{{ component.name }}</td>
+                                                <td>{{ component.availability_requirement.mtd if component.availability_requirement else 'N/A' }}</td>
+                                                <td>{{ component.availability_requirement.rto if component.availability_requirement else 'N/A' }}</td>
+                                                <td>{{ component.availability_requirement.rpo if component.availability_requirement else 'N/A' }}</td>
+                                                <td>{{ component.availability_requirement.masl if component.availability_requirement else 'N/A' }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5">No availability requirements found for any components.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Right Column -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card mb-3">
+                <div class="card-header">Contact persons & roles</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>End responsible:</strong> {{ item.responsible or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Coordinator:</strong> {{ item.coordinator or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Project leader:</strong> {{ item.project_leader or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Product owner:</strong> {{ item.product_owner or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Risk owner:</strong> {{ item.risk_owner or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Technical administrator:</strong> {{ item.technical_administrator or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Security Manager:</strong> {{ item.security_manager or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Incident Contact:</strong> {{ item.incident_contact or "N/A" }}</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-header">Suppliers & Contracts</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Support contracts:</strong> {{ item.support_contracts or "N/A" }}</li>
+                    <li class="list-group-item"><strong>Security supplier:</strong> {{ item.security_supplier or "N/A" }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function setBadgeColor(badge, category) {
+        switch(category.toLowerCase()) {
+            case 'no ai':
+            case 'insignificant':
+                badge.classList.add('bg-green');
+                break;
+            case 'unacceptable risk':
+            case 'catastrophic':
+                badge.classList.add('bg-dark-red');
+                break;
+            case 'high risk':
+            case 'major':
+                badge.classList.add('bg-red');
+                break;
+            case 'limited risk':
+            case 'moderate':
+                badge.classList.add('bg-orange');
+                break;
+            case 'minimal risk':
+            case 'minor':
+                badge.classList.add('bg-yellow');
+                break;
+            default:
+                badge.classList.add('bg-secondary');
+        }
+    }
+
+    // AI Risk badges
+    const aiRiskBadges = document.querySelectorAll('.ai-risk-badge');
+    aiRiskBadges.forEach(function(badge) {
+        const category = badge.textContent.trim();
+        setBadgeColor(badge, category);
+    });
+
+    // Consequence badges
+    const consequenceBadges = document.querySelectorAll('.consequence-badge');
+    consequenceBadges.forEach(function(badge) {
+        const category = badge.textContent.trim();
+        setBadgeColor(badge, category);
+    });
+});
+</script>
+</body>
+</html> 

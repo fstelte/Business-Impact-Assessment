@@ -1,0 +1,421 @@
+<!-- app/templates/create_edit_item.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <!-- Hoofdformulier voor BIA Item -->
+        <div class="card shadow-lg mb-4">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">{{ legend }}</h2>
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <fieldset>
+                        <legend class="h5 border-bottom pb-2 mb-3">Generic information</legend>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">{{ form.name.label(class="form-label") }}{{ form.name(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.user_amount.label(class="form-label") }}{{ form.user_amount(class="form-control") }}</div>
+                        </div>
+                        <div class="mb-3">{{ form.service_description.label(class="form-label") }}{{ form.service_description(class="form-control", rows=3) }}</div>
+                        <div class="mb-3">{{ form.scope_description.label(class="form-label") }}{{ form.scope_description(class="form-control", rows=3) }}</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">{{ form.start_date.label(class="form-label") }}{{ form.start_date(class="form-control", type='date') }}</div>
+                            <div class="col-md-6 mb-3">{{ form.end_date.label(class="form-label") }}{{ form.end_date(class="form-control", type='date') }}</div>
+                        </div>
+
+                        <legend class="h5 border-bottom pb-2 mt-4 mb-3">Roles and contact persons</legend>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">{{ form.responsible.label(class="form-label") }}{{ form.responsible(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.coordinator.label(class="form-label") }}{{ form.coordinator(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.project_leader.label(class="form-label") }}{{ form.project_leader(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.risk_owner.label(class="form-label") }}{{ form.risk_owner(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.product_owner.label(class="form-label") }}{{ form.product_owner(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.technical_administrator.label(class="form-label") }}{{ form.technical_administrator(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.security_manager.label(class="form-label") }}{{ form.security_manager(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.incident_contact.label(class="form-label") }}{{ form.incident_contact(class="form-control") }}</div>
+                        </div>
+
+                        <legend class="h5 border-bottom pb-2 mt-4 mb-3">Details & dependencies</legend>
+                        <div class="mb-3">{{ form.mission_critical.label(class="form-label") }}{{ form.mission_critical(class="form-control") }}</div>
+                        <div class="mb-3">{{ form.knowledge.label(class="form-label") }}{{ form.knowledge(class="form-control", rows=3) }}</div>
+                        <div class="mb-3">{{ form.interfaces.label(class="form-label") }}{{ form.interfaces(class="form-control", rows=3) }}</div>
+                        <div class="mb-3">{{ form.support_contracts.label(class="form-label") }}{{ form.support_contracts(class="form-control") }}</div>
+                        <div class="mb-3">{{ form.security_supplier.label(class="form-label") }}{{ form.security_supplier(class="form-control") }}</div>
+                        <div class="mb-3">{{ form.ai_model.label(class="form-label font-weight-bold") }}
+                            <div>
+                            {% for subfield in form.ai_model %}<div class="form-check form-check-inline">{{ subfield(class="form-check-input") }}{{ subfield.label(class="form-check-label") }}</div>{% endfor %}
+                            </div>
+                        </div>
+
+                        <legend class="h5 border-bottom pb-2 mt-4 mb-3">Risk assessments</legend>
+                        <div class="mb-3">{{ form.risk_assessment_human.label(class="form-label") }}
+                            <div>
+                            {% for subfield in form.risk_assessment_human %}<div class="form-check form-check-inline">{{ subfield(class="form-check-input") }}{{ subfield.label(class="form-check-label") }}</div>{% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-3">{{ form.risk_assessment_process.label(class="form-label") }}
+                            <div>
+                            {% for subfield in form.risk_assessment_process %}<div class="form-check form-check-inline">{{ subfield(class="form-check-input") }}{{ subfield.label(class="form-check-label") }}</div>{% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-3">{{ form.risk_assessment_technological.label(class="form-label") }}
+                            <div>
+                            {% for subfield in form.risk_assessment_technological %}<div class="form-check form-check-inline">{{ subfield(class="form-check-input") }}{{ subfield.label(class="form-check-label") }}</div>{% endfor %}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group mt-4 text-center">
+                        {{ form.submit(class="btn btn-primary w-50") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- Voeg dit toe in de sectie waar je de componenten beheert -->
+        {% if item %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>Summary</h3>
+            </div>
+            <div class="card-body">
+                {% if item.summary %}
+                    <p>{{ item.summary.content }}</p>
+                    <a href="{{ url_for('main.manage_summary', item_id=item.id) }}" class="btn btn-primary">Edit Summary</a>
+                {% else %}
+                    <p>No summary added yet.</p>
+                    <a href="{{ url_for('main.manage_summary', item_id=item.id) }}" class="btn btn-primary">Add Summary</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+<!-- Sectie voor Componenten (alleen op de bewerkpagina) -->
+{% if item %}
+<div class="card shadow-lg mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Related Components</h5>
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addComponentModal">
+            <i class="fas fa-plus"></i> Add component
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="row" id="component-list">
+            {% for component in item.components %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100" data-component-id="{{ component.id }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ component.name }}</h5>
+                            <p class="card-text">BIA: {{ item.name }}</p>
+                            <button class="btn btn-sm btn-outline-primary view-component-btn" data-bs-toggle="modal" data-bs-target="#viewComponentModal">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center" id="no-components-message">
+                    <p class="text-secondary">No components added yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Modal for viewing a component -->
+<div class="modal fade" id="viewComponentModal" tabindex="-1" aria-labelledby="viewComponentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewComponentModalLabel">Component Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 id="view-component-name"></h4>
+                <p>BIA: <span id="view-component-bia"></span></p>
+                <p>Linked Consequences: <span id="view-component-consequences"></span></p>
+                <a href="#" id="view-consequences-link" class="btn btn-primary">View All Consequences</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary edit-component-btn" data-bs-toggle="modal" data-bs-target="#editComponentModal">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button type="button" class="btn btn-danger delete-component-btn">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding a component -->
+<div class="modal fade" id="addComponentModal" tabindex="-1" aria-labelledby="addComponentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addComponentModalLabel">Add New Component</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="component-form">
+                    {{ component_form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ component_form.name.label(class="form-label") }}
+                        {{ component_form.name(class="form-control", id="component-name") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.info_type.label(class="form-label") }}
+                        {{ component_form.info_type(class="form-control", id="component-info-type") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.info_owner.label(class="form-label") }}
+                        {{ component_form.info_owner(class="form-control", id="component-info-owner") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.user_type.label(class="form-label") }}
+                        {{ component_form.user_type(class="form-control", id="component-user-type") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.description.label(class="form-label") }}
+                        {{ component_form.description(class="form-control", id="component-description", rows=3) }}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-component-btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal for editing a component -->
+<!-- Modal for editing a component -->
+<div class="modal fade" id="editComponentModal" tabindex="-1" aria-labelledby="editComponentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editComponentModalLabel">Edit Component</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-component-form">
+                    {{ component_form.hidden_tag() }}
+                    <input type="hidden" id="edit-component-id" name="component_id">
+                    <div class="mb-3">
+                        {{ component_form.name.label(class="form-label") }}
+                        {{ component_form.name(class="form-control", id="edit-component-name") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.info_type.label(class="form-label") }}
+                        {{ component_form.info_type(class="form-control", id="edit-component-info-type") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.info_owner.label(class="form-label") }}
+                        {{ component_form.info_owner(class="form-control", id="edit-component-info-owner") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.user_type.label(class="form-label") }}
+                        {{ component_form.user_type(class="form-control", id="edit-component-user-type") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.description.label(class="form-label") }}
+                        {{ component_form.description(class="form-control", id="edit-component-description", rows=3) }}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-edit-component-btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const viewComponentModal = new bootstrap.Modal(document.getElementById('viewComponentModal'));
+    const editComponentModal = new bootstrap.Modal(document.getElementById('editComponentModal'));
+    const addComponentModal = new bootstrap.Modal(document.getElementById('addComponentModal'));
+
+    // Functie om een component te verwijderen
+    function deleteComponent(componentId) {
+        if (confirm('Are you sure you want to delete this component?')) {
+            fetch(`/delete_component/${componentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`[data-component-id="${componentId}"]`).remove();
+                    if (document.getElementById('component-list').children.length === 0) {
+                        let noComponentsMessage = document.createElement('div');
+                        noComponentsMessage.id = 'no-components-message';
+                        noComponentsMessage.className = 'col-12 text-center';
+                        noComponentsMessage.innerHTML = '<p class="text-secondary">No components added yet.</p>';
+                        document.getElementById('component-list').appendChild(noComponentsMessage);
+                    }
+                    viewComponentModal.hide();
+                } else {
+                    alert('Error deleting component');
+                }
+            });
+        }
+    }
+
+    // Event listener voor view knoppen
+    document.querySelectorAll('.view-component-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const componentId = this.closest('.card').dataset.componentId;
+            fetch(`/get_component/${componentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('view-component-name').textContent = data.name;
+                    document.getElementById('view-component-bia').textContent = '{{ item.name if item else "New BIA" }}';
+                    document.getElementById('view-component-consequences').textContent = data.consequences_count;
+                    document.getElementById('view-consequences-link').href = `/consequences/${componentId}`;
+                    
+                    // Update edit en delete knoppen
+                    const editBtn = document.querySelector('#viewComponentModal .edit-component-btn');
+                    const deleteBtn = document.querySelector('#viewComponentModal .delete-component-btn');
+                    editBtn.setAttribute('data-component-id', componentId);
+                    deleteBtn.setAttribute('data-component-id', componentId);
+                });
+        });
+    });
+
+    // Event listener voor edit knop in view modal
+    document.querySelector('#viewComponentModal .edit-component-btn').addEventListener('click', function() {
+        const componentId = this.getAttribute('data-component-id');
+        fetch(`/get_component/${componentId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('edit-component-id').value = data.id;
+                document.getElementById('edit-component-name').value = data.name;
+                document.getElementById('edit-component-info-type').value = data.info_type;
+                document.getElementById('edit-component-info-owner').value = data.info_owner;
+                document.getElementById('edit-component-user-type').value = data.user_type;
+                document.getElementById('edit-component-description').value = data.description;
+                viewComponentModal.hide();
+                editComponentModal.show();
+            });
+    });
+
+    // Event listener voor delete knop in view modal
+    document.querySelector('#viewComponentModal .delete-component-btn').addEventListener('click', function() {
+        const componentId = this.getAttribute('data-component-id');
+        deleteComponent(componentId);
+    });
+
+    // Event listener voor het bijwerken van een component
+    document.getElementById('save-edit-component-btn').addEventListener('click', function() {
+        const form = document.getElementById('edit-component-form');
+        const formData = new FormData(form);
+        const componentId = formData.get('component_id');
+
+        fetch(`/update_component/${componentId}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const componentCard = document.querySelector(`[data-component-id="${componentId}"]`);
+                componentCard.querySelector('.card-title').textContent = data.name;
+                editComponentModal.hide();
+                // Refresh de view modal als deze open was
+                document.querySelector(`[data-component-id="${componentId}"] .view-component-btn`).click();
+            } else {
+                alert('Error updating component');
+            }
+        });
+    });
+
+    // Event listener voor het opslaan van een nieuw component
+    document.getElementById('save-component-btn').addEventListener('click', function() {
+        const form = document.getElementById('component-form');
+        const formData = new FormData(form);
+        
+        // Voeg de BIA ID toe aan de form data
+        formData.append('bia_id', '{{ item.id if item else "" }}');
+
+        fetch('{{ url_for("main.add_component") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                addComponentModal.hide();
+                
+                // Voeg het nieuwe component toe aan de lijst
+                const componentList = document.getElementById('component-list');
+                const newComponentHtml = `
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100" data-component-id="${data.id}">
+                            <div class="card-body">
+                                <h5 class="card-title">${data.name}</h5>
+                                <p class="card-text">BIA: {{ item.name if item else "New BIA" }}</p>
+                                <button class="btn btn-sm btn-outline-primary view-component-btn" data-bs-toggle="modal" data-bs-target="#viewComponentModal" data-component-id="${data.id}">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Verwijder het "No components" bericht als het bestaat
+                const noComponentsMessage = document.getElementById('no-components-message');
+                if (noComponentsMessage) {
+                    noComponentsMessage.remove();
+                }
+                
+                componentList.insertAdjacentHTML('beforeend', newComponentHtml);
+                
+                // Reset het formulier
+                form.reset();
+                
+                // Voeg event listener toe aan de nieuwe view knop
+                const newViewBtn = componentList.querySelector(`[data-component-id="${data.id}"] .view-component-btn`);
+                newViewBtn.addEventListener('click', function() {
+                    const componentId = this.getAttribute('data-component-id');
+                    fetch(`/get_component/${componentId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('view-component-name').textContent = data.name;
+                            document.getElementById('view-component-bia').textContent = '{{ item.name if item else "New BIA" }}';
+                            document.getElementById('view-component-consequences').textContent = data.consequences_count;
+                            document.getElementById('view-consequences-link').href = `/consequences/${componentId}`;
+                            
+                            const editBtn = document.querySelector('#viewComponentModal .edit-component-btn');
+                            const deleteBtn = document.querySelector('#viewComponentModal .delete-component-btn');
+                            editBtn.setAttribute('data-component-id', componentId);
+                            deleteBtn.setAttribute('data-component-id', componentId);
+                        });
+                });
+            } else {
+                alert('Error adding component: ' + data.errors);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while adding the component');
+        });
+    });
+});
+</script>
+
+{% endblock %}
+
