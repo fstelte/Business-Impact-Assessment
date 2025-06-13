@@ -52,6 +52,8 @@ Replace your_secret_key_here, admin@example.com, and secure_password_here with y
 
 ### 5. Initialize the database
 
+Make sure you have the instance folder created in the root of the application
+
 ```bash
 flask db init
 flask db migrate -m "Initial migration"

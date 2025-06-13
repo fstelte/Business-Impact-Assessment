@@ -169,6 +169,10 @@
                         {{ component_form.info_type(class="form-control", id="component-info-type") }}
                     </div>
                     <div class="mb-3">
+                        {{ component_form.process_dependencies.label(class="form-label") }}
+                        {{ component_form.process_dependencies(class="form-control", id="component-process-dependencies") }}
+                    </div>
+                    <div class="mb-3">
                         {{ component_form.info_owner.label(class="form-label") }}
                         {{ component_form.info_owner(class="form-control", id="component-info-owner") }}
                     </div>
@@ -211,6 +215,10 @@
                     <div class="mb-3">
                         {{ component_form.info_type.label(class="form-label") }}
                         {{ component_form.info_type(class="form-control", id="edit-component-info-type") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ component_form.process_dependencies.label(class="form-label") }}
+                        {{ component_form.process_dependencies(class="form-control", id="edit-component-process-dependencies") }}
                     </div>
                     <div class="mb-3">
                         {{ component_form.info_owner.label(class="form-label") }}
@@ -301,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('edit-component-info-type').value = data.info_type;
                 document.getElementById('edit-component-info-owner').value = data.info_owner;
                 document.getElementById('edit-component-user-type').value = data.user_type;
+                document.getElementById('edit-component-process-dependencies').value = data.process_dependencies; // Voeg deze regel toe
                 document.getElementById('edit-component-description').value = data.description;
                 viewComponentModal.hide();
                 editComponentModal.show();
@@ -406,8 +415,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                 });
             } else {
-                alert('Error adding component: ' + data.errors);
-            }
+    console.error('Error adding component:', data.errors);
+    let errorMessage = 'Error adding component:\n';
+    if (typeof data.errors === 'object') {
+        for (let key in data.errors) {
+            errorMessage += `${key}: ${data.errors[key]}\n`;
+        }
+    } else {
+        errorMessage += data.errors;
+    }
+    alert(errorMessage);
+}
         })
         .catch(error => {
             console.error('Error:', error);
