@@ -154,3 +154,12 @@ class ImportCSVForm(FlaskForm):
     ai_identification = FileField('AI Identification CSV', validators=[FileAllowed(['csv'])])
     summary = FileField('Summary CSV', validators=[FileAllowed(['csv'])])
     submit = SubmitField('Import')
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[
+        DataRequired(),
+        EqualTo('confirm_password', message='Passwords must match')
+    ])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired()])
+    submit = SubmitField('Change Password')
