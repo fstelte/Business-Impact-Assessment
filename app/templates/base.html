@@ -107,11 +107,7 @@
                         <!-- User Actions -->
                         {% if current_user.is_authenticated %}
                              <!-- Admin-only link (HIER GEPLAATST) -->
-                            {% if current_user.is_admin() %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('admin.list_users') }}">User management</a>
-                            </li>
-                            {% endif %}
+                          
                             
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -121,6 +117,10 @@
                                     <li><a class="dropdown-item" href="{{ url_for('main.change_password') }}">Change Password</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                      {% if current_user.is_admin() %}
+                                    <li><a class="dropdown-item" href="{{ url_for('admin.list_users') }}">User management</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                         {% else %}
