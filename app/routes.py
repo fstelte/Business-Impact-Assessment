@@ -7,7 +7,7 @@ from .utils import export_to_csv, import_from_csv
 from . import db
 from . import auth
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
-from .forms import ContextScopeForm, ConsequenceForm, RegistrationForm, ComponentForm, SummaryForm, ImportCSVForm
+from .forms import ContextScopeForm, ConsequenceForm, RegistrationForm, ComponentForm, SummaryForm, ImportCSVForm, ChangePasswordForm
 from datetime import date
 from werkzeug.utils import secure_filename
 import logging
@@ -591,3 +591,17 @@ def import_csv():
             print(f"Exception during import: {str(e)}")
 
     return render_template('import_csv.html', form=form)
+
+@main.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            db.session.commit()
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('main.index'))
+        else:
+            flash('Invalid current password.', 'danger')
+    return render_template('change_password.html', form=form)
