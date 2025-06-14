@@ -230,9 +230,45 @@ def update_component(component_id):
 @main.route('/components')
 @login_required
 def view_components():
-    components = Component.query.all()
-    consequence_form = ConsequenceForm()  # Instantieer het formulier hier
-    return render_template('components.html', components=components, consequence_form=consequence_form)
+    # Haal alle unieke ContextScope namen op
+    context_scopes = ContextScope.query.with_entities(ContextScope.name).distinct().all()
+    context_scope_names = [scope[0] for scope in context_scopes]
+    
+    # Haal de geselecteerde ContextScope op uit de query parameters
+    selected_scope = request.args.get('scope', 'all')
+    
+    # Filter de componenten op basis van de geselecteerde ContextScope
+    if selected_scope != 'all':
+        # Gebruik een LIKE query om gedeeltelijke overeenkomsten te vinden
+        components = Component.query.join(ContextScope).filter(ContextScope.name.like(f"%{selected_scope}%")).all()
+        if not components:
+            # Als er geen exacte match is, probeer dan een gedeeltelijke match
+            partial_match = ContextScope.query.filter(ContextScope.name.like(f"%{selected_scope}%")).first()
+            if partial_match:
+                components = Component.query.filter_by(context_scope_id=partial_match.id).all()
+                if components:
+                    flash(f"Showing components for BIA: {partial_match.name}", 'info')
+                else:
+                    flash(f"No components found for BIA: {partial_match.name}", 'info')
+            else:
+                flash(f"No BIA found matching: {selected_scope}", 'info')
+    else:
+        components = Component.query.all()
+    
+    # Log de gevonden componenten voor debugging
+    print(f"Selected scope: {selected_scope}")
+    print(f"Number of components found: {len(components)}")
+    for component in components:
+        print(f"Component: {component.name}, BIA: {component.context_scope.name}")
+    
+    # Maak een instantie van het ConsequenceForm
+    consequence_form = ConsequenceForm()
+    
+    return render_template('components.html', 
+                           components=components, 
+                           context_scope_names=context_scope_names,
+                           selected_scope=selected_scope,
+                           consequence_form=consequence_form)
 
 @main.route('/get_component/<int:component_id>')
 def get_component(component_id):
