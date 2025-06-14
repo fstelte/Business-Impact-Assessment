@@ -93,7 +93,7 @@ def new_item():
         )
         db.session.add(item)
         db.session.commit()
-        flash('Het item is succesvol aangemaakt!', 'success')
+        flash('BIA Added successfull!', 'success')
         return redirect(url_for('main.index'))
     return render_template('create_edit_item.html', title='New BIA', form=form, legend='New BIA', component_form=component_form, item=None)
 
@@ -132,7 +132,7 @@ def edit_item(item_id):
     item = ContextScope.query.get_or_404(item_id)
 
     if item.author != current_user:
-        flash('Je hebt geen toestemming om dit item te bewerken.', 'danger')
+        flash('You do not have permissions to edit this item.', 'danger')
         return redirect(url_for('main.index'))
     
     # Laad het formulier en vul het met de data van het 'item' object.
@@ -165,12 +165,12 @@ def delete_item(item_id):
     """Route voor het verwijderen van een item."""
     item = ContextScope.query.get_or_404(item_id)
     if item.author != current_user:
-        flash('Je hebt geen toestemming om dit item te verwijderen.', 'danger')
+        flash('You do not have permissions to remove this item.', 'danger')
         return redirect(url_for('main.index'))
     
     db.session.delete(item)
     db.session.commit()
-    flash('Het item is verwijderd.', 'success')
+    flash('Successfully removed item.', 'success')
     return redirect(url_for('main.index'))
 
 @main.route('/add_component', methods=['POST'])
