@@ -4,6 +4,17 @@
 <div class="container">
     <h1 class="mb-4">Components overview</h1>
     
+    <!-- Voeg de dropdown filter toe -->
+    <div class="mb-3">
+        <label for="scopeFilter" class="form-label">Filter by BIA:</label>
+        <select id="scopeFilter" class="form-select" onchange="this.form.submit()">
+            <option value="all" {% if selected_scope == 'all' %}selected{% endif %}>All BIAs</option>
+            {% for scope in context_scope_names %}
+                <option value="{{ scope }}" {% if selected_scope == scope %}selected{% endif %}>{{ scope }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
     <div class="row" id="component-list">
         {% for component in components %}
             <div class="col-md-4 mb-3">
@@ -503,6 +514,12 @@ if (saveAIIdentificationBtn) {
                 alert('Error updating availability requirements');
             }
         });
+    });
+
+    const scopeFilter = document.getElementById('scopeFilter');
+    scopeFilter.addEventListener('change', function() {
+        const selectedScope = this.value;
+        window.location.href = `{{ url_for('main.view_components') }}?scope=${selectedScope}`;
     });
 });
 </script>
