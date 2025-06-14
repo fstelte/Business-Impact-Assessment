@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Setup MFA</h2>
+                <p>Scan the QR code with your authenticator app:</p>
+                <div class="text-center mb-4">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+                    <div id="qrcode" class="mb-3"></div>
+                    <script>
+                        new QRCode(document.getElementById("qrcode"), "{{ provisioning_url }}");
+                    </script>
+                    <button id="showSecretBtn" class="btn btn-secondary btn-sm">Can't scan? Show secret key</button>
+                </div>
+                <div id="secretKeySection" class="text-center mb-4" style="display: none;">
+                    <p>If you can't scan the QR code, enter this secret key manually in your authenticator app:</p>
+                    <code class="secret-key">{{ secret_key }}</code>
+                </div>
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="token" class="form-label">Enter MFA Token</label>
+                        <input type="text" class="form-control" id="token" name="token" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Verify and Enable MFA</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('showSecretBtn').addEventListener('click', function() {
+    var secretSection = document.getElementById('secretKeySection');
+    if (secretSection.style.display === 'none') {
+        secretSection.style.display = 'block';
+        this.textContent = 'Hide secret key';
+    } else {
+        secretSection.style.display = 'none';
+        this.textContent = "Can't scan? Show secret key";
+    }
+});
+</script>
+{% endblock %}

@@ -25,6 +25,7 @@ def create_app(config_class=Config):
     """De application factory functie."""
     app = Flask(__name__, instance_relative_config=True)
     app.config['SECRET_KEY'] = 'your-secret-key'  # Zorg ervoor dat je een geheime sleutel hebt ingesteld
+   
     csrf.init_app(app)
     app.config.from_object(config_class)
 
@@ -43,7 +44,10 @@ def create_app(config_class=Config):
     # Registreer de admin blueprint (zie volgende stap)
     from .admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
-    
+
+    #from .auth import auth as auth_blueprint
+    #app.register_blueprint(auth_blueprint)
+
     # Registreer de CLI commando's
     from . import commands
     commands.init_app(app)

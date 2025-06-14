@@ -6,6 +6,8 @@ from sqlalchemy import Enum
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, datetime
+from pyotp import random_base32
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -21,7 +23,9 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(20), nullable=False, default='user')
     # Nieuw veld om accountstatus bij te houden
     active = db.Column(db.Boolean(), nullable=False, default=False)
-    
+    mfa_secret = db.Column(db.String(32), nullable=True)
+    mfa_enabled = db.Column(db.Boolean, default=False)
+
     items = db.relationship('ContextScope', backref='author', lazy='dynamic')
 
     # Override de is_active property van Flask-Login
@@ -46,6 +50,12 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.mfa_secret:
+            self.mfa_secret = random_base32()
+    
 class ContextScope(db.Model):
     """Model voor de context en scope van de BIA."""
     __tablename__ = 'context_scope'
