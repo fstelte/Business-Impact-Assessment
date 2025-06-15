@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Manage Context Scope Ownership</h1>
+<h2>{{ context_scope.name }}</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.users.label }}
+        {{ form.users(class="form-control", multiple=true) }}
+    </div>
+    {{ form.submit(class="btn btn-primary mt-3 btn-sm") }}
+</form>
+{% endblock %}

@@ -85,6 +85,10 @@ class ContextScopeForm(FlaskForm):
     incident_contact = StringField('Incident Contact', validators=[Optional(), Length(max=100)])
     submit = SubmitField('Save')
 
+class ContextScopeOwnershipForm(FlaskForm):
+    users = SelectMultipleField('Users', coerce=int)
+    submit = SubmitField('Save')
+
 # De losse __init__ functie kan volledig worden verwijderd.
 # NIEUW: Voeg deze class toe voor het componentenformulier
 class ComponentForm(FlaskForm):

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Context Scopes</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Owners</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for context_scope in context_scopes %}
+        <tr>
+            <td>{{ context_scope.name }}</td>
+            <td>
+                {% for user in context_scope.users %}
+                    {{ user.username }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <a href="{{ url_for('admin.manage_context_scope_ownership', context_scope_id=context_scope.id) }}" class="btn btn-sm btn-primary">Manage ownership</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

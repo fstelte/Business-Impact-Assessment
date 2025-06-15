@@ -4,9 +4,17 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, flash
 from flask_login import login_required, current_user
 from functools import wraps
-from .models import User
-from .forms import EditUserForm
+from .models import User, ContextScope
+from .forms import EditUserForm, ContextScopeOwnershipForm
 from . import db
+
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import login_required
+from .models import ContextScope, User
+from .forms import ContextScopeOwnershipForm
+from . import db
+
+
 
 admin = Blueprint('admin', __name__)
 
@@ -54,3 +62,32 @@ def activate_user(user_id):
     db.session.commit()
     flash(f'Gebruiker {user.username} is geactiveerd.', 'success')
     return redirect(url_for('admin.list_users'))
+
+@admin.route('/manage_context_scope_ownership/<int:context_scope_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_context_scope_ownership(context_scope_id):
+    context_scope = ContextScope.query.get_or_404(context_scope_id)
+    form = ContextScopeOwnershipForm()
+    
+    # Populate the choices for the SelectMultipleField
+    form.users.choices = [(user.id, user.username) for user in User.query.all()]
+    
+    if form.validate_on_submit():
+        selected_users = User.query.filter(User.id.in_(form.users.data)).all()
+        context_scope.users = selected_users
+        db.session.commit()
+        flash('Context Scope ownership updated successfully.', 'success')
+        return redirect(url_for('admin.list_context_scopes'))
+    
+    # Pre-select the current owners
+    form.users.data = [user.id for user in context_scope.users]
+    
+    return render_template('admin/manage_context_scope_ownership.html', form=form, context_scope=context_scope)
+
+@admin.route('/list_context_scopes')
+@login_required
+@admin_required
+def list_context_scopes():
+    context_scopes = ContextScope.query.all()
+    return render_template('admin/list_context_scopes.html', context_scopes=context_scopes)

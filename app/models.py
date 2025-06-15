@@ -1,6 +1,4 @@
 # app/models.py
-# Definieert de database modellen met SQLAlchemy.
-
 from . import db, login_manager
 from sqlalchemy import Enum
 from flask_login import UserMixin
@@ -8,29 +6,29 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, datetime
 from pyotp import random_base32
 
-
 @login_manager.user_loader
 def load_user(user_id):
-    """Callback functie voor Flask-Login om een gebruiker te laden."""
     return User.query.get(int(user_id))
 
+# Definieer de associatietabel eerst
+context_scope_users = db.Table('context_scope_users',
+    db.Column('context_scope_id', db.Integer, db.ForeignKey('context_scope.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
 class User(UserMixin, db.Model):
-    """Gebruikersmodel voor authenticatie."""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
     role = db.Column(db.String(20), nullable=False, default='user')
-    # Nieuw veld om accountstatus bij te houden
     active = db.Column(db.Boolean(), nullable=False, default=False)
     mfa_secret = db.Column(db.String(32), nullable=True)
     mfa_enabled = db.Column(db.Boolean, default=False)
 
     items = db.relationship('ContextScope', backref='author', lazy='dynamic')
+    context_scopes = db.relationship('ContextScope', secondary=context_scope_users, back_populates='users')
 
-    # Override de is_active property van Flask-Login
-    # Dit is cruciaal voor de integratie
-      # Definieer is_active als een property
     @property
     def is_active(self):
         return self.active
@@ -55,9 +53,8 @@ class User(UserMixin, db.Model):
         super().__init__(*args, **kwargs)
         if not self.mfa_secret:
             self.mfa_secret = random_base32()
-    
+
 class ContextScope(db.Model):
-    """Model voor de context en scope van de BIA."""
     __tablename__ = 'context_scope'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -87,10 +84,24 @@ class ContextScope(db.Model):
     security_manager = db.Column(db.String(100))
     incident_contact = db.Column(db.String(100))
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    users = db.relationship('User', secondary=context_scope_users, back_populates='context_scopes')
     components = db.relationship('Component', back_populates='context_scope', cascade="all, delete-orphan")
     summary = db.relationship('Summary', uselist=False, back_populates='context_scope', cascade='all, delete-orphan')
 
+    def __repr__(self):
+        return f'<ContextScope {self.name}>'
+    def __repr__(self):
+        """
+        Return a string representation of the ContextScope object.
+
+        This method provides a human-readable representation of the ContextScope instance,
+        which is useful for debugging and logging purposes.
+
+        Returns:
+            str: A string in the format '<ContextScope {name}>', where {name} is the name
+                 of the ContextScope instance.
+        """
+        return f'<ContextScope {self.name}>'    
     def __repr__(self):
         return f'<ContextScope {self.name}>'
 
