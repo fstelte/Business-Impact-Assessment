@@ -1,12 +1,13 @@
 # app/admin.py
 # Routes specifiek voor de administrator.
 
-from flask import Blueprint, render_template, abort, redirect, url_for, flash
+from flask import Blueprint, render_template, abort, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from functools import wraps
 from .models import User
 from .forms import EditUserForm
 from . import db
+from flask_wtf.csrf import CSRFProtect
 
 admin = Blueprint('admin', __name__)
 

@@ -39,6 +39,8 @@
                             <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-info">Edit</a>
                             {% if not user.is_active %}
                                 <form action="{{ url_for('admin.activate_user', user_id=user.id) }}" method="POST" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
                                     <button type="submit" class="btn btn-sm btn-success">Activate</button>
                                 </form>
                             {% endif %}
