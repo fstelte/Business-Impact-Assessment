@@ -55,3 +55,16 @@ def activate_user(user_id):
     db.session.commit()
     flash(f'Gebruiker {user.username} is geactiveerd.', 'success')
     return redirect(url_for('admin.list_users'))
+
+@admin.route('/user/<int:user_id>/deactivate', methods=['POST'])
+@login_required
+@admin_required
+def deactivate_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if user == current_user:
+        flash('You cannot deactivate yourself.', 'danger')
+    else:
+        user.is_active = False
+        db.session.commit()
+        flash(f'User {user.username} has been deactivated.', 'success')
+    return redirect(url_for('admin.list_users'))
