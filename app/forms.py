@@ -88,12 +88,13 @@ class ContextScopeForm(FlaskForm):
 # De losse __init__ functie kan volledig worden verwijderd.
 # NIEUW: Voeg deze class toe voor het componentenformulier
 class ComponentForm(FlaskForm):
-    name = StringField('Component Name', validators=[DataRequired()])
-    info_type = StringField('Information Type', validators=[DataRequired()])
-    info_owner = StringField('Information Owner', validators=[DataRequired()])
-    process_dependencies = StringField('Process dependend on this component', validators=[DataRequired()])
-    user_type = StringField('What kind of users are there?', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    info_type = StringField('Information Type')
+    info_owner = StringField('Information Owner')
+    user_type = StringField('User Type')
+    process_dependencies = TextAreaField('Process Dependencies')
     description = TextAreaField('Description')
+    submit = SubmitField('Save Component')
 
 class EditUserForm(FlaskForm):
     """Formulier om gebruikersgegevens te bewerken (admin only)."""

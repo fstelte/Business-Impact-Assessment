@@ -353,47 +353,61 @@ def import_from_csv(csv_files):
         except Exception as e:
             print(f"Error committing AI identifications: {str(e)}")
             db.session.rollback()
-# Import Summary (altijd proberen te importeren als aanwezig)
+    # Import Summary (als aanwezig)
     if 'summary' in csv_files and csv_files['summary']:
         summary_data = csv.DictReader(io.StringIO(csv_files['summary']))
+        
+        summary_field_mapping = {
+            'Gerelateerd aan BIA': 'bia_name',
+            'Summary Text': 'content'
+        }
+        
         for row in summary_data:
-            summary_field_mapping = {
-                'Gerelateerd aan BIA': 'bia_name',
-                'Summary Test': 'content'
-            }
-
-            mapped_row = {summary_field_mapping.get(k, k): v for k, v in row.items() if k in summary_field_mapping}
-            bia_name = mapped_row.pop('bia_name', None)
-            content = mapped_row.get('content', None)
+            if not any(row.values()):  # Skip empty rows
+                continue
             
-            if bia_name and content:
-                context_scope = ContextScope.query.filter_by(name=bia_name).first()
-                if context_scope:
-                    # Verwijder bestaande summary als die er is
-                    if context_scope.summary:
-                        db.session.delete(context_scope.summary)
-                    
-                    # Maak een nieuwe summary
-                    summary = Summary(content=content)
-                    summary.context_scope = context_scope
-                    db.session.add(summary)
-                    print(f"Added summary for BIA: {bia_name}")
+            # Map the row data
+            mapped_row = {summary_field_mapping.get(k, k): v.strip() if v else None for k, v in row.items() if k in summary_field_mapping}
+            
+            # Get the BIA name and remove it from mapped_row
+            bia_name = mapped_row.pop('bia_name', None)
+            
+            print(f"Processing summary for BIA: {bia_name}")
+            print(f"Summary content: {mapped_row.get('content', '')[:100]}...")  # Show first 100 chars
+            
+            if bia_name and mapped_row.get('content'):
+                # Find the related context_scope based on BIA name
+                related_context_scope = ContextScope.query.filter_by(name=bia_name).first()
+                if related_context_scope:
+                    try:
+                        # Check if summary already exists for this BIA
+                        existing_summary = Summary.query.filter_by(context_scope_id=related_context_scope.id).first()
+                        if existing_summary:
+                            # Update existing summary
+                            existing_summary.content = mapped_row['content']
+                            print(f"Updated existing summary for BIA: {bia_name}")
+                        else:
+                            # Create new summary
+                            summary = Summary(
+                                content=mapped_row['content'],
+                                context_scope_id=related_context_scope.id
+                            )
+                            db.session.add(summary)
+                            print(f"Added new summary for BIA: {bia_name}")
+                        
+                        db.session.flush()
+                    except Exception as e:
+                        print(f"Error adding/updating summary for BIA {bia_name}: {str(e)}")
+                        db.session.rollback()
                 else:
-                    print(f"ContextScope not found for BIA: {bia_name}")
+                    print(f"ContextScope not found for BIA name: {bia_name}")
             else:
-                print(f"Skipping summary without BIA name or content: {bia_name}")
+                print(f"Skipping summary - missing BIA name or content")
 
-        try:
-            db.session.commit()
-            print("Summary committed successfully")
-        except Exception as e:
-            print(f"Error committing summary: {str(e)}")
-            db.session.rollback()
-
-    # Commit all changes
     try:
         db.session.commit()
         print("All data committed successfully")
     except Exception as e:
-        print(f"Error committing all data: {str(e)}")
+        print(f"Error committing session: {str(e)}")
         db.session.rollback()
+        raise
