@@ -37,10 +37,10 @@ def export_to_csv(item):
     # Components CSV
     components_data = io.StringIO()
     components_writer = csv.writer(components_data)
-    components_writer.writerow(['Component name', 'Type of information', 'Information Owner', 'Types of users', 'Description of the component', 'Gerelateerd aan BIA'])
+    components_writer.writerow(['Component name', 'Type of information', 'Process Dependencies', 'Information Owner', 'Types of users', 'Description of the component', 'Gerelateerd aan BIA'])
     for component in item.components:
         components_writer.writerow([
-            component.name, component.info_type, component.info_owner, component.user_type,
+            component.name, component.info_type, component.process_dependencies, component.info_owner, component.user_type,
             component.description, item.name
         ])
     csv_files[f'{prefix}components.csv'] = components_data.getvalue()
