@@ -193,20 +193,6 @@ def add_component():
         return jsonify({'success': True, 'id': component.id, 'name': component.name})
     return jsonify({'success': False, 'errors': form.errors}), 400
 
-@main.route('/edit_component/<int:component_id>', methods=['GET', 'POST'])
-@login_required
-def edit_component(component_id):
-    component = Component.query.get_or_404(component_id)
-    form = ComponentForm(obj=component)
-    
-    if form.validate_on_submit():
-        form.populate_obj(component)
-        db.session.commit()
-        flash('Component has been updated!', 'success')
-        return redirect(url_for('main.view_components'))
-    
-    return render_template('edit_component.html', title='Edit Component', form=form, component=component)
-
 @main.route('/delete_component/<int:component_id>', methods=['POST'])
 @login_required
 def delete_component(component_id):
@@ -219,11 +205,18 @@ def delete_component(component_id):
 @login_required
 def update_component(component_id):
     component = Component.query.get_or_404(component_id)
-    form = ComponentForm(request.form)
-    if form.validate():
-        form.populate_obj(component)
+    form = ComponentForm()
+    
+    if form.validate_on_submit():
+        component.name = form.name.data
+        component.info_type = form.info_type.data
+        component.info_owner = form.info_owner.data
+        component.user_type = form.user_type.data
+        component.process_dependencies = form.process_dependencies.data
+        component.description = form.description.data
         db.session.commit()
-        return jsonify({'success': True})
+        return jsonify({'success': True, 'name': component.name})
+    
     return jsonify({'success': False, 'errors': form.errors}), 400
 
 
