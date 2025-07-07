@@ -8,7 +8,7 @@ from . import db
 from . import auth
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
 from .forms import ContextScopeForm, ConsequenceForm, RegistrationForm, ComponentForm, SummaryForm, ImportCSVForm, ChangePasswordForm
-from datetime import date
+from datetime import date, datetime
 from werkzeug.utils import secure_filename
 import logging
 import os
@@ -16,6 +16,8 @@ import zipfile
 import pandas as pd
 import tempfile
 import shutil
+import io
+import csv
 
 main = Blueprint('main', __name__)
 
@@ -634,3 +636,45 @@ def change_password():
         else:
             flash('Invalid current password.', 'danger')
     return render_template('change_password.html', form=form)
+
+@main.route('/export_data_inventory')
+@login_required
+def export_data_inventory():
+    """Exporteert een inventory van alle componenten met hun BIA informatie als CSV."""
+    
+    # Haal alle componenten op met hun gerelateerde ContextScope
+    components = Component.query.join(ContextScope).all()
+    
+    # Maak CSV data
+    csv_data = io.StringIO()
+    csv_writer = csv.writer(csv_data)
+    
+    # Schrijf header
+    csv_writer.writerow(['BIA', 'Systeem', 'Informatie', 'Eigenaar', 'Beheer'])
+    
+    # Schrijf data voor elke component
+    for component in components:
+        csv_writer.writerow([
+            component.context_scope.name,  # BIA
+            component.name,  # Systeem
+            component.info_type or 'N/A',  # Informatie
+            component.info_owner or 'N/A',  # Eigenaar
+            component.context_scope.technical_administrator or 'N/A'  # Beheer
+        ])
+    
+    # Maak een veilige bestandsnaam
+    filename = f"Data_Inventory_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    
+    # Bepaal het pad waar het bestand moet worden opgeslagen
+    export_path = os.path.join(current_app.root_path, 'exports')
+    if not os.path.exists(export_path):
+        os.makedirs(export_path)
+    
+    file_path = os.path.join(export_path, filename)
+    
+    # Schrijf de CSV-inhoud naar het bestand
+    with open(file_path, 'w', encoding='utf-8', newline='') as f:
+        f.write(csv_data.getvalue())
+    
+    # Stuur het bestand naar de gebruiker
+    return send_file(file_path, as_attachment=True, download_name=filename)
