@@ -1,7 +1,7 @@
 # app/routes.py
 # Behandelt de hoofdroutes van de applicatie (CRUD voor BIA).
 
-from flask import render_template, flash, redirect, url_for, request, Blueprint, jsonify,  current_app, send_file
+from flask import render_template, flash, redirect, url_for, request, Blueprint, jsonify,  current_app, send_file, abort
 from flask_login import current_user, login_required, login_user
 from .utils import export_to_csv, import_from_csv
 from . import db
@@ -559,14 +559,40 @@ def export_csv(item_id):
     # Exporteer de CSV-bestanden
     csv_files = export_to_csv(item)
 
-    # Schrijf elk CSV-bestand naar de map
+    # Schrijf elk CSV-bestand naar de map en verzamel bestandsinfo
+    exported_files = []
     for filename, content in csv_files.items():
         file_path = os.path.join(export_folder, filename)
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
+        
+        # Voeg bestandsinfo toe voor de template
+        exported_files.append({
+            'filename': filename,
+            'path': safe_folder_name,
+            'size': len(content.encode('utf-8'))  # Bestandsgrootte in bytes
+        })
 
-    flash(f'CSV-bestanden zijn geëxporteerd naar de map: {export_folder}', 'success')
-    return redirect(url_for('main.view_item', item_id=item.id))
+    flash(f'CSV-bestanden zijn succesvol geëxporteerd!', 'success')
+    
+    # Redirect naar de download overzichtspagina
+    return render_template('csv_export_overview.html', 
+                         item=item, 
+                         exported_files=exported_files,
+                         export_folder=safe_folder_name)
+
+@main.route('/download_csv/<path:folder_name>/<filename>')
+@login_required
+def download_csv_file(folder_name, filename):
+    """Route voor het downloaden van individuele CSV-bestanden."""
+    file_path = os.path.join(current_app.root_path, 'exports', folder_name, filename)
+    
+    # Controleer of het bestand bestaat
+    if not os.path.exists(file_path):
+        flash('Bestand niet gevonden.', 'error')
+        return redirect(url_for('main.index'))
+    
+    return send_file(file_path, as_attachment=True, download_name=filename)
 
 @main.route('/import_csv', methods=['GET', 'POST'])
 @login_required
