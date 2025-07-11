@@ -102,11 +102,12 @@ def assign_bia():
         # Store old owner for logging
         old_owner = bia_item.author.username if bia_item.author else 'No Owner'
         
-        # Update the assignment
-        bia_item.author_id = new_user.id
+        # Update the assignment using user_id
+        bia_item.user_id = new_user.id
+        
         db.session.commit()
         
-        # Log the change (you might want to add a proper logging system)
+        # Log the change
         flash(f'BIA "{bia_item.name}" has been reassigned from {old_owner} to {new_user.username}', 'success')
         
         return jsonify({
