@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, abort, redirect, url_for, flash, r
 from flask_login import login_required, current_user
 from functools import wraps
 from .models import User, ContextScope
+from .forms import EditUserForm
 from . import db
 from flask_wtf.csrf import CSRFProtect
 
