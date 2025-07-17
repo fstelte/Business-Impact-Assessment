@@ -3,7 +3,7 @@
 
 from flask import render_template, flash, redirect, url_for, request, Blueprint, jsonify,  current_app, send_file, abort
 from flask_login import current_user, login_required, login_user
-from .utils import export_to_csv, import_from_csv
+from .utils import export_to_csv, import_from_csv, get_impact_level, get_impact_color
 from . import db
 from . import auth
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
@@ -704,3 +704,166 @@ def export_data_inventory():
     
     # Stuur het bestand naar de gebruiker
     return send_file(file_path, as_attachment=True, download_name=filename)
+
+@login_required
+def export_all_consequences():
+    """Exporteert alle CIA consequences van alle BIA's als HTML-rapport."""
+    
+    # Haal het type export op uit de query parameters (default: detailed)
+    export_type = request.args.get('type', 'detailed')
+    
+    # Haal alle BIA's op met hun componenten en consequences
+    bias = ContextScope.query.all()
+    
+    if export_type == 'summary':
+        # Samenvattende versie: cumulatieve consequences per BIA
+        bia_summaries = []
+        
+        # Debug: print alle BIA's
+        print(f"Total BIAs found: {len(bias)}")
+        
+        for bia in bias:
+            print(f"\nProcessing BIA: {bia.name}")
+            print(f"  Components count: {len(bia.components)}")
+            
+            # Verzamel alle consequences voor deze BIA
+            all_consequences_for_bia = []
+            for component in bia.components:
+                print(f"    Component: {component.name}, Consequences: {len(component.consequences)}")
+                for consequence in component.consequences:
+                    print(f"      - {consequence.security_property}: W={consequence.consequence_worstcase}, R={consequence.consequence_realisticcase}")
+                all_consequences_for_bia.extend(component.consequences)
+            
+            print(f"  Total consequences for BIA: {len(all_consequences_for_bia)}")
+            
+            # Alleen BIA's met componenten EN consequences toevoegen
+            if len(bia.components) > 0 and len(all_consequences_for_bia) > 0:
+                # Initialiseer max_impacts met alle drie de security properties
+                max_impacts = {
+                    'Confidentiality': {'worstcase': None, 'realistic': None},
+                    'Integrity': {'worstcase': None, 'realistic': None},
+                    'Availability': {'worstcase': None, 'realistic': None}
+                }
+                
+                # Bereken de maximale impact per security property
+                for consequence in all_consequences_for_bia:
+                    prop = consequence.security_property
+                    
+                    # Zorg ervoor dat de property key correct is (met hoofdletter)
+                    if prop.lower() == 'confidentiality':
+                        prop = 'Confidentiality'
+                    elif prop.lower() == 'integrity':
+                        prop = 'Integrity'
+                    elif prop.lower() == 'availability':
+                        prop = 'Availability'
+                    
+                    if prop in max_impacts:
+                        current_worst = consequence.consequence_worstcase
+                        current_realistic = consequence.consequence_realisticcase
+                        
+                        # Update worstcase als het de eerste is of hoger is
+                        if (max_impacts[prop]['worstcase'] is None or 
+                            get_impact_level(current_worst) > get_impact_level(max_impacts[prop]['worstcase'])):
+                            max_impacts[prop]['worstcase'] = current_worst
+                        
+                        # Update realistic als het de eerste is of hoger is
+                        if (max_impacts[prop]['realistic'] is None or 
+                            get_impact_level(current_realistic) > get_impact_level(max_impacts[prop]['realistic'])):
+                            max_impacts[prop]['realistic'] = current_realistic
+                
+                bia_summaries.append({
+                    'bia_name': bia.name,
+                    'component_count': len(bia.components),
+                    'consequence_count': len(all_consequences_for_bia),
+                    'max_impacts': max_impacts
+                })
+                
+                print(f"  Added to summary with max_impacts: {max_impacts}")
+        
+        print(f"\nTotal BIA summaries created: {len(bia_summaries)}")
+        
+        # Genereer huidige datum/tijd
+        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Render de samenvattende template
+        html_content = render_template('export_consequences_summary.html', 
+                                       title='CIA Consequences Summary by BIA',
+                                       bia_summaries=bia_summaries,
+                                       current_datetime=current_datetime)
+        
+        filename = f"CIA_Consequences_Summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        
+    else:
+        # Uitgebreide versie: alle consequences individueel
+        all_consequences = []
+        for bia in bias:
+            for component in bia.components:
+                for consequence in component.consequences:
+                    all_consequences.append({
+                        'bia_name': bia.name,
+                        'component_name': component.name,
+                        'consequence': consequence
+                    })
+        
+        # Genereer huidige datum/tijd
+        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Render de uitgebreide template
+        html_content = render_template('export_all_consequences.html', 
+                                       title='All CIA Consequences Overview',
+                                       all_consequences=all_consequences,
+                                       current_datetime=current_datetime)
+        
+        filename = f"All_CIA_Consequences_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+    
+    # Bepaal het pad waar het bestand moet worden opgeslagen
+    export_path = os.path.join(current_app.root_path, 'exports')
+    if not os.path.exists(export_path):
+        os.makedirs(export_path)
+    
+    file_path = os.path.join(export_path, filename)
+    
+    # Schrijf de HTML-inhoud naar het bestand
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    
+    # Stuur het bestand naar de gebruiker
+    return send_file(file_path, as_attachment=True, download_name=filename)
+
+main.add_url_rule('/export-all-consequences', 'export_all_consequences', export_all_consequences, methods=['GET'])
+
+@main.route('/debug/consequences')
+@login_required
+def debug_consequences():
+    """Debug route om consequences data te controleren"""
+    bias = ContextScope.query.all()
+    debug_info = []
+    
+    for bia in bias:
+        bia_info = {
+            'bia_name': bia.name,
+            'bia_id': bia.id,
+            'components': []
+        }
+        
+        for component in bia.components:
+            component_info = {
+                'component_name': component.name,
+                'component_id': component.id,
+                'consequences': []
+            }
+            
+            for consequence in component.consequences:
+                consequence_info = {
+                    'security_property': consequence.security_property,
+                    'worstcase': consequence.consequence_worstcase,
+                    'realistic': consequence.consequence_realisticcase,
+                    'category': consequence.consequence_category
+                }
+                component_info['consequences'].append(consequence_info)
+            
+            bia_info['components'].append(component_info)
+        
+        debug_info.append(bia_info)
+    
+    return jsonify(debug_info)

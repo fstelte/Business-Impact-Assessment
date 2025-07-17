@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/badge-colors.js') }}"></script>
+<style>
+    /* Impact level colors - consistent with legend */
+    .bg-green { 
+        background-color: #28a745 !important; 
+        color: white !important; 
+    }
+    .bg-yellow { 
+        background-color: #ffc107 !important; 
+        color: black !important; 
+    }
+    .bg-orange { 
+        background-color: #fd7e14 !important; 
+        color: white !important; 
+    }
+    .bg-red { 
+        background-color: #dc3545 !important; 
+        color: white !important; 
+    }
+    .bg-dark-red { 
+        background-color: #721c24 !important; 
+        color: white !important; 
+    }
+    
+    /* Bootstrap overrides */
+    .badge.bg-secondary {
+        background-color: #6c757d !important;
+        color: white !important;
+    }
+    
+    .impact-badge { 
+        font-size: 0.8em; 
+        padding: 0.25em 0.5em; 
+        border-radius: 0.25rem; 
+        font-weight: bold;
+    }
+    .legend-item {
+        display: inline-block;
+        margin-right: 15px;
+        margin-bottom: 5px;
+    }
+    .legend-color {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        border-radius: 3px;
+        vertical-align: middle;
+    }
+
+
+</style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card shadow-lg mb-4">
+            <div class="card-header">
+                <h1 class="mb-0">{{ title }}</h1>
+                <small class="text-muted">Generated on: {{ current_datetime }}</small>
+            </div>
+            <div class="card-body">
+                <!-- Legend -->
+                <!-- Legend -->
+                <div class="mb-4">
+                    <h5>Impact Level Legend:</h5>
+                    <div class="legend-item">
+                        <span class="legend-color bg-green"></span>
+                        <span>Very Low / Insignificant</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color bg-yellow"></span>
+                        <span>Low / Minor</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color bg-orange"></span>
+                        <span>Medium / Moderate</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color bg-red"></span>
+                        <span>High / Major</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color bg-dark-red"></span>
+                        <span>Very High / Catastrophic</span>
+                    </div>
+                </div>
+
+                    
+                    <div class="legend-section">
+                        <h5>Impact Assessment Types:</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>W (Worst Case):</strong> Maximum potential impact under worst-case scenario conditions
+                            </div>
+                            <div class="col-md-6">
+                                <strong>R (Realistic Case):</strong> Most likely impact under normal operational conditions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Table -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>BIA Name</th>
+                                <th>Components</th>
+                                <th>Consequences</th>
+                                <th>Confidentiality (W/R)</th>
+                                <th>Integrity (W/R)</th>
+                                <th>Availability (W/R)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bia_summary in bia_summaries %}
+                            <tr>
+                                <td><strong>{{ bia_summary.bia_name }}</strong></td>
+                                <td>{{ bia_summary.component_count }}</td>
+                                <td>{{ bia_summary.consequence_count }}</td>
+                                
+                                <!-- Confidentiality -->
+                                <td>
+                                    {% if 'Confidentiality' in bia_summary.max_impacts %}
+                                        <span class="badge impact-badge {{ bia_summary.max_impacts['Confidentiality']['worstcase']|impact_color }}">
+                                            {{ bia_summary.max_impacts['Confidentiality']['worstcase'] }}
+                                        </span>
+                                        /
+                                        <span class="badge impact-badge {{ bia_summary.max_impacts['Confidentiality']['realistic']|impact_color }}">
+                                            {{ bia_summary.max_impacts['Confidentiality']['realistic'] }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge impact-badge bg-secondary">N/A</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- Integrity -->
+                                <td>
+                                    {% if 'Integrity' in bia_summary.max_impacts %}
+                                        <span class="badge impact-badge {{ bia_summary.max_impacts['Integrity']['worstcase']|impact_color }}">
+                                            {{ bia_summary.max_impacts['Integrity']['worstcase'] }}
+                                        </span>
+                                        /
+                                        <span class="badge impact-badge {{ bia_summary.max_impacts['Integrity']['realistic']|impact_color }}">
+                                            {{ bia_summary.max_impacts['Integrity']['realistic'] }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge impact-badge bg-secondary">N/A</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- Availability -->
+                                <td>
+                                    {% if 'Availability' in bia_summary.max_impacts %}
+                                        <span class="badge impact-badge {{ bia_summary.max_impacts['Availability']['worstcase']|impact_color }}">
+                                            {{ bia_summary.max_impacts['Availability']['worstcase'] }}
+                                        </span>
+                                        /
+                                        <span class="badge impact-badge {{ bia_summary.max_impacts['Availability']['realistic']|impact_color }}">
+                                            {{ bia_summary.max_impacts['Availability']['realistic'] }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge impact-badge bg-secondary">N/A</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+ 
+            </div>
+        </div>
+    </div>
+</body>
+</html>

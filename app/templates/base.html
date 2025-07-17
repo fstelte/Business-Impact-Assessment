@@ -80,6 +80,22 @@
                                     <i class="fas fa-download"></i> Export Data Inventory
                                 </a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="exportConsequencesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-exclamation-triangle"></i> Export CIA Consequences
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="exportConsequencesDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='detailed') }}">
+                                            <i class="fas fa-list"></i> Detailed Export
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='summary') }}">
+                                            <i class="fas fa-chart-bar"></i> Summary Export
+                                        </a>
+                                    </li>
+                                </ul>
                         {% endif %}
                     </ul>
                     <!-- Links aan de rechterkant -->
