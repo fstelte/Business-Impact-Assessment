@@ -6,3 +6,4 @@ migrations/*
 .DS_Store
 app/__pycache__/*
 instance/bia_tool copy.db
+__pycache__/*

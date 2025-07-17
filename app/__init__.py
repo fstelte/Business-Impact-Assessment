@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect
 from flask_moment import Moment
+from version import VERSION
 
 # Deze initialisaties blijven hetzelfde
 db = SQLAlchemy()
@@ -101,5 +102,9 @@ def create_app(config_class=None):
         # Default voor onbekende waarden
         else:
             return 'bg-secondary'
+
+    @app.context_processor
+    def inject_version():
+        return dict(app_version=VERSION)
 
     return app
