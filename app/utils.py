@@ -4,7 +4,96 @@ from datetime import datetime
 from .models import db, ContextScope, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
 from flask_login import current_user
 
+def get_impact_level(impact):
+    """Retourneert een numerieke waarde voor impact vergelijking."""
+    if not impact:
+        return 0
+    
+    impact_levels = {
+        'very low': 1,
+        'low': 2,
+        'medium': 3,
+        'high': 4,
+        'very high': 5,
+        'insignificant': 1,
+        'minor': 2,
+        'moderate': 3,
+        'major': 4,
+        'catastrophic': 5
+    }
+    return impact_levels.get(impact.lower(), 0)
 
+def get_impact_color(impact_level):
+    """
+    Retourneert de juiste CSS klasse voor een impact level.
+    Consistent met de legenda kleuren.
+    """
+    if not impact_level:
+        return 'impact-unknown'
+    
+    impact_lower = str(impact_level).lower().strip()
+    
+    # Very Low / Insignificant
+    if impact_lower in ['very low', 'insignificant', '1']:
+        return 'bg-green'
+    
+    # Low / Minor  
+    elif impact_lower in ['low', 'minor', '2']:
+        return 'bg-yellow'
+    
+    # Medium / Moderate
+    elif impact_lower in ['medium', 'moderate', '3']:
+        return 'bg-orange'
+    
+    # High / Major
+    elif impact_lower in ['high', 'major', '4']:
+        return 'bg-red'
+    
+    # Very High / Catastrophic
+    elif impact_lower in ['very high', 'catastrophic', '5']:
+        return 'bg-dark-red'
+    
+    # Default voor onbekende waarden
+    else:
+        return 'impact-unknown'
+
+def get_max_cia_impact(consequences):
+    """Berekent de maximale CIA impact uit een lijst van consequences."""
+    max_impacts = {
+        'Confidentiality': {'worstcase': 'Very Low', 'realistic': 'Very Low'},
+        'Integrity': {'worstcase': 'Very Low', 'realistic': 'Very Low'},
+        'Availability': {'worstcase': 'Very Low', 'realistic': 'Very Low'}
+    }
+    
+    for consequence in consequences:
+        prop = consequence.security_property
+        if prop in max_impacts:
+            current_worst = consequence.consequence_worstcase or 'Very Low'
+            current_realistic = consequence.consequence_realisticcase or 'Very Low'
+            
+            if get_impact_level(current_worst) > get_impact_level(max_impacts[prop]['worstcase']):
+                max_impacts[prop]['worstcase'] = current_worst
+            
+            if get_impact_level(current_realistic) > get_impact_level(max_impacts[prop]['realistic']):
+                max_impacts[prop]['realistic'] = current_realistic
+    
+    return max_impacts
+
+def get_cia_impact(consequences, security_property, case_type='worstcase'):
+    """Haalt de maximale impact op voor een specifieke security property."""
+    max_impact = 'Very Low'
+    
+    for consequence in consequences:
+        if consequence.security_property == security_property:
+            if case_type == 'worstcase':
+                current_impact = consequence.consequence_worstcase or 'Very Low'
+            else:
+                current_impact = consequence.consequence_realisticcase or 'Very Low'
+            
+            if get_impact_level(current_impact) > get_impact_level(max_impact):
+                max_impact = current_impact
+    
+    return max_impact
 
 def translate_consequence(value):
     translation = {
@@ -48,13 +137,13 @@ def export_to_csv(item):
     # Consequences CSV
     consequences_data = io.StringIO()
     consequences_writer = csv.writer(consequences_data)
-    consequences_writer.writerow(['Gerelateerd aan Component', 'Category of consequence', 'Property of Security', 'Worstcase consequence', 'Justification for worst consequence', 'Realistic consequence', 'Justification for realistic consequence'])
+    consequences_writer.writerow(['Gerelateerd aan Component', 'Category of consequence', 'Property of Security', 'Worstcase consequence', 'Realistic consequence'])
     for component in item.components:
         for consequence in component.consequences:
             consequences_writer.writerow([
                 component.name, consequence.consequence_category, consequence.security_property,
-                consequence.consequence_worstcase, consequence.justification_worstcase,
-                consequence.consequence_realisticcase, consequence.justification_realisticcase
+                consequence.consequence_worstcase,
+                consequence.consequence_realisticcase
             ])
     csv_files[f'{prefix}consequences.csv'] = consequences_data.getvalue()
 
@@ -245,9 +334,7 @@ def import_from_csv(csv_files):
                 'Category of consequence': 'consequence_category',
                 'Property of Security': 'security_property',
                 'Worstcase consequence': 'consequence_worstcase',
-                'Justification for worst consequence': 'justification_worstcase',
-                'Realistic consequence': 'consequence_realisticcase',
-                'Justification for realistic consequence': 'justification_realisticcase'
+                'Realistic consequence': 'consequence_realisticcase'
             }
 
             mapped_row = {consequences_field_mapping.get(k, k): v for k, v in row.items() if k in consequences_field_mapping}

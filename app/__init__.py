@@ -1,4 +1,3 @@
-# app/__init__.py
 # Dit bestand bevat de application factory.
 
 from flask import Flask
@@ -7,10 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
-# --- GEWIJZIGD: Importeer het 'config' dictionary uit je config.py ---
-from .config import config  # Let op: 'config' in kleine letters
 from flask_wtf.csrf import CSRFProtect
-from .config import DefaultConfig
+from flask_moment import Moment
 
 # Deze initialisaties blijven hetzelfde
 db = SQLAlchemy()
@@ -18,34 +15,34 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 csrf = CSRFProtect()
+moment = Moment()
 
 login_manager.login_view = 'auth.login'
-login_manager.login_message = 'Please login to view this page.'
+login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
 
-# --- GEWIJZIGD: De functie accepteert nu een 'config_name' string ---
-def create_app(config_name='default'):
+def create_app(config_class=None):
     """De application factory functie."""
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__)
 
-    # --- VERWIJDERD: De hardcoded SECRET_KEY is weg! ---
-    # app.config['SECRET_KEY'] = 'your-secret-key' # DIT IS NIET VEILIG
+    # Als geen config_class is gegeven, gebruik de DefaultConfig
+    if config_class is None:
+        from .config import DefaultConfig
+        config_class = DefaultConfig
 
-    # --- GEWIJZIGD: Laad de configuratie op basis van de naam ---
-    # Deze regel laadt ALLE configuratie-instellingen (incl. SECRET_KEY en DATABASE_URI)
-    # uit de juiste klasse (bv. ProductionConfig of DevelopmentConfig).
-    app.config.from_object(DefaultConfig)
+    # Laad de configuratie
+    app.config.from_object(config_class)
 
-    # De initialisaties van de extensies blijven hetzelfde.
-    # Ze gebruiken nu de configuratie die hierboven is geladen.
+    # Debug: print de database URI om te controleren
+    print(f"Database URI: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
+
+    # Initialiseer de extensies
     csrf.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-
-    # De rest van je bestand blijft ongewijzigd, dit is al perfect!
-    # -----------------------------------------------------------------
+    moment.init_app(app)
 
     # Registreer de blueprints
     from .routes import main as main_blueprint
@@ -72,5 +69,37 @@ def create_app(config_name='default'):
             except ValueError:
                 return value
         return value.strftime(format)
+
+    @app.template_filter('impact_color')
+    def impact_color_filter(impact_level):
+        """Template filter voor impact kleuren"""
+        if not impact_level:
+            return 'bg-secondary'
+        
+        impact_lower = str(impact_level).lower().strip()
+        
+        # Very Low / Insignificant
+        if impact_lower in ['very low', 'insignificant', '1']:
+            return 'bg-green'
+        
+        # Low / Minor  
+        elif impact_lower in ['low', 'minor', '2']:
+            return 'bg-yellow'
+        
+        # Medium / Moderate
+        elif impact_lower in ['medium', 'moderate', '3']:
+            return 'bg-orange'
+        
+        # High / Major
+        elif impact_lower in ['high', 'major', '4']:
+            return 'bg-red'
+        
+        # Very High / Catastrophic
+        elif impact_lower in ['very high', 'catastrophic', '5']:
+            return 'bg-dark-red'
+        
+        # Default voor onbekende waarden
+        else:
+            return 'bg-secondary'
 
     return app
