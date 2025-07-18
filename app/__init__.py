@@ -9,6 +9,8 @@ from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect
 from flask_moment import Moment
 from version import VERSION
+from .session_security import init_session_security
+from .security_headers import init_security_headers
 
 # Deze initialisaties blijven hetzelfde
 db = SQLAlchemy()
@@ -44,6 +46,18 @@ def create_app(config_class=None):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     moment.init_app(app)
+
+    # Initialize session security
+    init_session_security(app)
+
+    # Initialize security headers
+    init_security_headers(app)
+
+    # Make session info available in templates
+    @app.context_processor
+    def inject_session_info():
+        from .utils import get_session_info
+        return dict(get_session_info=get_session_info)
 
     # Registreer de blueprints
     from .routes import main as main_blueprint

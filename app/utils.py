@@ -3,6 +3,23 @@ import io
 from datetime import datetime
 from .models import db, ContextScope, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
 from flask_login import current_user
+from flask import session
+from datetime import datetime, timedelta
+
+
+def get_session_info():
+    """Get session information for display in templates."""
+    if 'last_activity' in session:
+        last_activity = datetime.fromisoformat(session['last_activity'])
+        expires_at = last_activity + timedelta(hours=12)
+        time_remaining = expires_at - datetime.now()
+        
+        return {
+            'expires_at': expires_at,
+            'time_remaining': time_remaining,
+            'expires_soon': time_remaining < timedelta(minutes=30)
+        }
+    return None
 
 def get_impact_level(impact):
     """Retourneert een numerieke waarde voor impact vergelijking."""
