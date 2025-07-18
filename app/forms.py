@@ -107,8 +107,9 @@ class ConsequenceForm(FlaskForm):
     consequence_category = SelectMultipleField('Consequence Category', choices=[
         ('financial', 'Financial'),
         ('operational', 'Operational'),
-        ('reputational', 'Reputational'),
-        ('legal', 'Legal'),
+        ('reputation and trust', 'Reputation and Trust'),
+        ('regulatory', 'Regulatory'),
+        ('human and safety', 'Human and Safety'),
         ('privacy', 'Privacy')
     ], 
     coerce=str,

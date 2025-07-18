@@ -330,17 +330,29 @@ def get_consequence(consequence_id):
 def edit_consequence(consequence_id):
     consequence = Consequences.query.get_or_404(consequence_id)
     data = request.json
-    form = ConsequenceForm(data=data)
-    if form.validate():
-        consequence.consequence_category = form.consequence_category.data
-        consequence.security_property = form.security_property.data
-        consequence.consequence_worstcase = form.consequence_worstcase.data
-        consequence.justification_worstcase = form.justification_worstcase.data
-        consequence.consequence_realisticcase = form.consequence_realisticcase.data
-        consequence.justification_realisticcase = form.justification_realisticcase.data
+    
+    # Validate required fields manually since we're not using WTForms validation
+    required_fields = ['consequence_category', 'security_property', 'consequence_worstcase', 'consequence_realisticcase']
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({'success': False, 'errors': {field: ['This field is required.']}}), 400
+    
+    try:
+        # Update the consequence directly without form validation
+        consequence.consequence_category = data.get('consequence_category')
+        consequence.security_property = data.get('security_property')
+        consequence.consequence_worstcase = data.get('consequence_worstcase')
+        consequence.justification_worstcase = data.get('justification_worstcase', '')
+        consequence.consequence_realisticcase = data.get('consequence_realisticcase')
+        consequence.justification_realisticcase = data.get('justification_realisticcase', '')
+        
         db.session.commit()
-        return jsonify({'success': True})
-    return jsonify({'success': False, 'errors': form.errors}), 400
+        return jsonify({'success': True, 'message': 'Consequence updated successfully'})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating consequence: {str(e)}")  # For debugging
+        return jsonify({'success': False, 'errors': {'general': ['An error occurred while updating the consequence.']}}), 500
+
 
 @main.route('/delete_consequence/<int:consequence_id>', methods=['POST'])
 @login_required
