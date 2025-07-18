@@ -9,6 +9,7 @@ from . import auth
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
 from .forms import ContextScopeForm, ConsequenceForm, RegistrationForm, ComponentForm, SummaryForm, ImportCSVForm, ChangePasswordForm
 from datetime import date, datetime
+from .session_security import require_fresh_login
 from werkzeug.utils import secure_filename
 import logging
 import os
@@ -163,6 +164,7 @@ def edit_item(item_id):
 
 @main.route('/item/<int:item_id>/delete', methods=['POST'])
 @login_required
+@require_fresh_login(max_age_minutes=30)  # Require login within last 30 minutes
 def delete_item(item_id):
     """Route voor het verwijderen van een item."""
     item = ContextScope.query.get_or_404(item_id)
@@ -663,6 +665,7 @@ def import_csv():
 
 @main.route('/change_password', methods=['GET', 'POST'])
 @login_required
+@require_fresh_login(max_age_minutes=15)  # Require very fresh login for password changes
 def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():

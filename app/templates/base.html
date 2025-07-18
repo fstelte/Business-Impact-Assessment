@@ -10,14 +10,12 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons for theme toggle -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Font Awewsome icoontjes-->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    {% if title %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons/bootstrap-icons.min.css') }}">
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons/fontawesome/css/all.min.css') }}">
         <title>BIA Tool - {{ title }}</title>
-    {% else %}
-        <title>BIA Tool</title>
-    {% endif %}
+
+
 
     <style>
         /* Extra styling voor betere look & feel */
@@ -47,18 +45,72 @@
         .bg-success { background-color: #28a745 !important; }
         .text-white { color: #ffffff !important; }
         .text-dark { color: #343a40 !important; }
+        
+        /* Session Security Styles */
+        .session-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
 
+        .session-info {
+            font-size: 0.9em;
+            color: #6c757d;
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+
+        .session-timeout-modal {
+            z-index: 9999;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
     </style>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/badge-colors.js') }}"></script>
 
 </head>
 <body>
-
+<!-- Session Timeout Modal -->
+<div class="modal fade session-timeout-modal" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="sessionTimeoutModalLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Session Timeout Warning
+                </h5>
+            </div>
+            <div class="modal-body">
+                <p>Your session will expire in <strong><span id="countdown">60</span></strong> seconds due to inactivity.</p>
+                <p>Click "Stay Logged In" to continue your session, or you will be automatically logged out.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="stayLoggedInBtn">
+                    <i class="fas fa-clock"></i> Stay Logged In
+                </button>
+                <button type="button" class="btn btn-secondary" id="logoutNowBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     <header>
         <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">BIA Tool</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                    <i class="fas fa-shield-alt"></i> BIA Tool
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -67,35 +119,43 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         {% if current_user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('main.index') }}">Dashboard</a>
+                                <a class="nav-link" href="{{ url_for('main.index') }}">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('main.new_item') }}">New BIA</a>
+                                <a class="nav-link" href="{{ url_for('main.new_item') }}">
+                                    <i class="fas fa-plus-circle"></i> New BIA
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('main.view_components') }}">Components</a>
+                                <a class="nav-link" href="{{ url_for('main.view_components') }}">
+                                    <i class="fas fa-cubes"></i> Components
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('main.export_data_inventory') }}">
                                     <i class="fas fa-download"></i> Export Data Inventory
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="exportConsequencesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-exclamation-triangle"></i> Export CIA Consequences
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="exportConsequencesDropdown">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='detailed') }}">
-                                            <i class="fas fa-list"></i> Detailed Export
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='summary') }}">
-                                            <i class="fas fa-chart-bar"></i> Summary Export
-                                        </a>
-                                    </li>
-                                </ul>
+                           <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="exportConsequencesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-exclamation-triangle"></i> Export CIA Consequences
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="exportConsequencesDropdown">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='detailed') }}">
+                                                <i class="fas fa-list"></i> Detailed Export
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='summary') }}">
+                                                <i class="fas fa-chart-bar"></i> Summary Export
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                
                         {% endif %}
                     </ul>
                     <!-- Links aan de rechterkant -->
@@ -128,35 +188,42 @@
                         <!-- User Actions -->
                         {% if current_user.is_authenticated %}
                              <!-- Admin-only link (HIER GEPLAATST) -->
-                          
-                            
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ current_user.username }}
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ url_for('main.change_password') }}">Change Password</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                      {% if current_user.is_admin() %}
-                                    <li><a class="dropdown-item" href="{{ url_for('admin.list_users') }}">User management</a></li>
-                                    <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('admin.manage_assignments') }}">
-                                        <i class="fas fa-users-cog"></i> Manage BIA Assignments
-                                    </a>
-                                </li>
-                                    {% endif %}
-                                </ul>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-                            </li>
-                        {% endif %}
+                                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i> {{ current_user.username }}
+                            {% if session.get('session_warning') %}
+                                <i class="fas fa-exclamation-triangle text-warning ms-1" title="Session expiring soon"></i>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('main.change_password') }}">
+                                <i class="fas fa-key"></i> Change Password
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
+                            {% if current_user.is_admin %}
+                            <li><a class="dropdown-item" href="{{ url_for('admin.list_users') }}">
+                                <i class="fas fa-users-cog"></i> User management
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin.manage_assignments') }}">
+                                <i class="fas fa-tasks"></i> Manage BIA Assignments
+                            </a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register') }}">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                    {% endif %}
                     </ul>
                 </div>
             </div>
@@ -250,5 +317,124 @@
         })
     })()
     </script>
+<!-- Session Security JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let sessionTimeoutModal;
+    let countdownTimer;
+    let warningTimer;
+    let logoutTimer;
+    
+    // Initialize modal
+    const modalElement = document.getElementById('sessionTimeoutModal');
+    if (modalElement) {
+        sessionTimeoutModal = new bootstrap.Modal(modalElement, {
+            backdrop: 'static',
+            keyboard: false
+        });
+    }
+    
+    // Session configuration
+    const SESSION_WARNING_TIME = 14 * 60 * 1000; // 14 minutes in milliseconds
+    const SESSION_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
+    const WARNING_COUNTDOWN = 60; // 60 seconds warning
+    
+    let lastActivity = Date.now();
+    let countdownSeconds = WARNING_COUNTDOWN;
+    
+    // Track user activity
+    function resetActivity() {
+        lastActivity = Date.now();
+        clearTimers();
+        startWarningTimer();
+    }
+    
+    // Clear all timers
+    function clearTimers() {
+        if (warningTimer) clearTimeout(warningTimer);
+        if (logoutTimer) clearTimeout(logoutTimer);
+        if (countdownTimer) clearInterval(countdownTimer);
+    }
+    
+    // Start warning timer
+    function startWarningTimer() {
+        warningTimer = setTimeout(showWarning, SESSION_WARNING_TIME);
+    }
+    
+    // Show warning modal
+    function showWarning() {
+        if (sessionTimeoutModal) {
+            countdownSeconds = WARNING_COUNTDOWN;
+            updateCountdown();
+            sessionTimeoutModal.show();
+            
+            // Start countdown
+            countdownTimer = setInterval(function() {
+                countdownSeconds--;
+                updateCountdown();
+                
+                if (countdownSeconds <= 0) {
+                    logout();
+                }
+            }, 1000);
+            
+            // Auto logout after warning period
+            logoutTimer = setTimeout(logout, WARNING_COUNTDOWN * 1000);
+        }
+    }
+    
+    // Update countdown display
+    function updateCountdown() {
+        const countdownElement = document.getElementById('countdown');
+        if (countdownElement) {
+            countdownElement.textContent = countdownSeconds;
+        }
+    }
+    
+    // Logout function
+    function logout() {
+        clearTimers();
+        window.location.href = '/auth/logout?reason=timeout';
+    }
+    
+    // Stay logged in
+    function stayLoggedIn() {
+        clearTimers();
+        if (sessionTimeoutModal) {
+            sessionTimeoutModal.hide();
+        }
+        
+        // Extend session via AJAX
+        fetch('/auth/extend_session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        }).then(response => {
+            if (response.ok) {
+                resetActivity();
+            } else {
+                logout();
+            }
+        }).catch(() => {
+            logout();
+        });
+    }
+    
+    // Event listeners
+    document.getElementById('stayLoggedInBtn')?.addEventListener('click', stayLoggedIn);
+    document.getElementById('logoutNowBtn')?.addEventListener('click', logout);
+    
+    // Activity tracking
+    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    activityEvents.forEach(event => {
+        document.addEventListener(event, resetActivity, true);
+    });
+    
+    // Start the timer
+    startWarningTimer();
+});
+</script>
 </body>
 </html>

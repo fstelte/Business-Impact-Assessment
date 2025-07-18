@@ -3,6 +3,7 @@
 
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # Laad de environment variabelen uit het .env bestand
 load_dotenv()
@@ -14,6 +15,18 @@ class Config:
     """Basisconfiguratie"""
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'een-zeer-geheim-wachtwoord'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Session Security Configuration (OWASP recommendations)
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=12)  # 12-hour session timeout
+    SESSION_COOKIE_SECURE = True  # Only send cookies over HTTPS
+    SESSION_COOKIE_HTTPONLY = True  # Prevent XSS attacks
+    SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+    REMEMBER_COOKIE_SECURE = True  # Secure remember me cookies
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_DURATION = timedelta(hours=12)  # Also limit remember me duration
+    
+    # Additional security headers
+    WTF_CSRF_TIME_LIMIT = None  # Let session timeout handle this
 
 class SQLiteConfig(Config):
     # Configureer de SQLite database

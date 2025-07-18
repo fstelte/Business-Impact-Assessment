@@ -15,6 +15,11 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Login')
 
+class MFAForm(FlaskForm):
+    """Formulier voor MFA token verificatie."""
+    token = StringField('MFA Token', validators=[DataRequired(), Length(min=6, max=6)])
+    submit = SubmitField('Verify')
+
 class RegistrationForm(FlaskForm):
     """Registratieformulier."""
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=64)])
