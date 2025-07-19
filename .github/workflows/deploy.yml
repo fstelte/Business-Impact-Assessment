@@ -1,0 +1,43 @@
+# Dit is de naam van de workflow, zichtbaar in de "Actions" tab van GitHub.
+name: Deploy to Internal Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-python-app:
+    # De naam van de job.
+    name: Deploy Python App
+
+    # BELANGRIJK: Hier geef je aan dat deze job op je eigen runner moet draaien.
+    runs-on: self-hosted
+
+    steps:
+      # Stap 1: Code uitchecken
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Stap 2: Synchroniseer bestanden en voer deploy-script uit
+      # Deze action gebruikt rsync (efficiënter voor mappen) om je code te kopiëren
+      # en voert daarna een commando uit op de server.
+      - name: Deploy to Server via SSH
+        uses: easingthemes/ssh-deploy@v5.0.0
+        with:
+          # Secrets uit je repository-instellingen
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          
+          # Synchroniseer de huidige map naar de doelmap op de server
+          SOURCE: "./"
+          TARGET: ${{ secrets.TARGET_DIR }}
+          
+          # Sluit onnodige bestanden en mappen uit van de kopieeractie
+          EXCLUDE: "/.git/, /.github/, /__pycache__/, *.pyc, .env"
+          
+          # Commando dat wordt uitgevoerd NADAT de bestanden zijn gekopieerd
+          script: |
+            cd ${{ secrets.SCRIPT_DIR }}
+            sh ./deploy.sh
+
