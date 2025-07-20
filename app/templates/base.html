@@ -91,7 +91,7 @@
                 </h5>
             </div>
             <div class="modal-body">
-                <p>Your session will expire in <strong><span id="countdown">60</span></strong> seconds due to inactivity.</p>
+                <p>Your session will expire in <strong><span id="countdown">60</span></strong> seconds due to 15 minutes of inactivity.</p>
                 <p>Click "Stay Logged In" to continue your session, or you will be automatically logged out.</p>
             </div>
             <div class="modal-footer">
@@ -160,26 +160,26 @@
                     </ul>
                     <!-- Links aan de rechterkant -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Theme Toggler -->
+                    <!-- Theme Toggler -->
                          <li class="nav-item dropdown">
                             <button class="btn nav-link dropdown-toggle" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-                                <i class="bi bi-circle-half theme-icon-active"></i>
+                                <i class="fas fa-adjust theme-icon-active"></i>
                                 <span class="d-lg-none ms-2">Toggle theme</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
                                 <li>
                                     <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
-                                        <i class="bi bi-sun-fill me-2 opacity-50 theme-icon"></i> Light
+                                        <i class="fas fa-sun me-2 opacity-50 theme-icon"></i> Light
                                     </button>
                                 </li>
                                 <li>
                                     <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="dark">
-                                        <i class="bi bi-moon-stars-fill me-2 opacity-50 theme-icon"></i> Dark
+                                        <i class="fas fa-moon me-2 opacity-50 theme-icon"></i> Dark
                                     </button>
                                 </li>
                                 <li>
                                     <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto">
-                                        <i class="bi bi-circle-half me-2 opacity-50 theme-icon"></i> Auto
+                                        <i class="fas fa-adjust me-2 opacity-50 theme-icon"></i> Auto
                                     </button>
                                 </li>
                             </ul>
@@ -249,7 +249,7 @@
 
     <footer class="bg-body-tertiary text-center text-secondary py-3 mt-auto border-top">
         <div class="container">
-                       <p class="mb-0">&copy; {{ "now"|date("Y") }} Ferry Stelte : BIA Tool v{{ app_version }} - All rights preserved.</p>
+                       <p class="mb-0">&copy;Ferry Stelte : BIA Tool {{ app_version }} - All rights preserved.</p>
         </div>
     </footer>
 
@@ -276,7 +276,7 @@
                 document.documentElement.setAttribute('data-bs-theme', theme)
             }
         }
-        const showActiveTheme = (theme, focus = false) => {
+            const showActiveTheme = (theme, focus = false) => {
             const themeSwitcher = document.querySelector('#bd-theme')
             if (!themeSwitcher) {
                 return
@@ -286,14 +286,21 @@
             if (!btnToActive) {
                 return
             }
-            const svgOfActiveBtn = btnToActive.querySelector('i').className
+            
+            // Map themes to Font Awesome icons
+            const themeIcons = {
+                'light': 'fas fa-sun',
+                'dark': 'fas fa-moon', 
+                'auto': 'fas fa-adjust'
+            }
+            
             document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
                 element.classList.remove('active')
                 element.setAttribute('aria-pressed', 'false')
             })
             btnToActive.classList.add('active')
             btnToActive.setAttribute('aria-pressed', 'true')
-            activeThemeIcon.className = `${svgOfActiveBtn} theme-icon-active`
+            activeThemeIcon.className = `${themeIcons[theme]} theme-icon-active`
         }
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             const storedTheme = getStoredTheme()
@@ -334,9 +341,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Session configuration
-    const SESSION_WARNING_TIME = 14 * 60 * 1000; // 14 minutes in milliseconds
-    const SESSION_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
+    // Session configuration - 15 minutes of inactivity before warning
+    const SESSION_WARNING_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
+    const SESSION_TIMEOUT = 16 * 60 * 1000; // 16 minutes total (15 min + 1 min warning)
     const WARNING_COUNTDOWN = 60; // 60 seconds warning
     
     let lastActivity = Date.now();
