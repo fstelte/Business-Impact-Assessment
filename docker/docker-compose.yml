@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  bia-app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - DATABASE_TYPE=sqlite
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=aVerySecurePasswordSh0uldBeUsedH3r3!
+      - SECRET_KEY=een_andere_geheime_sleutel_voor_flask
+      - FLASK_ENV=development
+    volumes:
+      - ../instance:/app/instance
+      - ../app:/app/app
+      - ../static:/app/static
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optionele MariaDB service voor ontwikkeling
+  mariadb-dev:
+    image: mariadb:10.11
+    environment:
+      - MYSQL_ROOT_PASSWORD=dev_root_password
+      - MYSQL_DATABASE=bia_tool_dev
+      - MYSQL_USER=bia_dev_user
+      - MYSQL_PASSWORD=bia_dev_password
+    volumes:
+      - mariadb_dev_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    profiles:
+      - mariadb
+
+volumes:
+  mariadb_dev_data:
