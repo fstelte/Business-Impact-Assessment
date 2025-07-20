@@ -1,0 +1,6 @@
+# 2025.7.10
+- Fix margin between cards and footer on dashboard when having a lot of BIA's
+
+# 2025.7.9
+- Fix icons for theme toggler
+- Set logout timer for 15 minutes inactivity
