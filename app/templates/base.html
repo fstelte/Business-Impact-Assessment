@@ -408,9 +408,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Logout function
-        function logout() {
+        function logout(reason = 'manual') {
             clearTimers();
-            window.location.href = '/auth/logout?reason=timeout';
+            if (reason === 'timeout') {
+                window.location.href = '/auth/logout?reason=timeout';
+            } else {
+                window.location.href = '/auth/logout';
+            }
         }
         
         // Stay logged in
