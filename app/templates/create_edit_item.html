@@ -162,7 +162,7 @@
                     {{ component_form.hidden_tag() }}
                     <div class="mb-3">
                         {{ component_form.name.label(class="form-label") }}
-                        {{ component_form.name(class="form-control", id="component-name") }}
+                        {{ component_form.name(class="form-control", id="component-name", **{'data-bs-toggle': 'tooltip', 'data-bs-placement': 'top', 'title': 'Enter the name of the component'}) }}
                     </div>
                     <div class="mb-3">
                         {{ component_form.info_type.label(class="form-label") }}
@@ -209,24 +209,36 @@
                     {{ component_form.hidden_tag() }}
                     <input type="hidden" id="edit-component-id" name="component_id">
                     <div class="mb-3">
-                        {{ component_form.name.label(class="form-label") }}
+                        <label for="edit-component-name" class="form-label">
+                            {{ component_form.name.label.text }}
+                            <i class="fas fa-info-circle ms-1" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-html="true" 
+                            data-bs-placement="right"
+                            title="<strong>Component Name Guidelines:</strong><br>
+                                    - Use clear, descriptive names<br>
+                                    - Avoid abbreviations unless widely known<br>
+                                    - Be consistent with naming conventions<br>
+                                    - Keep it concise but informative">
+                            </i>
+                        </label>
                         {{ component_form.name(class="form-control", id="edit-component-name") }}
                     </div>
                     <div class="mb-3">
                         {{ component_form.info_type.label(class="form-label") }}
-                        {{ component_form.info_type(class="form-control", id="edit-component-info-type") }}
+                        {{ component_form.info_type(class="form-control", id="edit-component-info_type") }}
                     </div>
                     <div class="mb-3">
                         {{ component_form.process_dependencies.label(class="form-label") }}
-                        {{ component_form.process_dependencies(class="form-control", id="edit-component-process-dependencies") }}
+                        {{ component_form.process_dependencies(class="form-control", id="edit-component-process_dependencies") }}
                     </div>
                     <div class="mb-3">
                         {{ component_form.info_owner.label(class="form-label") }}
-                        {{ component_form.info_owner(class="form-control", id="edit-component-info-owner") }}
+                        {{ component_form.info_owner(class="form-control", id="edit-component-info_owner") }}
                     </div>
                     <div class="mb-3">
                         {{ component_form.user_type.label(class="form-label") }}
-                        {{ component_form.user_type(class="form-control", id="edit-component-user-type") }}
+                        {{ component_form.user_type(class="form-control", id="edit-component-user_type") }}
                     </div>
                     <div class="mb-3">
                         {{ component_form.description.label(class="form-label") }}
@@ -299,22 +311,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Event listener voor edit knop in view modal
-    document.querySelector('#viewComponentModal .edit-component-btn').addEventListener('click', function() {
-        const componentId = this.getAttribute('data-component-id');
-        fetch(`/get_component/${componentId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('edit-component-id').value = data.id;
-                document.getElementById('edit-component-name').value = data.name;
-                document.getElementById('edit-component-info-type').value = data.info_type;
-                document.getElementById('edit-component-info-owner').value = data.info_owner;
-                document.getElementById('edit-component-user-type').value = data.user_type;
-                document.getElementById('edit-component-process-dependencies').value = data.process_dependencies; // Voeg deze regel toe
-                document.getElementById('edit-component-description').value = data.description;
+document.querySelector('#viewComponentModal .edit-component-btn').addEventListener('click', function() {
+    const componentId = this.getAttribute('data-component-id');
+    console.log('Editing component with ID:', componentId);
+    fetch(`/get_component/${componentId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Received component data:', data);
+            try {
+                const editForm = document.getElementById('edit-component-form');
+                if (!editForm) {
+                    throw new Error('Edit component form not found');
+                }
+                
+                const fields = ['id', 'name', 'info_type', 'info_owner', 'user_type', 'process_dependencies', 'description'];
+                fields.forEach(field => {
+                    const element = document.getElementById(`edit-component-${field}`);
+                    if (element) {
+                        element.value = data[field] || '';
+                    } else {
+                        console.warn(`Element with id 'edit-component-${field}' not found`);
+                    }
+                });
+
                 viewComponentModal.hide();
                 editComponentModal.show();
-            });
-    });
+            } catch (error) {
+                console.error('Error setting form values:', error);
+                alert('An error occurred while loading the component data. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching component data:', error);
+            alert('An error occurred while fetching the component data. Please try again.');
+        });
+});
 
     // Event listener voor delete knop in view modal
     document.querySelector('#viewComponentModal .delete-component-btn').addEventListener('click', function() {
