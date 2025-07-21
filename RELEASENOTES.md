@@ -1,3 +1,6 @@
+# 2025.7.12_2
+- When a BIA or componenent or consequence is edited the BIA will be displayed as edited
+
 # 2025.7.12_1
 - Removed the prompt for inactivity when not logged in
 
