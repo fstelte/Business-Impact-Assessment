@@ -79,14 +79,22 @@
             </div>
             <div class="card-body">
                 {% if item.summary %}
-                    <p>{{ item.summary.content }}</p>
-                    <a href="{{ url_for('main.manage_summary', item_id=item.id) }}" class="btn btn-primary">Edit Summary</a>
+                    <div class="mb-3">
+                        <p class="lead">{{ item.summary.content }}</p>
+                    </div>
+                    <a href="{{ url_for('main.manage_summary', item_id=item.id) }}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit Summary
+                    </a>
                 {% else %}
-                    <p>No summary added yet.</p>
-                    <a href="{{ url_for('main.manage_summary', item_id=item.id) }}" class="btn btn-primary">Add Summary</a>
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i> No summary added yet.
+                    </div>
+                    <a href="{{ url_for('main.manage_summary', item_id=item.id) }}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Summary
+                    </a>
                 {% endif %}
             </div>
-        </div>
+            </div>
         {% endif %}
 
 <!-- Sectie voor Componenten (alleen op de bewerkpagina) -->
@@ -137,13 +145,16 @@
                 <a href="#" id="view-consequences-link" class="btn btn-primary">View All Consequences</a>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Close
+                </button>
                 <button type="button" class="btn btn-primary edit-component-btn" data-bs-toggle="modal" data-bs-target="#editComponentModal">
                     <i class="fas fa-edit"></i> Edit
                 </button>
                 <button type="button" class="btn btn-danger delete-component-btn">
                     <i class="fas fa-trash"></i> Delete
                 </button>
+            </div>
             </div>
         </div>
     </div>
@@ -186,9 +197,13 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="save-component-btn">Save</button>
+                       <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="save-component-btn">
+                    <i class="fas fa-save"></i> Save
+                </button>
             </div>
         </div>
     </div>
@@ -247,8 +262,12 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="save-edit-component-btn">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="save-edit-component-btn">
+                    <i class="fas fa-save"></i> Save
+                </button>
             </div>
         </div>
     </div>

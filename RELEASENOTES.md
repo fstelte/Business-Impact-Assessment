@@ -1,3 +1,7 @@
+# 2025.7.12
+- Adding icons to buttons
+- More consistency
+
 # 2025.7.11
 - Fix edit component from view BIA
 - Add tooltips functionality
