@@ -2,11 +2,12 @@
 # Definieert de database modellen met SQLAlchemy.
 
 from . import db, login_manager
-from sqlalchemy import Enum, Text
+from sqlalchemy import Enum, Text, event
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, datetime
 from pyotp import random_base32
+from datetime import date
 
 
 @login_manager.user_loader
@@ -158,3 +159,23 @@ class Summary(db.Model):
     content = db.Column(Text)
     context_scope_id = db.Column(db.Integer, db.ForeignKey('context_scope.id'), unique=True)
     context_scope = db.relationship('ContextScope', back_populates='summary')
+
+def update_context_scope_last_update(mapper, connection, target):
+    if isinstance(target, ContextScope):
+        target.last_update = date.today()
+    else:
+        if isinstance(target, Component):
+            context_scope = target.context_scope
+        elif isinstance(target, Consequences):
+            context_scope = target.component.context_scope
+        elif isinstance(target, AvailabilityRequirements):
+            context_scope = target.component.context_scope
+        elif isinstance(target, AIIdentificatie):
+            context_scope = target.component.context_scope
+        elif isinstance(target, Summary):
+            context_scope = target.context_scope
+        else:
+            return  # If it's none of these types, we don't update anything
+
+        if context_scope:
+            context_scope.last_update = date.today()
