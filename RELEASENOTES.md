@@ -1,3 +1,6 @@
+# 2025.7.12_1
+- Removed the prompt for inactivity when not logged in
+
 # 2025.7.12
 - Adding icons to buttons
 - More consistency
