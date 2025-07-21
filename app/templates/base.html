@@ -82,6 +82,7 @@
 </head>
 <body>
 <!-- Session Timeout Modal -->
+<body class="{% if current_user.is_authenticated %}logged-in{% endif %}"></body>
 <div class="modal fade session-timeout-modal" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -331,120 +332,133 @@
 <!-- Session Security JavaScript -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let sessionTimeoutModal;
-    let countdownTimer;
-    let warningTimer;
-    let logoutTimer;
+    // Controleer of de gebruiker is ingelogd
+    const isLoggedIn = document.body.classList.contains('logged-in');
     
-    // Initialize modal
-    const modalElement = document.getElementById('sessionTimeoutModal');
-    if (modalElement) {
-        sessionTimeoutModal = new bootstrap.Modal(modalElement, {
-            backdrop: 'static',
-            keyboard: false
-        });
-    }
-    
-    // Session configuration - 15 minutes of inactivity before warning
-    const SESSION_WARNING_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
-    const SESSION_TIMEOUT = 16 * 60 * 1000; // 16 minutes total (15 min + 1 min warning)
-    const WARNING_COUNTDOWN = 60; // 60 seconds warning
-    
-    let lastActivity = Date.now();
-    let countdownSeconds = WARNING_COUNTDOWN;
-    
-    // Track user activity
-    function resetActivity() {
-        lastActivity = Date.now();
-        clearTimers();
-        startWarningTimer();
-    }
-    
-    // Clear all timers
-    function clearTimers() {
-        if (warningTimer) clearTimeout(warningTimer);
-        if (logoutTimer) clearTimeout(logoutTimer);
-        if (countdownTimer) clearInterval(countdownTimer);
-    }
-    
-    // Start warning timer
-    function startWarningTimer() {
-        warningTimer = setTimeout(showWarning, SESSION_WARNING_TIME);
-    }
-    
-    // Show warning modal
-    function showWarning() {
-        if (sessionTimeoutModal) {
-            countdownSeconds = WARNING_COUNTDOWN;
-            updateCountdown();
-            sessionTimeoutModal.show();
-            
-            // Start countdown
-            countdownTimer = setInterval(function() {
-                countdownSeconds--;
-                updateCountdown();
-                
-                if (countdownSeconds <= 0) {
-                    logout();
-                }
-            }, 1000);
-            
-            // Auto logout after warning period
-            logoutTimer = setTimeout(logout, WARNING_COUNTDOWN * 1000);
-        }
-    }
-    
-    // Update countdown display
-    function updateCountdown() {
-        const countdownElement = document.getElementById('countdown');
-        if (countdownElement) {
-            countdownElement.textContent = countdownSeconds;
-        }
-    }
-    
-    // Logout function
-    function logout() {
-        clearTimers();
-        window.location.href = '/auth/logout?reason=timeout';
-    }
-    
-    // Stay logged in
-    function stayLoggedIn() {
-        clearTimers();
-        if (sessionTimeoutModal) {
-            sessionTimeoutModal.hide();
+    if (isLoggedIn) {
+        let sessionTimeoutModal;
+        let countdownTimer;
+        let warningTimer;
+        let logoutTimer;
+        
+        // Initialize modal
+        const modalElement = document.getElementById('sessionTimeoutModal');
+        if (modalElement) {
+            sessionTimeoutModal = new bootstrap.Modal(modalElement, {
+                backdrop: 'static',
+                keyboard: false
+            });
         }
         
-        // Extend session via AJAX
-        fetch('/auth/extend_session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        // Session configuration - 15 minutes of inactivity before warning
+        const SESSION_WARNING_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
+        const SESSION_TIMEOUT = 16 * 60 * 1000; // 16 minutes total (15 min + 1 min warning)
+        const WARNING_COUNTDOWN = 60; // 60 seconds warning
+        
+        let lastActivity = Date.now();
+        let countdownSeconds = WARNING_COUNTDOWN;
+        
+        // Track user activity
+        function resetActivity() {
+            lastActivity = Date.now();
+            clearTimers();
+            startWarningTimer();
+        }
+        
+        // Clear all timers
+        function clearTimers() {
+            if (warningTimer) clearTimeout(warningTimer);
+            if (logoutTimer) clearTimeout(logoutTimer);
+            if (countdownTimer) clearInterval(countdownTimer);
+        }
+        
+        // Start warning timer
+        function startWarningTimer() {
+            warningTimer = setTimeout(showWarning, SESSION_WARNING_TIME);
+        }
+        
+        // Show warning modal
+        function showWarning() {
+            if (sessionTimeoutModal) {
+                countdownSeconds = WARNING_COUNTDOWN;
+                updateCountdown();
+                sessionTimeoutModal.show();
+                
+                // Start countdown
+                countdownTimer = setInterval(function() {
+                    countdownSeconds--;
+                    updateCountdown();
+                    
+                    if (countdownSeconds <= 0) {
+                        logout();
+                    }
+                }, 1000);
+                
+                // Auto logout after warning period
+                logoutTimer = setTimeout(logout, WARNING_COUNTDOWN * 1000);
             }
-        }).then(response => {
-            if (response.ok) {
-                resetActivity();
-            } else {
+        }
+        
+        // Update countdown display
+        function updateCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            if (countdownElement) {
+                countdownElement.textContent = countdownSeconds;
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            clearTimers();
+            window.location.href = '/auth/logout?reason=timeout';
+        }
+        
+        // Stay logged in
+        function stayLoggedIn() {
+            clearTimers();
+            if (sessionTimeoutModal) {
+                sessionTimeoutModal.hide();
+            }
+            
+            // Extend session via AJAX
+            fetch('/auth/extend_session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }).then(response => {
+                if (response.ok) {
+                    resetActivity();
+                } else {
+                    logout();
+                }
+            }).catch(() => {
                 logout();
-            }
-        }).catch(() => {
-            logout();
+            });
+        }
+        
+        // Event listeners
+        document.getElementById('stayLoggedInBtn')?.addEventListener('click', stayLoggedIn);
+        document.getElementById('logoutNowBtn')?.addEventListener('click', logout);
+        
+        // Activity tracking
+        const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+        activityEvents.forEach(event => {
+            document.addEventListener(event, resetActivity, true);
         });
+        
+        // Start the timer
+        startWarningTimer();
     }
-    
-    // Event listeners
-    document.getElementById('stayLoggedInBtn')?.addEventListener('click', stayLoggedIn);
-    document.getElementById('logoutNowBtn')?.addEventListener('click', logout);
-    
-    // Activity tracking
-    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    activityEvents.forEach(event => {
-        document.addEventListener(event, resetActivity, true);
-    });
-    
-    // Start the timer
-    startWarningTimer();
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 });
 </script>
 </body>

@@ -155,7 +155,19 @@
                 <form id="edit-component-form">
                     <input type="hidden" id="edit-component-id" name="component_id">
                     <div class="mb-3">
-                        <label for="edit-component-name" class="form-label">Name</label>
+                        <label for="edit-component-name" class="form-label">
+                            Name
+                            <i class="fas fa-info-circle ms-1" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-html="true" 
+                            data-bs-placement="right"
+                            title="<strong>Component Name Guidelines:</strong><br>
+                                    - Use clear, descriptive names<br>
+                                    - Avoid abbreviations unless widely known<br>
+                                    - Be consistent with naming conventions<br>
+                                    - Keep it concise but informative">
+                            </i>
+                        </label>
                         <input type="text" class="form-control" id="edit-component-name" name="name" required>
                     </div>
                     <div class="mb-3">
