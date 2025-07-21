@@ -44,4 +44,5 @@ USER root
 RUN chmod +x /entrypoint.sh
 USER appuser
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Change ENTRYPOINT to use Gunicorn
+ENTRYPOINT ["/entrypoint.sh", "gunicorn", "--bind", "0.0.0.0:5001", "run:app"]

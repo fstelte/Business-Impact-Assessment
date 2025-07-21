@@ -76,5 +76,8 @@ with app.app_context():
             print(f'Admin user already exists: {admin_email}')
 "
 
-echo "Starting Flask application..."
-exec python run.py
+# Voer database migraties uit
+flask db upgrade
+
+# Start de applicatie met Gunicorn
+exec "$@"
