@@ -1,3 +1,3 @@
 # BIA Tool Version
 # Format: YYYY.MM.PATCH
-VERSION = "2025.7.12_2"
+VERSION = "2025.7.13"

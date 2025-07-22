@@ -1,3 +1,6 @@
+# 2025.7.13
+- Fix logout when clicking logout in inactivity warning
+
 # 2025.7.12_2
 - When a BIA or componenent or consequence is edited the BIA will be displayed as edited
 
