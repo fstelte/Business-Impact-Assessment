@@ -1,5 +1,5 @@
 # Dit is de naam van de workflow, zichtbaar in de "Actions" tab van GitHub.
-name: Deploy to Remote Server
+name: Deploy to Internal Server
 
 on:
   push:
@@ -7,16 +7,20 @@ on:
 
 jobs:
   deploy-python-app:
-    name: Deploy Python App to Remote Server
-    # Draait op een standaard GitHub runner. Kan ook een andere self-hosted runner zijn.
-    runs-on: ubuntu-latest
+    # De naam van de job.
+    name: Deploy Python App
+
+    # BELANGRIJK: Hier geef je aan dat deze job op je eigen runner moet draaien.
+    runs-on: self-hosted
 
     steps:
-      # Stap 1: Code uitchecken op de runner
+      # Stap 1: Code uitchecken
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Stap 2: Synchroniseer bestanden en voer deploy-commando's uit op de doelserver
+      # Stap 2: Synchroniseer bestanden en voer deploy-script uit
+      # Deze action gebruikt rsync (efficiënter voor mappen) om je code te kopiëren
+      # en voert daarna een commando uit op de server.
       - name: Deploy to Server via SSH
         uses: easingthemes/ssh-deploy@v5.0.0
         with:
@@ -25,33 +29,15 @@ jobs:
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
           
-          # Kopieer de huidige map (op de runner) naar de doelmap op de server
+          # Synchroniseer de huidige map naar de doelmap op de server
           SOURCE: "./"
           TARGET: ${{ secrets.TARGET_DIR }}
           
-          # Sluit onnodige bestanden uit
+          # Sluit onnodige bestanden en mappen uit van de kopieeractie
           EXCLUDE: "/.git/, /.github/, /__pycache__/, *.pyc, .env"
           
-          # Commando's die worden uitgevoerd OP DE DOELSERVER nadat de bestanden zijn gekopieerd
+          # Commando dat wordt uitgevoerd NADAT de bestanden zijn gekopieerd
           script: |
-            echo "--- Starting deployment on remote server ---"
-            
-            # Definieer de paden op de remote server voor leesbaarheid
-            PROJECT_DIR=${{ secrets.TARGET_DIR }}
-            VENV_DIR=/home/ferry/venv/bia_app_venv # Pas aan indien nodig
+            cd ${{ secrets.SCRIPT_DIR }}
+            sh ./deploy.sh
 
-            echo "1. Installing dependencies..."
-            # Gebruik het absolute pad naar pip in de venv
-            $VENV_DIR/bin/pip install -r $PROJECT_DIR/requirements.txt
-            
-            echo "2. Running database migrations..."
-            # Voer 'flask' uit vanuit de venv in de juiste projectmap
-            cd $PROJECT_DIR
-            export FLASK_APP=run.py
-            $VENV_DIR/bin/flask db upgrade
-            
-            echo "3. Restarting application service..."
-            # Dit vereist dat de remote user (ferry) wachtwoordloze sudo-rechten heeft
-            sudo systemctl restart bia
-            
-            echo "--- Deployment finished successfully! ---"
