@@ -1,5 +1,5 @@
 # Dit is de naam van de workflow, zichtbaar in de "Actions" tab van GitHub.
-name: Deploy to Internal Server
+name: Deploy to Internal Server (Idiomatic)
 
 on:
   push:
@@ -7,37 +7,44 @@ on:
 
 jobs:
   deploy-python-app:
-    # De naam van de job.
     name: Deploy Python App
-
-    # BELANGRIJK: Hier geef je aan dat deze job op je eigen runner moet draaien.
     runs-on: self-hosted
 
+    # Definieer hier de variabelen voor de eenvoud
+    env:
+      PROJECT_DIR: ${{ secrets.TARGET_DIR }} # bv. /home/ferry/bia_app
+      VENV_DIR: /home/ferry/venv/bia_app_venv # Pas aan indien nodig
+
     steps:
-      # Stap 1: Code uitchecken
+      # Stap 1: Code uitchecken in de workspace van de runner
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Stap 2: Synchroniseer bestanden en voer deploy-script uit
-      # Deze action gebruikt rsync (efficiënter voor mappen) om je code te kopiëren
-      # en voert daarna een commando uit op de server.
-      - name: Deploy to Server via SSH
-        uses: easingthemes/ssh-deploy@v5.0.0
-        with:
-          # Secrets uit je repository-instellingen
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_USER }}
-          
-          # Synchroniseer de huidige map naar de doelmap op de server
-          SOURCE: "./"
-          TARGET: ${{ secrets.TARGET_DIR }}
-          
-          # Sluit onnodige bestanden en mappen uit van de kopieeractie
-          EXCLUDE: "/.git/, /.github/, /__pycache__/, *.pyc, .env"
-          
-          # Commando dat wordt uitgevoerd NADAT de bestanden zijn gekopieerd
-          script: |
-            cd ${{ secrets.SCRIPT_DIR }}
-            sh ./deploy.sh
+      # Stap 2: Synchroniseer de nieuwe code naar de live directory
+      - name: Sync files to target directory
+        run: |
+          rsync -av --delete \
+            --exclude=".git/" \
+            --exclude=".github/" \
+            --exclude="__pycache__/" \
+            --exclude="*.pyc" \
+            --exclude=".env" \
+            ./ ${{ env.PROJECT_DIR }}/
 
+      # Stap 3: Installeer/update dependencies in de venv
+      # We roepen pip direct aan vanuit de venv, geen 'source' nodig.
+      - name: Install dependencies
+        run: ${{ env.VENV_DIR }}/bin/pip install -r ${{ env.PROJECT_DIR }}/requirements.txt
+
+      # Stap 4: Voer database migraties uit
+      # We gebruiken de 'flask' executable uit de venv.
+      - name: Run database migrations
+        run: ${{ env.VENV_DIR }}/bin/flask db upgrade
+        working-directory: ${{ env.PROJECT_DIR }} # Voer dit commando uit in de projectmap
+        env:
+          FLASK_APP: run.py
+
+      # Stap 5: Herstart de applicatie service
+      # Dit vereist dat de runner-gebruiker sudo-rechten heeft zonder wachtwoord.
+      - name: Restart application service
+        run: sudo systemctl restart bia
