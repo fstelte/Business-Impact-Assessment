@@ -31,7 +31,7 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v2
         with:
           # Pad naar het playbook IN DE REPOSITORY
-          playbook: /home/ferry/deploy.yml # Of bijvoorbeeld 'ansible/deploy.yml'
+          playbook: ansible/deploy.yml # Of bijvoorbeeld 'ansible/deploy.yml'
 
           # Geef de SSH key en inventory door
           key: ${{ secrets.SSH_PRIVATE_KEY }}
