@@ -26,24 +26,17 @@ jobs:
           TARGET: ${{ secrets.TARGET_DIR }} # bv. /home/ferry/bia_app
           EXCLUDE: "/.git/, /.github/, /__pycache__/, *.pyc, .env"
 
-      # Stap 3: Voer het Ansible playbook uit
+       # Stap 3: Voer het Ansible playbook uit
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
-          # Pad naar het playbook IN DE REPOSITORY
-          playbook: ansible/deploy.yml # Of bijvoorbeeld 'ansible/deploy.yml'
-          # 👇 VOEG DEZE OPTIE TOE VOOR MEER DEBUG-INFO
-          options: |
-            -v 
-
-          # Geef de SSH key en inventory door
+          playbook: ansible/deploy.yml
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           inventory: |
             [je_server_groep]
             ${{ secrets.SSH_HOST }} ansible_user=${{ secrets.SSH_USER }}
 
-          # 👇 HIER GEEF JE DE SECRETS DOOR AAN ANSIBLE
-            extra_vars: |
-              project_dir=${{ secrets.TARGET_DIR }}
-              venv_dir=${{ secrets.VENV_DIR }}
-              service_name=bia
+          # CORRECT: Geef alle variabelen door via de '--extra-vars' vlag in 'options'
+          options: |
+            --extra-vars "project_dir=${{ secrets.TARGET_DIR }} venv_dir=${{ secrets.VENV_DIR }} service_name=bia"
+            -v
