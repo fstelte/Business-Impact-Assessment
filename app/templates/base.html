@@ -363,6 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function resetActivity() {
             lastActivity = Date.now();
             clearTimers();
+            // Only restart timer if warning is not currently shown
             if (!isWarningShown) {
                 startWarningTimer();
             }
@@ -387,11 +388,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Start warning timer
         function startWarningTimer() {
             isWarningShown = false;
+            clearTimers(); // Clear any existing timers first
             warningTimer = setTimeout(showWarning, SESSION_WARNING_TIME);
         }
         
         // Show warning modal
         function showWarning() {
+            // Only show warning if not already shown and modal exists
             if (sessionTimeoutModal && !isWarningShown) {
                 isWarningShown = true;
                 countdownSeconds = WARNING_COUNTDOWN;
@@ -408,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }, 1000);
                 
-                // Auto logout after warning period - use requestAnimationFrame for Safari
+                // Auto logout after warning period
                 logoutTimer = setTimeout(function() {
                     logout('timeout');
                 }, WARNING_COUNTDOWN * 1000);
@@ -484,6 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }).then(response => {
                 if (response.ok) {
                     resetActivity();
+                    startWarningTimer(); // Restart the warning timer
                 } else {
                     logout();
                 }
@@ -530,6 +534,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Start the timer
         startWarningTimer();
+        
+        // Debug logging (remove in production)
+        console.log('Session timeout initialized. Warning after:', SESSION_WARNING_TIME / 1000, 'seconds');
     }
 });
 </script>
