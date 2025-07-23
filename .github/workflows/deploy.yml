@@ -11,13 +11,11 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # Stap 1: Code uitchecken (blijft hetzelfde)
+      # Stap 1: Code uitchecken
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Stap 2: Kopieer de bestanden naar de server
-      # We gebruiken nog steeds ssh-deploy, maar nu alleen voor het synchroniseren.
-      # Het uitvoeren van het script wordt door Ansible overgenomen.
+      # Stap 2: Bestanden synchroniseren (optioneel, kan ook met Ansible)
       - name: Sync files to server
         uses: easingthemes/ssh-deploy@v5.0.0
         with:
@@ -25,18 +23,24 @@ jobs:
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
           SOURCE: "./"
-          TARGET: ${{ secrets.TARGET_DIR }}
+          TARGET: ${{ secrets.TARGET_DIR }} # bv. /home/ferry/bia_app
           EXCLUDE: "/.git/, /.github/, /__pycache__/, *.pyc, .env"
 
-      # Stap 3: Voer het Ansible playbook uit op de server
+      # Stap 3: Voer het Ansible playbook uit
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
-          # Pad naar je playbook in de repository
-          playbook: deploy.yml 
-          # Geef de SSH key door aan Ansible
+          # Pad naar het playbook IN DE REPOSITORY
+          playbook: ${{ secrets.SCRIPT_DIR }}/deploy.yml # Of bijvoorbeeld 'ansible/deploy.yml'
+
+          # Geef de SSH key en inventory door
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # Maak een "inventory" aan voor Ansible
           inventory: |
-            [lab-bia-01]
+            [je_server_groep]
             ${{ secrets.SSH_HOST }} ansible_user=${{ secrets.SSH_USER }}
+
+          # 👇 HIER GEEF JE DE SECRETS DOOR AAN ANSIBLE
+          extra_vars: |
+            project_dir=${{ secrets.TARGET_DIR }}
+            venv_dir=${{ secrets.VENV_DIR }}
+            service_name=bia
