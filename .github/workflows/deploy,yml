@@ -1,0 +1,42 @@
+# .github/workflows/deploy.yml
+name: Deploy to Internal Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-python-app:
+    name: Deploy Python App
+    runs-on: self-hosted
+
+    steps:
+      # Stap 1: Code uitchecken (blijft hetzelfde)
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Stap 2: Kopieer de bestanden naar de server
+      # We gebruiken nog steeds ssh-deploy, maar nu alleen voor het synchroniseren.
+      # Het uitvoeren van het script wordt door Ansible overgenomen.
+      - name: Sync files to server
+        uses: easingthemes/ssh-deploy@v5.0.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          SOURCE: "./"
+          TARGET: ${{ secrets.TARGET_DIR }}
+          EXCLUDE: "/.git/, /.github/, /__pycache__/, *.pyc, .env"
+
+      # Stap 3: Voer het Ansible playbook uit op de server
+      - name: Run Ansible Playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          # Pad naar je playbook in de repository
+          playbook: deploy.yml 
+          # Geef de SSH key door aan Ansible
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Maak een "inventory" aan voor Ansible
+          inventory: |
+            [lab-bia-01]
+            ${{ secrets.SSH_HOST }} ansible_user=${{ secrets.SSH_USER }}
