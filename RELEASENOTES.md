@@ -1,6 +1,6 @@
 # 2025.7.14
 - Add a fix for safari not logging out
-- Fix for CI/CD
+- Fix for CI/CD to use ansible
 # 2025.7.13
 - Fix logout when clicking logout in inactivity warning
 
