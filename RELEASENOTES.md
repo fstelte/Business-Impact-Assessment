@@ -1,3 +1,5 @@
+# 2025/7.14_1
+- Ansible fixes
 # 2025.7.14
 - Add a fix for safari not logging out
 - Fix for CI/CD to use ansible
