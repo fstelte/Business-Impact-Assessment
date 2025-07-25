@@ -1,3 +1,6 @@
+# 2025.7.16
+- MFA registration during first login after having account enabled 
+
 # 2025.7.15
 - Fix for session time out
 
