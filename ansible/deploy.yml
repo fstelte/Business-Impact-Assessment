@@ -1,0 +1,28 @@
+#deploy.yml!!
+---
+- name: Deploy de Python applicatie
+  hosts: je_server_groep
+  become: yes
+
+  # De variabelen worden hier automatisch ingeladen vanuit 'extra_vars'
+  # Je hoeft de 'vars:' sectie niet eens meer te gebruiken als je alles doorgeeft.
+
+  tasks:
+    - name: Installeer Python dependencies
+      ansible.builtin.pip:
+        requirements: "{{ project_dir }}/requirements.txt"
+        virtualenv: "{{ venv_dir }}"
+      become: no
+
+    - name: Voer database migraties uit
+      ansible.builtin.command:
+        cmd: "{{ venv_dir }}/bin/flask db upgrade"
+        chdir: "{{ project_dir }}"
+      environment:
+        FLASK_APP: "run.py"
+      become: no
+
+    - name: Herstart de applicatie service
+      ansible.builtin.systemd:
+        name: "{{ service_name }}"
+        state: restarted
