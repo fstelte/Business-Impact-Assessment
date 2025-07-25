@@ -51,8 +51,9 @@ def login():
                 return redirect(url_for('auth.verify_mfa'))
             else:
                 # Complete login process
-                complete_login(user, form.remember_me.data)
-                return redirect(url_for('main.index'))
+                login_user(user, remember=form.remember_me.data)
+                flash('Please set up MFA to secure your account.', 'warning')
+                return redirect(url_for('auth.setup_mfa'))
         else:
             flash('Invalid email or password', 'danger')
     
