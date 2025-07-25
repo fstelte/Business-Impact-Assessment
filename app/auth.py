@@ -48,30 +48,35 @@ def register():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        # Check if user has MFA enabled, if not redirect to setup
+        if not current_user.mfa_enabled:
+            flash('You must set up Multi-Factor Authentication to secure your account.', 'warning')
+            return redirect(url_for('auth.setup_mfa'))
         return redirect(url_for('main.index'))
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        
+        user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             if not user.is_active:
                 flash('Your account is not active. Please contact an administrator.', 'danger')
-                return render_template('auth/login.html', title='Sign In', form=form)
+                return redirect(url_for('auth.login'))
             
             # Check if MFA is enabled
             if user.mfa_enabled:
-                # Normal MFA flow
+                # Store user ID in session for MFA verification
                 session['mfa_user_id'] = user.id
                 session['mfa_timestamp'] = datetime.now().isoformat()
                 return redirect(url_for('auth.verify_mfa'))
             else:
-                # Force MFA setup for users without MFA
+                # Login user but force MFA setup
                 login_user(user, remember=form.remember_me.data)
                 flash('You must set up Multi-Factor Authentication to secure your account.', 'warning')
                 return redirect(url_for('auth.setup_mfa'))
         else:
-            flash('Invalid username or password', 'danger')
+            flash('Invalid email or password', 'danger')
+    
+    return render_template('auth/login.html', title='Sign In', form=form)
     
     return render_template('auth/login.html', title='Sign In', form=form)
 @auth.route('/verify_mfa', methods=['GET', 'POST'])

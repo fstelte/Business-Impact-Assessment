@@ -57,6 +57,7 @@ def get_max_cia_impact(consequences):
 @main.route('/')
 @main.route('/index')
 @login_required
+@mfa_required
 def index():
     """Hoofdpagina/dashboard die alle BIA items toont."""
     items = ContextScope.query.order_by(ContextScope.last_update.desc()).all()
