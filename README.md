@@ -1,4 +1,4 @@
-# Business Impact Assessment Application
+# Business Impact Assessment Application!
 
 This application is designed to facilitate Business Impact Assessments (BIAs) within organizations. It's built using Python and Flask. 
 **Update 19-06-2025** : The application can now also be deployed with a "real" SQL backend, so it can be run for an entire organisation.

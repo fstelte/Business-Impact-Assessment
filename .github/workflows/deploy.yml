@@ -1,5 +1,7 @@
 # .github/workflows/deploy.yml
-name: Deploy to Internal ota Server
+
+name: Deploy to Internal Server
+
 
 on:
   push:
@@ -34,7 +36,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           inventory: |
             [je_server_groep]
-            ${{ secrets.SSH_OTAHOST }} ansible_user=${{ secrets.SSH_USER }}
+            ${{ secrets.SSH_HOST }} ansible_user=${{ secrets.SSH_USER }}
 
           # CORRECT: Geef alle variabelen door via de '--extra-vars' vlag in 'options'
           options: |

@@ -1,3 +1,15 @@
+# 2025.7.15
+- Fix for session time out
+
+# 2025.7.14_1
+- Ansible fixes
+
+# 2025.7.14
+- Add a fix for safari not logging out
+- Fix for CI/CD to use ansible
+# 2025.7.13
+- Fix logout when clicking logout in inactivity warning
+
 # 2025.7.12_2
 - When a BIA or componenent or consequence is edited the BIA will be displayed as edited
 

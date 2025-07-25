@@ -357,45 +357,64 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let lastActivity = Date.now();
         let countdownSeconds = WARNING_COUNTDOWN;
+        let isWarningShown = false;
         
         // Track user activity
         function resetActivity() {
             lastActivity = Date.now();
             clearTimers();
-            startWarningTimer();
+            // Only restart timer if warning is not currently shown
+            if (!isWarningShown) {
+                startWarningTimer();
+            }
         }
         
-        // Clear all timers
+        // Clear all timers - Safari-safe version
         function clearTimers() {
-            if (warningTimer) clearTimeout(warningTimer);
-            if (logoutTimer) clearTimeout(logoutTimer);
-            if (countdownTimer) clearInterval(countdownTimer);
+            if (warningTimer) {
+                clearTimeout(warningTimer);
+                warningTimer = null;
+            }
+            if (logoutTimer) {
+                clearTimeout(logoutTimer);
+                logoutTimer = null;
+            }
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
         }
         
         // Start warning timer
         function startWarningTimer() {
+            isWarningShown = false;
+            clearTimers(); // Clear any existing timers first
             warningTimer = setTimeout(showWarning, SESSION_WARNING_TIME);
         }
         
         // Show warning modal
         function showWarning() {
-            if (sessionTimeoutModal) {
+            // Only show warning if not already shown and modal exists
+            if (sessionTimeoutModal && !isWarningShown) {
+                isWarningShown = true;
                 countdownSeconds = WARNING_COUNTDOWN;
                 updateCountdown();
                 sessionTimeoutModal.show();
                 
-                // Start countdown
+                // Start countdown with Safari-friendly approach
                 countdownTimer = setInterval(function() {
                     countdownSeconds--;
                     updateCountdown();
                     
                     if (countdownSeconds <= 0) {
-                        logout();
+                        logout('timeout');
                     }
                 }, 1000);
                 
                 // Auto logout after warning period
-                logoutTimer = setTimeout(logout, WARNING_COUNTDOWN * 1000);
+                logoutTimer = setTimeout(function() {
+                    logout('timeout');
+                }, WARNING_COUNTDOWN * 1000);
             }
         }
         
@@ -407,49 +426,117 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Logout function
-        function logout() {
+        // Logout function - Safari-compatible
+        function logout(reason = 'manual') {
             clearTimers();
-            window.location.href = '/auth/logout?reason=timeout';
-        }
-        
-        // Stay logged in
-        function stayLoggedIn() {
-            clearTimers();
+            isWarningShown = false;
+            
+            // Hide modal if shown
             if (sessionTimeoutModal) {
-                sessionTimeoutModal.hide();
+                try {
+                    sessionTimeoutModal.hide();
+                } catch (e) {
+                    // Safari sometimes throws errors on modal operations
+                    console.warn('Modal hide error:', e);
+                }
             }
             
-            // Extend session via AJAX
+            // Use a more Safari-compatible approach for navigation
+            const logoutUrl = reason === 'timeout' ? '/auth/logout?reason=timeout' : '/auth/logout';
+            
+            // Try multiple approaches for Safari compatibility
+            try {
+                window.location.assign(logoutUrl);
+            } catch (e) {
+                try {
+                    window.location.href = logoutUrl;
+                } catch (e2) {
+                    // Fallback for very old Safari versions
+                    document.location = logoutUrl;
+                }
+            }
+        }
+        
+        // Stay logged in - Safari-compatible
+        function stayLoggedIn() {
+            clearTimers();
+            isWarningShown = false;
+            
+            if (sessionTimeoutModal) {
+                try {
+                    sessionTimeoutModal.hide();
+                } catch (e) {
+                    console.warn('Modal hide error:', e);
+                }
+            }
+            
+            // Extend session via AJAX with Safari-compatible fetch
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (csrfToken) {
+                headers['X-CSRFToken'] = csrfToken.getAttribute('content');
+            }
+            
             fetch('/auth/extend_session', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
+                headers: headers,
+                credentials: 'same-origin' // Important for Safari
             }).then(response => {
                 if (response.ok) {
                     resetActivity();
+                    startWarningTimer(); // Restart the warning timer
                 } else {
                     logout();
                 }
-            }).catch(() => {
+            }).catch(error => {
+                console.warn('Session extend error:', error);
                 logout();
             });
         }
         
-        // Event listeners
-        document.getElementById('stayLoggedInBtn')?.addEventListener('click', stayLoggedIn);
-        document.getElementById('logoutNowBtn')?.addEventListener('click', logout);
+        // Event listeners with Safari-safe approach
+        const stayBtn = document.getElementById('stayLoggedInBtn');
+        const logoutBtn = document.getElementById('logoutNowBtn');
         
-        // Activity tracking
+        if (stayBtn) {
+            stayBtn.addEventListener('click', stayLoggedIn);
+        }
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                logout('manual');
+            });
+        }
+        
+        // Activity tracking with Safari-optimized events
         const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+        
+        // Use passive listeners for better Safari performance
         activityEvents.forEach(event => {
-            document.addEventListener(event, resetActivity, true);
+            document.addEventListener(event, resetActivity, { 
+                passive: true, 
+                capture: true 
+            });
+        });
+        
+        // Safari-specific: Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && isWarningShown) {
+                // Page became visible again, check if we need to logout
+                const timeSinceLastActivity = Date.now() - lastActivity;
+                if (timeSinceLastActivity > SESSION_TIMEOUT) {
+                    logout('timeout');
+                }
+            }
         });
         
         // Start the timer
         startWarningTimer();
+        
+        // Debug logging (remove in production)
+        console.log('Session timeout initialized. Warning after:', SESSION_WARNING_TIME / 1000, 'seconds');
     }
 });
 </script>
