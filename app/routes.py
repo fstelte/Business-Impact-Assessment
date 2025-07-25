@@ -6,6 +6,7 @@ from flask_login import current_user, login_required, login_user
 from .utils import export_to_csv, import_from_csv, get_impact_level, get_impact_color
 from . import db
 from . import auth
+from app.auth import mfa_required
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
 from .forms import ContextScopeForm, ConsequenceForm, RegistrationForm, ComponentForm, SummaryForm, ImportCSVForm, ChangePasswordForm
 from datetime import date, datetime
@@ -56,6 +57,7 @@ def get_max_cia_impact(consequences):
 @main.route('/')
 @main.route('/index')
 @login_required
+@mfa_required
 def index():
     """Hoofdpagina/dashboard die alle BIA items toont."""
     items = ContextScope.query.order_by(ContextScope.last_update.desc()).all()
@@ -63,6 +65,7 @@ def index():
 
 @main.route('/item/new', methods=['GET', 'POST'])
 @login_required
+@mfa_required
 def new_item():
     """Route voor het aanmaken van een nieuw BIA item."""
     form = ContextScopeForm()
@@ -129,6 +132,7 @@ def view_item(item_id):
 
 @main.route('/item/<int:item_id>/edit', methods=['GET', 'POST'])
 @login_required
+@mfa_required
 def edit_item(item_id):
     """Route voor het bewerken van een bestaand item."""
     
@@ -164,6 +168,7 @@ def edit_item(item_id):
 
 @main.route('/item/<int:item_id>/delete', methods=['POST'])
 @login_required
+@mfa_required
 @require_fresh_login(max_age_minutes=30)  # Require login within last 30 minutes
 def delete_item(item_id):
     """Route voor het verwijderen van een item."""
@@ -179,6 +184,7 @@ def delete_item(item_id):
 
 @main.route('/add_component', methods=['POST'])
 @login_required
+@mfa_required
 def add_component():
     form = ComponentForm()
     if form.validate_on_submit():
@@ -199,6 +205,7 @@ def add_component():
 
 @main.route('/delete_component/<int:component_id>', methods=['POST'])
 @login_required
+@mfa_required
 def delete_component(component_id):
     component = Component.query.get_or_404(component_id)
     db.session.delete(component)
@@ -207,6 +214,7 @@ def delete_component(component_id):
 
 @main.route('/update_component/<int:component_id>', methods=['POST'])
 @login_required
+@mfa_required
 def update_component(component_id):
     component = Component.query.get_or_404(component_id)
     form = ComponentForm()
@@ -226,6 +234,7 @@ def update_component(component_id):
 
 @main.route('/components')
 @login_required
+@mfa_required
 def view_components():
     # Haal alle unieke ContextScope namen op
     context_scopes = ContextScope.query.with_entities(ContextScope.name).distinct().all()
@@ -268,6 +277,8 @@ def view_components():
                            consequence_form=consequence_form)
 
 @main.route('/get_component/<int:component_id>')
+@login_required
+@mfa_required
 def get_component(component_id):
     component = Component.query.get_or_404(component_id)
     return jsonify({
@@ -284,6 +295,7 @@ def get_component(component_id):
 
 @main.route('/add_consequence/<int:component_id>', methods=['POST'])
 @login_required
+@mfa_required
 def add_consequence(component_id):
     data = request.json
     print("Received data:", data)  # Debug print
@@ -313,6 +325,8 @@ def add_consequence(component_id):
     return jsonify({'success': False, 'errors': form.errors}), 400
 
 @main.route('/get_consequence/<int:consequence_id>')
+@login_required
+@mfa_required
 def get_consequence(consequence_id):
     consequence = Consequences.query.get_or_404(consequence_id)
     data = {
@@ -329,6 +343,7 @@ def get_consequence(consequence_id):
 
 @main.route('/edit_consequence/<int:consequence_id>', methods=['POST'])
 @login_required
+@mfa_required
 def edit_consequence(consequence_id):
     consequence = Consequences.query.get_or_404(consequence_id)
     data = request.json
@@ -358,6 +373,7 @@ def edit_consequence(consequence_id):
 
 @main.route('/delete_consequence/<int:consequence_id>', methods=['POST'])
 @login_required
+@mfa_required
 def delete_consequence(consequence_id):
     consequence = Consequences.query.get_or_404(consequence_id)
     db.session.delete(consequence)
@@ -366,6 +382,7 @@ def delete_consequence(consequence_id):
 
 @main.route('/consequences/<int:component_id>')
 @login_required
+@mfa_required
 def view_consequences(component_id):
     component = Component.query.get_or_404(component_id)
     consequences = Consequences.query.filter_by(component_id=component_id).all()
@@ -382,6 +399,7 @@ def view_consequences(component_id):
 
 @main.route('/get_availability/<int:component_id>')
 @login_required
+@mfa_required
 def get_availability(component_id):
     availability = AvailabilityRequirements.query.filter_by(component_id=component_id).first()
     if availability:
@@ -395,6 +413,7 @@ def get_availability(component_id):
 
 @main.route('/update_availability/<int:component_id>', methods=['POST'])
 @login_required
+@mfa_required
 def update_availability(component_id):
     availability = AvailabilityRequirements.query.filter_by(component_id=component_id).first()
     if not availability:
@@ -411,6 +430,7 @@ def update_availability(component_id):
 
 @main.route('/add_ai_identification/<int:component_id>', methods=['POST'])
 @login_required
+@mfa_required
 def add_ai_identification(component_id):
     # Controleer eerst of er al een AI-identificatie bestaat voor deze component
     existing_ai_identification = AIIdentificatie.query.filter_by(component_id=component_id).first()
@@ -434,6 +454,7 @@ def add_ai_identification(component_id):
 # Update de bestaande update_ai_identification functie
 @main.route('/update_ai_identification/<int:component_id>', methods=['POST'])
 @login_required
+@mfa_required
 def update_ai_identification(component_id):
     ai_identification = AIIdentificatie.query.filter_by(component_id=component_id).first()
     
@@ -450,6 +471,7 @@ def update_ai_identification(component_id):
 
 @main.route('/get_ai_identification/<int:component_id>')
 @login_required
+@mfa_required
 def get_ai_identification(component_id):
     ai_identification = AIIdentificatie.query.filter_by(component_id=component_id).first()
     if ai_identification:
@@ -467,6 +489,7 @@ def get_ai_identification(component_id):
     
 @main.route('/item/<int:item_id>/summary', methods=['GET', 'POST'])
 @login_required
+@mfa_required
 def manage_summary(item_id):
     item = ContextScope.query.get_or_404(item_id)
     if item.author != current_user:
@@ -491,6 +514,7 @@ def manage_summary(item_id):
 
 @main.route('/item/<int:item_id>/summary/delete', methods=['POST'])
 @login_required
+@mfa_required
 def delete_summary(item_id):
     item = ContextScope.query.get_or_404(item_id)
     if item.author != current_user:
@@ -505,6 +529,7 @@ def delete_summary(item_id):
 
 @main.route('/item/<int:item_id>/export', methods=['GET'])
 @login_required
+@mfa_required
 def export_item(item_id):
     """Exporteert de details van een BIA item als HTML-rapport."""
     item = ContextScope.query.get_or_404(item_id)
@@ -557,6 +582,7 @@ def export_item(item_id):
 
 @main.route('/export_csv/<int:item_id>', methods=['GET'])
 @login_required
+@mfa_required
 def export_csv(item_id):
     item = ContextScope.query.get_or_404(item_id)
     if item.author != current_user:
@@ -597,6 +623,7 @@ def export_csv(item_id):
 
 @main.route('/download_csv/<path:folder_name>/<filename>')
 @login_required
+@mfa_required
 def download_csv_file(folder_name, filename):
     """Route voor het downloaden van individuele CSV-bestanden."""
     file_path = os.path.join(current_app.root_path, 'exports', folder_name, filename)
@@ -610,6 +637,7 @@ def download_csv_file(folder_name, filename):
 
 @main.route('/import_csv', methods=['GET', 'POST'])
 @login_required
+@mfa_required
 def import_csv():
     form = ImportCSVForm()
     if request.method == 'POST':
@@ -665,6 +693,7 @@ def import_csv():
 
 @main.route('/change_password', methods=['GET', 'POST'])
 @login_required
+@mfa_required
 @require_fresh_login(max_age_minutes=15)  # Require very fresh login for password changes
 def change_password():
     form = ChangePasswordForm()
@@ -680,6 +709,7 @@ def change_password():
 
 @main.route('/export_data_inventory')
 @login_required
+@mfa_required
 def export_data_inventory():
     """Exporteert een inventory van alle componenten met hun BIA informatie als CSV."""
     
@@ -721,6 +751,7 @@ def export_data_inventory():
     return send_file(file_path, as_attachment=True, download_name=filename)
 
 @login_required
+@mfa_required
 def export_all_consequences():
     """Exporteert alle CIA consequences van alle BIA's als HTML-rapport."""
     
@@ -849,6 +880,7 @@ main.add_url_rule('/export-all-consequences', 'export_all_consequences', export_
 
 @main.route('/debug/consequences')
 @login_required
+@mfa_required
 def debug_consequences():
     """Debug route om consequences data te controleren"""
     bias = ContextScope.query.all()

@@ -7,12 +7,27 @@ from .forms import LoginForm, RegistrationForm, MFAForm  # Voeg MFAForm toe hier
 from .models import User
 from . import db # bcrypt is hier niet meer nodig
 from datetime import datetime, timedelta
+from functools import wraps
 import pyotp
 import urllib.parse
 import secrets
 from .session_security import generate_session_fingerprint
 
 auth = Blueprint('auth', __name__)
+
+def mfa_required(f):
+    """Decorator die MFA vereist voor toegang tot routes."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return redirect(url_for('auth.login'))
+        
+        if not current_user.mfa_enabled:
+            flash('You must set up MFA before accessing this feature.', 'warning')
+            return redirect(url_for('auth.setup_mfa'))
+        
+        return f(*args, **kwargs)
+    return decorated_function
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -37,28 +52,28 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
+        
         if user and user.check_password(form.password.data):
             if not user.is_active:
                 flash('Your account is not active. Please contact an administrator.', 'danger')
-                return redirect(url_for('auth.login'))
+                return render_template('auth/login.html', title='Sign In', form=form)
             
             # Check if MFA is enabled
             if user.mfa_enabled:
-                # Store user ID in session for MFA verification
+                # Normal MFA flow
                 session['mfa_user_id'] = user.id
                 session['mfa_timestamp'] = datetime.now().isoformat()
                 return redirect(url_for('auth.verify_mfa'))
             else:
-                # Complete login process
+                # Force MFA setup for users without MFA
                 login_user(user, remember=form.remember_me.data)
-                flash('Please set up MFA to secure your account.', 'warning')
+                flash('You must set up Multi-Factor Authentication to secure your account.', 'warning')
                 return redirect(url_for('auth.setup_mfa'))
         else:
-            flash('Invalid email or password', 'danger')
+            flash('Invalid username or password', 'danger')
     
     return render_template('auth/login.html', title='Sign In', form=form)
-
 @auth.route('/verify_mfa', methods=['GET', 'POST'])
 def verify_mfa():
     if 'mfa_user_id' not in session:
@@ -98,6 +113,10 @@ def verify_mfa():
 @auth.route('/setup_mfa', methods=['GET', 'POST'])
 @login_required
 def setup_mfa():
+    # Als MFA al is ingeschakeld, redirect naar dashboard
+    if current_user.mfa_enabled:
+        return redirect(url_for('main.index'))
+    
     # Genereer een geheime sleutel voor de gebruiker als deze nog niet bestaat
     if not current_user.mfa_secret:
         current_user.mfa_secret = pyotp.random_base32()
@@ -111,18 +130,19 @@ def setup_mfa():
     encoded_url = urllib.parse.quote(provisioning_url)
 
     if request.method == 'POST':
-        # Verwerk de POST-aanvraag hier
         token = request.form.get('token')
         if totp.verify(token):
             current_user.mfa_enabled = True
             db.session.commit()
-            flash('MFA has been successfully set up!', 'success')
+            flash('MFA has been successfully set up! You can now access the application.', 'success')
             return redirect(url_for('main.index'))
         else:
             flash('Invalid token. Please try again.', 'danger')
 
-    return render_template('auth/setup_mfa.html', provisioning_url=encoded_url, secret_key=current_user.mfa_secret)
-
+    return render_template('auth/setup_mfa.html', 
+                         provisioning_url=encoded_url, 
+                         secret_key=current_user.mfa_secret,
+                         force_setup=True)  # Flag om te tonen dat dit verplicht is
 def complete_login(user, remember_me=False):
     """Complete the login process with security measures."""
     login_user(user, remember=remember_me)
