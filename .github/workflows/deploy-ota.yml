@@ -20,7 +20,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v5.0.0
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_HOST: ${{ secrets.SSH_OTAHOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
           SOURCE: "./"
           TARGET: ${{ secrets.TARGET_DIR }} # bv. /home/ferry/bia_app
@@ -34,7 +34,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           inventory: |
             [je_server_groep]
-            ${{ secrets.SSH_HOST }} ansible_user=${{ secrets.SSH_USER }}
+            ${{ secrets.SSH_OTAHOST }} ansible_user=${{ secrets.SSH_USER }}
 
           # CORRECT: Geef alle variabelen door via de '--extra-vars' vlag in 'options'
           options: |
