@@ -1,0 +1,42 @@
+# .github/workflows/deploy.yml
+name: Deploy to Internal ota Server
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  deploy-python-app:
+    name: Deploy Python App
+    runs-on: ota
+
+    steps:
+      # Stap 1: Code uitchecken
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Stap 2: Bestanden synchroniseren (optioneel, kan ook met Ansible)
+      - name: Sync files to server
+        uses: easingthemes/ssh-deploy@v5.0.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          SOURCE: "./"
+          TARGET: ${{ secrets.TARGET_DIR }} # bv. /home/ferry/bia_app
+          EXCLUDE: "/.git/, /.github/, /__pycache__/, *.pyc, .env"
+
+       # Stap 3: Voer het Ansible playbook uit
+      - name: Run Ansible Playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: ansible/deploy.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          inventory: |
+            [je_server_groep]
+            ${{ secrets.SSH_HOST }} ansible_user=${{ secrets.SSH_USER }}
+
+          # CORRECT: Geef alle variabelen door via de '--extra-vars' vlag in 'options'
+          options: |
+            --extra-vars "project_dir=${{ secrets.TARGET_DIR }} venv_dir=${{ secrets.VENV_DIR }} service_name=bia"
+            -v
