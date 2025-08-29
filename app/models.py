@@ -42,6 +42,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @property
     def is_admin(self):
         return self.role == 'admin'
 
@@ -179,3 +180,13 @@ def update_context_scope_last_update(mapper, connection, target):
 
         if context_scope:
             context_scope.last_update = date.today()
+
+# Register the event listeners to automatically update the 'last_update' field.
+# This ensures that any change in related models updates the parent BIA.
+event.listen(ContextScope, 'before_update', update_context_scope_last_update)
+
+models_to_track = [Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary]
+for model in models_to_track:
+    event.listen(model, 'after_insert', update_context_scope_last_update)
+    event.listen(model, 'after_update', update_context_scope_last_update)
+    event.listen(model, 'after_delete', update_context_scope_last_update)
