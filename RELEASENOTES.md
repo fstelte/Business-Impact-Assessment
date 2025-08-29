@@ -1,3 +1,6 @@
+# 2025.8.1
+- Fix user permissions for assignments and user administration
+
 # 2025.7.16
 - MFA registration during first login after having account enabled 
 
