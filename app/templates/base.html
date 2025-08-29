@@ -107,128 +107,94 @@
     </div>
 </div>
     <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                    <i class="fas fa-shield-alt"></i> BIA Tool
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <!-- Links aan de linkerkant -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        {% if current_user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('main.index') }}">
-                                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('main.new_item') }}">
-                                    <i class="fas fa-plus-circle"></i> New BIA
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('main.view_components') }}">
-                                    <i class="fas fa-cubes"></i> Components
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('main.export_data_inventory') }}">
-                                    <i class="fas fa-download"></i> Export Data Inventory
-                                </a>
-                            </li>
-                           <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="exportConsequencesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-exclamation-triangle"></i> Export CIA Consequences
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="exportConsequencesDropdown">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='detailed') }}">
-                                                <i class="fas fa-list"></i> Detailed Export
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('main.export_all_consequences', type='summary') }}">
-                                                <i class="fas fa-chart-bar"></i> Summary Export
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                
-                        {% endif %}
-                    </ul>
-                    <!-- Links aan de rechterkant -->
-                    <ul class="navbar-nav ms-auto">
-                    <!-- Theme Toggler -->
-                         <li class="nav-item dropdown">
-                            <button class="btn nav-link dropdown-toggle" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-                                <i class="fas fa-adjust theme-icon-active"></i>
-                                <span class="d-lg-none ms-2">Toggle theme</span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
-                                <li>
-                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
-                                        <i class="fas fa-sun me-2 opacity-50 theme-icon"></i> Light
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="dark">
-                                        <i class="fas fa-moon me-2 opacity-50 theme-icon"></i> Dark
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto">
-                                        <i class="fas fa-adjust me-2 opacity-50 theme-icon"></i> Auto
-                                    </button>
-                                </li>
-                            </ul>
-                        </li>
-                        
-                        <!-- User Actions -->
-                        {% if current_user.is_authenticated %}
-                             <!-- Admin-only link (HIER GEPLAATST) -->
-                                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user"></i> {{ current_user.username }}
-                            {% if session.get('session_warning') %}
-                                <i class="fas fa-exclamation-triangle text-warning ms-1" title="Session expiring soon"></i>
-                            {% endif %}
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">
+            <i class="fas fa-shield-alt"></i>
+            BIA Tool
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.context_scope_list') }}">Mijn BIA's</a>
+                    </li>
+                    {% if current_user.is_admin() %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Admin
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ url_for('main.change_password') }}">
-                                <i class="fas fa-key"></i> Change Password
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a></li>
-                            {% if current_user.is_admin %}
-                            <li><a class="dropdown-item" href="{{ url_for('admin.list_users') }}">
-                                <i class="fas fa-users-cog"></i> User management
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('admin.manage_assignments') }}">
-                                <i class="fas fa-tasks"></i> Manage BIA Assignments
-                            </a></li>
-                            {% endif %}
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('admin.list_users') }}">User management</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin.manage_assignments') }}">Manage BIA assignments</a></li>
                         </ul>
                     </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register') }}">
-                            <i class="fas fa-user-plus"></i> Register
-                        </a>
-                    </li>
                     {% endif %}
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i> {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Wachtwoord wijzigen</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Uitloggen</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
+                    <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>
+                    <hr class="d-lg-none my-2 text-white-50">
+                </li>
+                <li class="nav-item dropdown">
+                    <button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
+                            id="bd-theme"
+                            type="button"
+                            aria-expanded="false"
+                            data-bs-toggle="dropdown"
+                            data-bs-display="static"
+                            aria-label="Toggle theme (auto)">
+                        <i class="theme-icon-active"></i>
+                        <span class="d-lg-none ms-2" id="bd-theme-text">Toggle theme</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="bd-theme-text">
+                        <li>
+                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                <i class="fas fa-sun me-2"></i>
+                                Light
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                <i class="fas fa-moon me-2"></i>
+                                Dark
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                                <i class="fas fa-adjust me-2"></i>
+                                Auto
+                            </button>
+                        </li>
                     </ul>
-                </div>
-            </div>
-        </nav>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
     </header>
     
     <main class="container mt-4 mb-5 main-content">
