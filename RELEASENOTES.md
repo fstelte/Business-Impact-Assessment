@@ -1,3 +1,6 @@
+# 2025.8.1_1
+- Minor fix for user management
+
 # 2025.8.1
 - Fix user permissions for assignments and user administration
 - Fix model and last updates of BIA's
