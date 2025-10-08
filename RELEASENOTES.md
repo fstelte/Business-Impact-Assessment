@@ -1,3 +1,5 @@
+# 2025.10.1
+- Import fix when there are empty fields in the csv file
 # 2025.8.1_1
 - Minor fix for user management
 
