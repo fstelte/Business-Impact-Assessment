@@ -154,14 +154,30 @@ def export_to_csv(item):
     # Consequences CSV
     consequences_data = io.StringIO()
     consequences_writer = csv.writer(consequences_data)
-    consequences_writer.writerow(['Gerelateerd aan Component', 'Category of consequence', 'Property of Security', 'Worstcase consequence', 'Realistic consequence'])
+    
+    consequences_writer.writerow([
+        'Gerelateerd aan Component',
+        'Category of consequence',
+        'Property of Security',
+        'Worstcase consequence',
+        'Justification for worst consequence',
+        'Realistic consequence',
+        'Justification for realistic consequence'
+    ])
+
     for component in item.components:
         for consequence in component.consequences:
             consequences_writer.writerow([
-                component.name, consequence.consequence_category, consequence.security_property,
+                
+                component.name,
+                consequence.consequence_category,
+                consequence.security_property,
                 consequence.consequence_worstcase,
-                consequence.consequence_realisticcase
+                consequence.justification_worstcase,
+                consequence.consequence_realisticcase,
+                consequence.justification_realisticcase
             ])
+
     csv_files[f'{prefix}consequences.csv'] = consequences_data.getvalue()
 
     # Availability Requirements CSV
@@ -339,23 +355,26 @@ def import_from_csv(csv_files):
 
         print(f"Total components in database: {Component.query.count()}")
 
-    # Import Consequences (als aanwezig en components geïmporteerd zijn)
+      # Import Consequences (als aanwezig en components geïmporteerd zijn)
     if 'consequences' in csv_files and csv_files['consequences'] and 'components' in csv_files:
         consequences_data = csv.DictReader(io.StringIO(csv_files['consequences']))
         for row in consequences_data:
             if not any(row.values()):  # Skip empty rows
                 continue
             
+            
             consequences_field_mapping = {
-                'Gerelateerd aan Component': 'component_name',
                 'Category of consequence': 'consequence_category',
                 'Property of Security': 'security_property',
                 'Worstcase consequence': 'consequence_worstcase',
-                'Realistic consequence': 'consequence_realisticcase'
+                'Justification for worst consequence': 'justification_worstcase',
+                'Realistic consequence': 'consequence_realisticcase',
+                'Justification for realistic consequence': 'justification_realisticcase',
             }
 
+
             mapped_row = {consequences_field_mapping.get(k, k): v for k, v in row.items() if k in consequences_field_mapping}
-            component_name = mapped_row.pop('component_name', None)
+            component_name = row.get('Gerelateerd aan Component')
             
             # Vertaal de consequence waarden
             mapped_row['consequence_worstcase'] = translate_consequence(mapped_row.get('consequence_worstcase'))
@@ -365,7 +384,8 @@ def import_from_csv(csv_files):
             print(f"Mapped row: {mapped_row}")
             
             if component_name:
-                component = Component.query.filter_by(name=component_name, context_scope=context_scope).first()
+                # Zoek de component die bij de huidige context_scope hoort
+                component = Component.query.filter_by(name=component_name, context_scope_id=context_scope.id).first()
                 if component:
                     try:
                         consequence = Consequences(**mapped_row)
@@ -376,7 +396,7 @@ def import_from_csv(csv_files):
                         print(f"Error adding consequence for component {component_name}: {str(e)}")
                         db.session.rollback()
                 else:
-                    print(f"Component not found: {component_name}")
+                    print(f"Component not found: {component_name} for context_scope_id: {context_scope.id}")
             else:
                 print("Skipping consequence without component name")
 
