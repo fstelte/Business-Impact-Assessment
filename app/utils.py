@@ -160,7 +160,9 @@ def export_to_csv(item):
         'Category of consequence',
         'Property of Security',
         'Worstcase consequence',
-        'Realistic consequence'
+        'Justification for worst consequence',
+        'Realistic consequence',
+        'Justification for realistic consequence'
     ])
 
     for component in item.components:
@@ -382,7 +384,8 @@ def import_from_csv(csv_files):
             print(f"Mapped row: {mapped_row}")
             
             if component_name:
-                component = Component.query.filter_by(name=component_name, context_scope=context_scope).first()
+                # Zoek de bijbehorende Component
+                component = Component.query.filter_by(name=component_name).first()
                 if component:
                     try:
                         consequence = Consequences(**mapped_row)
