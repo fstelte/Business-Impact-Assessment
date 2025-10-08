@@ -1,3 +1,4 @@
+
 # app/routes.py
 # Behandelt de hoofdroutes van de applicatie (CRUD voor BIA).
 
@@ -640,7 +641,15 @@ def import_csv():
                     
                     # Lees de inhoud van het bestand direct
                     file_content = file.read().decode('utf-8')
-                    csv_files[file_type] = file_content
+                    
+                    # Vervang lege velden (,, of , \n) door ,0, of ,0\n
+                    # Dit zorgt ervoor dat lege numerieke velden als 0 worden geïnterpreteerd
+                    processed_content = file_content.replace(',,', ',0,').replace(',\n', ',0\n')
+                    # Herhaal om opeenvolgende lege velden te vangen
+                    while ',,' in processed_content:
+                        processed_content = processed_content.replace(',,', ',0,')
+
+                    csv_files[file_type] = processed_content
                     print(f"{file_type} file content loaded: {new_filename}")
                 else:
                     print(f"No file received for {file_type}")
