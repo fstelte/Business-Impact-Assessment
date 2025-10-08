@@ -154,15 +154,28 @@ def export_to_csv(item):
     # Consequences CSV
     consequences_data = io.StringIO()
     consequences_writer = csv.writer(consequences_data)
-    consequences_writer.writerow(['Gerelateerd aan Component', 'Category of consequence', 'Property of Security', 'Worstcase consequence', 'Realistic consequence', 'Justification'])
+    
+    consequences_writer.writerow([
+        'Gerelateerd aan Component',
+        'Category of consequence',
+        'Property of Security',
+        'Worstcase consequence',
+        'Realistic consequence'
+    ])
+
     for component in item.components:
         for consequence in component.consequences:
             consequences_writer.writerow([
-                component.name, consequence.consequence_category, consequence.security_property,
+                
+                component.name,
+                consequence.consequence_category,
+                consequence.security_property,
                 consequence.consequence_worstcase,
+                consequence.justification_worstcase,
                 consequence.consequence_realisticcase,
-                consequence.justification
+                consequence.justification_realisticcase
             ])
+
     csv_files[f'{prefix}consequences.csv'] = consequences_data.getvalue()
 
     # Availability Requirements CSV
@@ -347,15 +360,16 @@ def import_from_csv(csv_files):
             if not any(row.values()):  # Skip empty rows
                 continue
             
+            
             consequences_field_mapping = {
-                'Gerelateerd aan Component': 'component_name',
                 'Category of consequence': 'consequence_category',
                 'Property of Security': 'security_property',
                 'Worstcase consequence': 'consequence_worstcase',
-                'Worstcase Justification': 'justification_worstcase',
+                'Justification for worst consequence': 'justification_worstcase',
                 'Realistic consequence': 'consequence_realisticcase',
-                'Realistic Justification': 'justification_realisticcase'
+                'Justification for realistic consequence': 'justification_realisticcase',
             }
+
 
             mapped_row = {consequences_field_mapping.get(k, k): v for k, v in row.items() if k in consequences_field_mapping}
             component_name = mapped_row.pop('component_name', None)
