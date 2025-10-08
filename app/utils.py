@@ -154,13 +154,14 @@ def export_to_csv(item):
     # Consequences CSV
     consequences_data = io.StringIO()
     consequences_writer = csv.writer(consequences_data)
-    consequences_writer.writerow(['Gerelateerd aan Component', 'Category of consequence', 'Property of Security', 'Worstcase consequence', 'Realistic consequence'])
+    consequences_writer.writerow(['Gerelateerd aan Component', 'Category of consequence', 'Property of Security', 'Worstcase consequence', 'Realistic consequence', 'Justification'])
     for component in item.components:
         for consequence in component.consequences:
             consequences_writer.writerow([
                 component.name, consequence.consequence_category, consequence.security_property,
                 consequence.consequence_worstcase,
-                consequence.consequence_realisticcase
+                consequence.consequence_realisticcase,
+                consequence.justification
             ])
     csv_files[f'{prefix}consequences.csv'] = consequences_data.getvalue()
 
@@ -351,7 +352,9 @@ def import_from_csv(csv_files):
                 'Category of consequence': 'consequence_category',
                 'Property of Security': 'security_property',
                 'Worstcase consequence': 'consequence_worstcase',
-                'Realistic consequence': 'consequence_realisticcase'
+                'Worstcase Justification': 'justification_worstcase',
+                'Realistic consequence': 'consequence_realisticcase',
+                'Realistic Justification': 'justification_realisticcase'
             }
 
             mapped_row = {consequences_field_mapping.get(k, k): v for k, v in row.items() if k in consequences_field_mapping}

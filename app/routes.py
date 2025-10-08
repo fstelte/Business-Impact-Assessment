@@ -826,11 +826,12 @@ def export_all_consequences():
                     all_consequences.append({
                         'bia_name': bia.name,
                         'component_name': component.name,
-                        'consequence': consequence
+                        'consequence': consequence,
+                        'justification': consequence.justification
                     })
         
         # Genereer huidige datum/tijd
-        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M%S')
         
         # Render de uitgebreide template
         html_content = render_template('export_all_consequences.html', 
