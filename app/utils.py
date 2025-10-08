@@ -215,91 +215,192 @@ def export_to_csv(item):
     return csv_files
 
 def import_from_csv(csv_files):
-    """Importeert data van CSV bestanden naar de database."""
     
-    context_scope = None
-    
-    # Bepaal de ContextScope. We gaan ervan uit dat alle bestanden bij dezelfde BIA horen.
-    # We proberen het eerst uit de components.csv te halen.
-    if 'components' in csv_files and csv_files['components']:
-        components_content = csv_files['components']
-        components_data = csv.DictReader(io.StringIO(components_content))
-        first_row = next(components_data, None)
-        if first_row:
-            bia_name = first_row.get('Gerelateerd aan BIA')
-            if bia_name:
-                context_scope = ContextScope.query.filter_by(name=bia_name, user_id=current_user.id).first()
-        # Reset de reader om opnieuw vanaf het begin te lezen
-        csv_files['components'] = components_content
+    # Controleer of het BIA bestand aanwezig is
+    if 'bia' not in csv_files or not csv_files['bia']:
+        raise ValueError("ContextScope CSV file (BIA) is required.")
 
-    # Als de context_scope niet gevonden is, probeer het via de componenten in de consequences.csv
-    if not context_scope and 'consequences' in csv_files and csv_files['consequences']:
-        consequences_content = csv_files['consequences']
-        consequences_data = csv.DictReader(io.StringIO(consequences_content))
-        first_row = next(consequences_data, None)
-        if first_row:
-            component_name = first_row.get('Gerelateerd aan Component')
-            if component_name:
-                # Zoek de component en zijn parent context_scope
-                component = Component.query.filter_by(name=component_name).join(ContextScope).filter(ContextScope.user_id == current_user.id).first()
-                if component:
-                    context_scope = component.context_scope
-        # Reset de reader
-        csv_files['consequences'] = consequences_content
-
-    if not context_scope:
-        # Als we nog steeds geen context_scope hebben, kunnen we niet importeren.
-        # Dit kan gebeuren als de CSV's leeg zijn of de BIA/component niet bestaat.
-        return # Of flash een error message
-
-    # Mapping voor Component velden
-    component_field_mapping = {
-        'Component name': 'name',
-        'Type of information': 'info_type',
-        'Process Dependencies': 'process_dependencies',
-        'Information Owner': 'info_owner',
-        'Types of users': 'user_type',
-        'Description of the component': 'description',
+    # Maak een mapping van CSV kolomnamen naar model veldnamen
+    field_mapping = {
+        'BIA Name': 'name',
+        'BIA Responsible': 'responsible',
+        'BIA Coordinator': 'coordinator',
+        'BIA Start Date': 'start_date',
+        'BIA End Date': 'end_date',
+        'BIA Last Update': 'last_update',
+        'Service Description': 'service_description',
+        'Knowledge': 'knowledge',
+        'Interfaces': 'interfaces',
+        'mission_critical': 'mission_critical',
+        'support_contracts': 'support_contracts',
+        'security_supplier': 'security_supplier',
+        'user_amount': 'user_amount',
+        'scope_description': 'scope_description',
+        'risk_assessment_human': 'risk_assessment_human',
+        'risk_assessment_process': 'risk_assessment_process',
+        'risk_assessment_technological': 'risk_assessment_technological',
+        'project_leader': 'project_leader',
+        'risk_owner': 'risk_owner',
+        'product_owner': 'product_owner',
+        'technical_administrator': 'technical_administrator',
+        'security_manager': 'security_manager',
+        'incident_contact': 'incident_contact'
     }
 
-    # Import Components
+    def parse_date(date_string):
+        if date_string:
+            try:
+                return datetime.strptime(date_string, '%Y-%m-%d').date()
+            except ValueError:
+                return None
+        return None
+
+    # Import ContextScope
+    context_scope_data = csv.DictReader(io.StringIO(csv_files['bia']))
+    for row in context_scope_data:
+        # Verwijder de 'id' uit de row data als deze aanwezig is
+        row.pop('id', None)
+        
+        # Maak een nieuwe dictionary met de juiste veldnamen
+        mapped_row = {field_mapping.get(k, k): v for k, v in row.items() if k in field_mapping}
+        
+        # Converteer datumvelden
+        mapped_row['start_date'] = parse_date(mapped_row.get('start_date'))
+        mapped_row['end_date'] = parse_date(mapped_row.get('end_date'))
+        mapped_row['last_update'] = parse_date(mapped_row.get('last_update'))
+
+        # Converteer boolean velden
+        for bool_field in ['risk_assessment_human', 'risk_assessment_process', 'risk_assessment_technological', 'ai_model']:
+            if bool_field in mapped_row:
+                mapped_row[bool_field] = mapped_row[bool_field].lower() in ['true', 'yes', '1']
+
+        # Converteer numerieke velden
+        if 'user_amount' in mapped_row and mapped_row['user_amount']:
+            try:
+                mapped_row['user_amount'] = int(mapped_row['user_amount'])
+            except ValueError:
+                mapped_row['user_amount'] = None
+
+        # Voeg het gebruikers-ID toe aan de mapped_row
+        mapped_row['user_id'] = current_user.id
+
+        context_scope = ContextScope(**mapped_row)
+        db.session.add(context_scope)
+    
+    db.session.flush()
+    # Maak een mapping van CSV kolomnamen naar model veldnamen voor Component
+    component_field_mapping = {
+                'Component name': 'name',
+                'Type of information': 'info_type',
+                'Information Owner': 'info_owner',
+                'Types of users': 'user_type',
+                'Description of the component': 'description',
+                'Gerelateerd aan BIA': 'context_scope_id',
+                'Process Dependencies': 'process_dependencies'  # Voeg deze toe als het een veld is in je Component model
+            }
+
+    # Import Components (als aanwezig)
     if 'components' in csv_files and csv_files['components']:
         components_data = csv.DictReader(io.StringIO(csv_files['components']))
-        for row in components_data:
-            mapped_row = {component_field_mapping.get(k, k): v for k, v in row.items() if k in component_field_mapping}
-            
-            # We hebben de context_scope al, dus we kunnen deze direct gebruiken
-            mapped_row['context_scope_id'] = context_scope.id
-            component = Component(**mapped_row)
-            db.session.add(component)
-
-    db.session.flush()
-
-    # Import Consequences
-    if 'consequences' in csv_files and csv_files['consequences']:
-        consequences_data = csv.DictReader(io.StringIO(csv_files['consequences']))
-        consequence_field_mapping = {
-            'Category of consequence': 'consequence_category',
-            'Property of Security': 'security_property',
-            'Worstcase consequence': 'consequence_worstcase',
-            'Justification for worst consequence': 'justification_worstcase',
-            'Realistic consequence': 'consequence_realisticcase',
-            'Justification for realistic consequence': 'justification_realisticcase'
-        }
         
-        for row in consequences_data:
-            mapped_row = {consequence_field_mapping.get(k, k): v for k, v in row.items() if k in consequence_field_mapping}
+        components_data = csv.DictReader(io.StringIO(csv_files['components']))
+        
+        for row in components_data:
+            print(f"Processing row: {row}")
+            row.pop('id', None)
             
-            # Zoek de bijbehorende Component binnen de juiste context_scope
-            component_name = row.get('Gerelateerd aan Component')
-            component = Component.query.filter_by(name=component_name, context_scope_id=context_scope.id).first()
+            # Maak een nieuwe dictionary met de juiste veldnamen
+            mapped_row = {component_field_mapping.get(k, k): v.strip() if v else None for k, v in row.items() if k in component_field_mapping}
             
-            if component:
-                mapped_row['component_id'] = component.id
-                consequence = Consequences(**mapped_row)
-                db.session.add(consequence)
+            # Haal de BIA naam op en verwijder het uit mapped_row
+            bia_name = mapped_row.pop('context_scope_id', None)
+            
+            print(f"Mapped row: {mapped_row}")
+            print(f"BIA name: {bia_name}")
+            
+            # Controleer of de verplichte velden aanwezig zijn
+            if not mapped_row.get('name'):
+                print(f"Skipping component without name: {mapped_row}")
+                continue
+            
+            try:
+                # Zoek de juiste context_scope op basis van de BIA naam
+                related_context_scope = ContextScope.query.filter_by(name=bia_name).first()
+                if not related_context_scope:
+                    print(f"ContextScope not found for BIA name: {bia_name}")
+                    continue
 
-    db.session.commit()
+                component = Component(**mapped_row)
+                component.context_scope = related_context_scope
+                db.session.add(component)
+                print(f"Added component to session: {component.name}, linked to BIA: {related_context_scope.name}")
+                
+                # Probeer de component direct op te halen om te controleren of deze is toegevoegd
+                db.session.flush()
+                added_component = Component.query.filter_by(name=component.name, context_scope=related_context_scope).first()
+                if added_component:
+                    print(f"Component successfully added and retrieved: {added_component.name}, linked to BIA: {added_component.context_scope.name}")
+                else:
+                    print(f"Failed to retrieve added component: {component.name}")
+            except Exception as e:
+                print(f"Error adding component: {str(e)}")
+                db.session.rollback()
+
+        try:
+            db.session.commit()
+            print("Session committed successfully")
+        except Exception as e:
+            print(f"Error committing session: {str(e)}")
+            db.session.rollback()
+
+        print(f"Total components in database: {Component.query.count()}")
+
+      # Import Consequences (als aanwezig en components geïmporteerd zijn)
+    if 'consequences' in csv_files and csv_files['consequences'] and 'components' in csv_files:
+        consequences_data = csv.DictReader(io.StringIO(csv_files['consequences']))
+        for row in consequences_data:
+            if not any(row.values()):  # Skip empty rows
+                continue
+            
+            
+            consequences_field_mapping = {
+                'Category of consequence': 'consequence_category',
+                'Property of Security': 'security_property',
+                'Worstcase consequence': 'consequence_worstcase',
+                'Justification for worst consequence': 'justification_worstcase',
+                'Realistic consequence': 'consequence_realisticcase',
+                'Justification for realistic consequence': 'justification_realisticcase',
+            }
+
+
+            mapped_row = {consequences_field_mapping.get(k, k): v for k, v in row.items() if k in consequences_field_mapping}
+            component_name = row.get('Gerelateerd aan Component')
+            
+            # Vertaal de consequence waarden
+            mapped_row['consequence_worstcase'] = translate_consequence(mapped_row.get('consequence_worstcase'))
+            mapped_row['consequence_realisticcase'] = translate_consequence(mapped_row.get('consequence_realisticcase'))
+            
+            print(f"Processing consequence for component: {component_name}")
+            print(f"Mapped row: {mapped_row}")
+            
+            if component_name:
+                # Zoek de component die bij de huidige context_scope hoort
+                component = Component.query.filter_by(name=component_name, context_scope_id=context_scope.id).first()
+                if component:
+                    try:
+                        consequence = Consequences(**mapped_row)
+                        consequence.component = component
+                        db.session.add(consequence)
+                        db.session.flush()
+                    except Exception as e:
+                        print(f"Error adding consequence for component {component_name}: {str(e)}")
+                        db.session.rollback()
+                else:
+                    print(f"Component not found: {component_name} for context_scope_id: {context_scope.id}")
+            else:
+                print("Skipping consequence without component name")
+
+        db.session.commit()
     # Import Availability Requirements
     if 'availability_requirements' in csv_files and csv_files['availability_requirements'] and 'components' in csv_files:
         availability_data = csv.DictReader(io.StringIO(csv_files['availability_requirements']))
