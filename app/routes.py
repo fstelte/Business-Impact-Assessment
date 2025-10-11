@@ -8,7 +8,7 @@ from .utils import export_to_csv, import_from_csv, get_impact_level, get_impact_
 from . import db
 from . import auth
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
-from .forms import ContextScopeForm, ConsequenceForm, RegistrationForm, ComponentForm, SummaryForm, ImportCSVForm, ChangePasswordForm
+from .forms import ContextScopeForm, ConsequenceForm, RegistrationForm, ComponentForm, SummaryForm, ImportCSVForm, ChangePasswordForm,ImportSQLForm
 from datetime import date, datetime
 from .session_security import require_fresh_login
 from werkzeug.utils import secure_filename
@@ -892,3 +892,65 @@ def debug_consequences():
         debug_info.append(bia_info)
     
     return jsonify(debug_info)
+
+
+@main.route('/bia/<int:item_id>/export/sql')
+@login_required
+def export_bia_sql(item_id):
+    """Exporteert een specifieke BIA naar een SQL-bestand."""
+    item = ContextScope.query.get_or_404(item_id)
+    
+    try:
+        sql_data = export_to_sql(item)
+        
+        # Maak een veilige bestandsnaam
+        safe_name = "".join(c for c in item.name if c.isalnum() or c in (' ', '_')).rstrip()
+        filename = f"BIA_Export_{safe_name}_{datetime.now().strftime('%Y%m%d')}.sql"
+        
+        # Bepaal het pad waar het bestand moet worden opgeslagen
+        export_path = os.path.join(current_app.root_path, 'exports')
+        if not os.path.exists(export_path):
+            os.makedirs(export_path)
+        
+        file_path = os.path.join(export_path, filename)
+        
+        # Schrijf de SQL-data naar het bestand
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(sql_data)
+            
+        # Stuur het bestand naar de gebruiker
+        return send_file(file_path, as_attachment=True, download_name=filename)
+
+    except Exception as e:
+        flash(f'Error exporting BIA to SQL: {e}', 'danger')
+        return redirect(url_for('main.bia_detail', item_id=item_id))
+
+@main.route('/import/sql', methods=['GET', 'POST'])
+@login_required
+def import_bia_sql():
+    """Importeert een BIA vanuit een SQL-bestand."""
+    form = ImportSQLForm()
+    if form.validate_on_submit():
+        file = form.sql_file.data
+        filename = secure_filename(file.filename)
+        
+        # Tijdelijk opslaan om te lezen
+        temp_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        file.save(temp_path)
+        
+        try:
+            with open(temp_path, 'r', encoding='utf-8') as f:
+                sql_content = f.read()
+            
+            new_bia_id = import_from_sql(sql_content)
+            flash('BIA successfully imported from SQL file.', 'success')
+            return redirect(url_for('main.bia_detail', item_id=new_bia_id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred during SQL import: {e}', 'danger')
+        finally:
+            # Verwijder het tijdelijke bestand
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+                
+    return render_template('import_sql.html', title='Import BIA from SQL', form=form)

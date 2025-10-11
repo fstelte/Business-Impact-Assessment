@@ -1,3 +1,7 @@
+# 2025.10.2
+- Display amount of users in the overview
+- Created export to SQL routine
+
 # 2025.10.1_1
 - Fix import and export to include justifications
 

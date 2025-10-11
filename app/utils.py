@@ -535,3 +535,108 @@ def import_from_csv(csv_files):
         print(f"Error committing session: {str(e)}")
         db.session.rollback()
         raise
+
+def escape_sql_string(value):
+    """Escapes a string for use in an SQL statement."""
+    if value is None:
+        return "NULL"
+    # Replace single quote with two single quotes for SQL compatibility
+    return "'" + str(value).replace("'", "''") + "'"
+
+def export_to_sql(item):
+    """Exports a BIA item and its related data to SQL INSERT statements."""
+    from .models import Component, Consequence, AvailabilityRequirement, AIIdentificatie, Summary
+    sql_statements = []
+
+    # Helper to generate INSERT statement
+    def generate_insert(table_name, data):
+        columns = ', '.join(data.keys())
+        values = ', '.join(map(str, data.values()))
+        return f"INSERT INTO {table_name} ({columns}) VALUES ({values});"
+
+    # 1. ContextScope
+    bia_data = {
+        'id': item.id,
+        'name': escape_sql_string(item.name),
+        'description': escape_sql_string(item.description),
+        'creation_date': escape_sql_string(item.creation_date.strftime('%Y-%m-%d %H:%M:%S')),
+        'last_update': escape_sql_string(item.last_update.strftime('%Y-%m-%d %H:%M:%S')),
+        'business_owner': escape_sql_string(item.business_owner),
+        'technical_administrator': escape_sql_string(item.technical_administrator),
+        'user_id': item.user_id
+    }
+    sql_statements.append(generate_insert('context_scope', bia_data))
+
+    # 2. Components
+    for component in item.components:
+        comp_data = {
+            'id': component.id,
+            'name': escape_sql_string(component.name),
+            'info_type': escape_sql_string(component.info_type),
+            'info_owner': escape_sql_string(component.info_owner),
+            'context_scope_id': component.context_scope_id
+        }
+        sql_statements.append(generate_insert('component', comp_data))
+
+        # 3. Consequences for each component
+        for consequence in component.consequences:
+            cons_data = {
+                'id': consequence.id,
+                'security_property': escape_sql_string(consequence.security_property),
+                'consequence_category': escape_sql_string(consequence.consequence_category),
+                'consequence_worstcase': escape_sql_string(consequence.consequence_worstcase),
+                'consequence_realisticcase': escape_sql_string(consequence.consequence_realisticcase),
+                'justification': escape_sql_string(consequence.justification),
+                'component_id': consequence.component_id
+            }
+            sql_statements.append(generate_insert('consequence', cons_data))
+
+        # 4. Availability Requirements for each component
+        for ar in component.availability_requirements:
+            ar_data = {
+                'id': ar.id,
+                'time_period': escape_sql_string(ar.time_period),
+                'rto_worstcase': escape_sql_string(ar.rto_worstcase),
+                'rto_realisticcase': escape_sql_string(ar.rto_realisticcase),
+                'rpo_worstcase': escape_sql_string(ar.rpo_worstcase),
+                'rpo_realisticcase': escape_sql_string(ar.rpo_realisticcase),
+                'component_id': ar.component_id
+            }
+            sql_statements.append(generate_insert('availability_requirement', ar_data))
+            
+        # 5. AI Identification for each component
+        ai_identification = AIIdentificatie.query.filter_by(component_id=component.id).first()
+        if ai_identification:
+            ai_data = {
+                'id': ai_identification.id,
+                'category': escape_sql_string(ai_identification.category),
+                'justification': escape_sql_string(ai_identification.justification),
+                'component_id': ai_identification.component_id
+            }
+            sql_statements.append(generate_insert('ai_identificatie', ai_data))
+
+    # 6. Summary
+    summary = Summary.query.filter_by(context_scope_id=item.id).first()
+    if summary:
+        summary_data = {
+            'id': summary.id,
+            'summary_text': escape_sql_string(summary.summary_text),
+            'context_scope_id': summary.context_scope_id
+        }
+        sql_statements.append(generate_insert('summary', summary_data))
+
+    return "\n".join(sql_statements)
+
+def import_from_sql(sql_content):
+    """Executes SQL statements from a given string to import data."""
+    from . import db
+    try:
+        # Split statements and execute them one by one
+        statements = [s.strip() for s in sql_content.split(';') if s.strip()]
+        for statement in statements:
+            db.session.execute(db.text(statement))
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        # Re-raise the exception to be caught by the route
+        raise e
