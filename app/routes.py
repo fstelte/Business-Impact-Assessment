@@ -4,7 +4,7 @@
 
 from flask import render_template, flash, redirect, url_for, request, Blueprint, jsonify,  current_app, send_file, abort
 from flask_login import current_user, login_required, login_user
-from .utils import export_to_csv, import_from_csv, get_impact_level, get_impact_color
+from .utils import export_to_csv, import_from_csv, get_impact_level, get_impact_color, export_to_sql
 from . import db
 from . import auth
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
