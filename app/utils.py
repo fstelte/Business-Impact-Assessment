@@ -550,16 +550,24 @@ def export_to_sql(item):
 
     # Helper to generate INSERT statement
     def generate_insert(table_name, data):
-        columns = ', '.join(data.keys())
-        values = ', '.join(map(str, data.values()))
+        # Filter out None values, as they should be represented as NULL in SQL
+        filtered_data = {k: v for k, v in data.items() if v is not None}
+        columns = ', '.join(filtered_data.keys())
+        values = ', '.join(map(str, filtered_data.values()))
         return f"INSERT INTO {table_name} ({columns}) VALUES ({values});"
+
+    # Helper to escape strings and handle None
+    def escape_sql_string(value):
+        if value is None:
+            return "NULL"
+        return f"'{str(value).replace("'", "''")}'"
 
     # 1. ContextScope
     bia_data = {
         'id': item.id,
         'name': escape_sql_string(item.name),
-        'creation_date': escape_sql_string(item.creation_date.strftime('%Y-%m-%d %H:%M:%S')),
-        'last_update': escape_sql_string(item.last_update.strftime('%Y-%m-%d %H:%M:%S')),
+        'creation_date': escape_sql_string(item.creation_date.strftime('%Y-%m-%d %H:%M:%S') if item.creation_date else None),
+        'last_update': escape_sql_string(item.last_update.strftime('%Y-%m-%d %H:%M:%S') if item.last_update else None),
         'business_owner': escape_sql_string(item.business_owner),
         'technical_administrator': escape_sql_string(item.technical_administrator),
         'user_id': item.user_id
@@ -568,31 +576,44 @@ def export_to_sql(item):
 
     # 2. Components
     for component in item.components:
-# ... existing code
+        comp_data = {
+            'id': component.id,
+            'name': escape_sql_string(component.name),
+            'description': escape_sql_string(component.description),
+            'supplier': escape_sql_string(component.supplier),
+            'info_type': escape_sql_string(component.info_type),
+            'info_owner': escape_sql_string(component.info_owner),
+            'context_scope_id': component.context_scope_id
+        }
+        sql_statements.append(generate_insert('component', comp_data))
+
+ # 3. Consequences for each component
         for consequence in component.consequences:
             cons_data = {
                 'id': consequence.id,
                 'security_property': escape_sql_string(consequence.security_property),
                 'consequence_category': escape_sql_string(consequence.consequence_category),
                 'consequence_worstcase': escape_sql_string(consequence.consequence_worstcase),
+                'justification_worstcase': escape_sql_string(consequence.justification_worstcase),
                 'consequence_realisticcase': escape_sql_string(consequence.consequence_realisticcase),
-                'justification': escape_sql_string(consequence.justification),
+                'justification_realisticcase': escape_sql_string(consequence.justification_realisticcase),
                 'component_id': consequence.component_id
             }
             sql_statements.append(generate_insert('consequences', cons_data))
 
         # 4. Availability Requirements for each component
-        for ar in component.availability_requirements:
+        availability = AvailabilityRequirements.query.filter_by(component_id=component.id).first()
+        if availability:
             ar_data = {
-                'id': ar.id,
-                'time_period': escape_sql_string(ar.time_period),
-                'rto_worstcase': escape_sql_string(ar.rto_worstcase),
-                'rto_realisticcase': escape_sql_string(ar.rto_realisticcase),
-                'rpo_worstcase': escape_sql_string(ar.rpo_worstcase),
-                'rpo_realisticcase': escape_sql_string(ar.rpo_realisticcase),
-                'component_id': ar.component_id
+                'id': availability.id,
+                'mtd': escape_sql_string(availability.mtd),
+                'rto': escape_sql_string(availability.rto),
+                'rpo': escape_sql_string(availability.rpo),
+                'masl': escape_sql_string(availability.masl),
+                'component_id': availability.component_id
             }
             sql_statements.append(generate_insert('availability_requirements', ar_data))
+            
             
         # 5. AI Identification for each component
         ai_identification = AIIdentificatie.query.filter_by(component_id=component.id).first()
@@ -616,6 +637,7 @@ def export_to_sql(item):
         sql_statements.append(generate_insert('summary', summary_data))
 
     return "\n".join(sql_statements)
+
 
 
 def import_from_sql(sql_content):
