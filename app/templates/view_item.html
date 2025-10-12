@@ -19,6 +19,9 @@
             <a href="{{ url_for('main.export_item', item_id=item.id) }}" class="btn btn-outline-primary btn-sm me-2">
                 <i class="fas fa-file-code"></i> Export HTML
             </a>
+            <!--    <a href="{{ url_for('main.export_bia_sql', item_id=item.id) }}" class="btn btn-sm btn-outline-info">
+                    <i class="fas fa-database"></i> Export SQL-->
+                </a>
             {% if item.author == current_user %}
                 <a href="{{ url_for('main.edit_item', item_id=item.id) }}" class="btn btn-outline-info btn-sm me-2">
                     <i class="fas fa-edit"></i> Edit
@@ -72,6 +75,8 @@
                             <dd class="col-sm-8">{{ item.interfaces or "N/A" }}</dd>
                             <dt class="col-sm-4">Mision critical</dt>
                             <dd class="col-sm-8">{{ item.mission_critical or "N/A" }}</dd>
+                            <dt class="col-sm-4">Amount of users</dt>
+                            <dd class="col-sm-8">{{ item.user_amount or "N/A" }}</dd>
                              <dt class="col-sm-4">Uses AI Model</dt>
                             <dd class="col-sm-8">{% if item.ai_model %}Ja{% else %}Nee{% endif %}</dd>
                         </dl>

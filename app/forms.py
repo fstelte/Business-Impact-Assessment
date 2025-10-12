@@ -170,3 +170,11 @@ class ChangePasswordForm(FlaskForm):
     ])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired()])
     submit = SubmitField('Change Password')
+
+class ImportSQLForm(FlaskForm):
+    """Formulier voor het importeren van een BIA via een SQL-bestand."""
+    sql_file = FileField('SQL File', validators=[
+        FileRequired(),
+        FileAllowed(['sql'], 'SQL files only!')
+    ])
+    submit = SubmitField('Import from SQL')
