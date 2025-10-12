@@ -558,7 +558,6 @@ def export_to_sql(item):
     bia_data = {
         'id': item.id,
         'name': escape_sql_string(item.name),
-        'description': escape_sql_string(item.description),
         'creation_date': escape_sql_string(item.creation_date.strftime('%Y-%m-%d %H:%M:%S')),
         'last_update': escape_sql_string(item.last_update.strftime('%Y-%m-%d %H:%M:%S')),
         'business_owner': escape_sql_string(item.business_owner),
@@ -569,16 +568,7 @@ def export_to_sql(item):
 
     # 2. Components
     for component in item.components:
-        comp_data = {
-            'id': component.id,
-            'name': escape_sql_string(component.name),
-            'info_type': escape_sql_string(component.info_type),
-            'info_owner': escape_sql_string(component.info_owner),
-            'context_scope_id': component.context_scope_id
-        }
-        sql_statements.append(generate_insert('component', comp_data))
-
-        # 3. Consequences for each component
+# ... existing code
         for consequence in component.consequences:
             cons_data = {
                 'id': consequence.id,
@@ -589,7 +579,7 @@ def export_to_sql(item):
                 'justification': escape_sql_string(consequence.justification),
                 'component_id': consequence.component_id
             }
-            sql_statements.append(generate_insert('consequence', cons_data))
+            sql_statements.append(generate_insert('consequences', cons_data))
 
         # 4. Availability Requirements for each component
         for ar in component.availability_requirements:
@@ -602,7 +592,7 @@ def export_to_sql(item):
                 'rpo_realisticcase': escape_sql_string(ar.rpo_realisticcase),
                 'component_id': ar.component_id
             }
-            sql_statements.append(generate_insert('availability_requirement', ar_data))
+            sql_statements.append(generate_insert('availability_requirements', ar_data))
             
         # 5. AI Identification for each component
         ai_identification = AIIdentificatie.query.filter_by(component_id=component.id).first()
@@ -610,7 +600,7 @@ def export_to_sql(item):
             ai_data = {
                 'id': ai_identification.id,
                 'category': escape_sql_string(ai_identification.category),
-                'justification': escape_sql_string(ai_identification.justification),
+                'motivatie': escape_sql_string(ai_identification.motivatie),
                 'component_id': ai_identification.component_id
             }
             sql_statements.append(generate_insert('ai_identificatie', ai_data))
@@ -620,12 +610,13 @@ def export_to_sql(item):
     if summary:
         summary_data = {
             'id': summary.id,
-            'summary_text': escape_sql_string(summary.summary_text),
+            'content': escape_sql_string(summary.content),
             'context_scope_id': summary.context_scope_id
         }
         sql_statements.append(generate_insert('summary', summary_data))
 
     return "\n".join(sql_statements)
+
 
 def import_from_sql(sql_content):
     """Executes SQL statements from a given string to import data."""
