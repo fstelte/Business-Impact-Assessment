@@ -561,15 +561,38 @@ def export_to_sql(item):
         if value is None:
             return "NULL"
         return f"'{str(value).replace("'", "''")}'"
-
+        
+    def escape_sql_date(value):
+        if value is None:
+            return "NULL"
+        return f"'{value.strftime('%Y-%m-%d')}'"
     # 1. ContextScope
     bia_data = {
         'id': item.id,
         'name': escape_sql_string(item.name),
-        'creation_date': escape_sql_string(item.creation_date.strftime('%Y-%m-%d %H:%M:%S') if item.creation_date else None),
-        'last_update': escape_sql_string(item.last_update.strftime('%Y-%m-%d %H:%M:%S') if item.last_update else None),
-        'business_owner': escape_sql_string(item.business_owner),
+        'responsible': escape_sql_string(item.responsible),
+        'coordinator': escape_sql_string(item.coordinator),
+        'start_date': escape_sql_date(item.start_date),
+        'end_date': escape_sql_date(item.end_date),
+        'last_update': escape_sql_date(item.last_update),
+        'service_description': escape_sql_string(item.service_description),
+        'knowledge': escape_sql_string(item.knowledge),
+        'interfaces': escape_sql_string(item.interfaces),
+        'mission_critical': escape_sql_string(item.mission_critical),
+        'support_contracts': escape_sql_string(item.support_contracts),
+        'security_supplier': escape_sql_string(item.security_supplier),
+        'user_amount': item.user_amount,
+        'scope_description': escape_sql_string(item.scope_description),
+        'risk_assessment_human': 1 if item.risk_assessment_human else 0,
+        'risk_assessment_process': 1 if item.risk_assessment_process else 0,
+        'risk_assessment_technological': 1 if item.risk_assessment_technological else 0,
+        'ai_model': 1 if item.ai_model else 0,
+        'project_leader': escape_sql_string(item.project_leader),
+        'risk_owner': escape_sql_string(item.risk_owner),
+        'product_owner': escape_sql_string(item.product_owner),
         'technical_administrator': escape_sql_string(item.technical_administrator),
+        'security_manager': escape_sql_string(item.security_manager),
+        'incident_contact': escape_sql_string(item.incident_contact),
         'user_id': item.user_id
     }
     sql_statements.append(generate_insert('context_scope', bia_data))
