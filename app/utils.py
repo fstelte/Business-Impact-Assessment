@@ -545,7 +545,7 @@ def escape_sql_string(value):
 
 def export_to_sql(item):
     """Exports a BIA item and its related data to SQL INSERT statements."""
-    from .models import Component, Consequence, AvailabilityRequirement, AIIdentificatie, Summary
+    from .models import Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
     sql_statements = []
 
     # Helper to generate INSERT statement
