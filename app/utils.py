@@ -602,15 +602,15 @@ def export_to_sql(item):
         comp_data = {
             'id': component.id,
             'name': escape_sql_string(component.name),
-            'description': escape_sql_string(component.description),
-            'supplier': escape_sql_string(component.supplier),
             'info_type': escape_sql_string(component.info_type),
             'info_owner': escape_sql_string(component.info_owner),
+            'user_type': escape_sql_string(component.user_type),
+            'process_dependencies': escape_sql_string(component.process_dependencies),
+            'description': escape_sql_string(component.description),
             'context_scope_id': component.context_scope_id
         }
         sql_statements.append(generate_insert('component', comp_data))
 
- # 3. Consequences for each component
         for consequence in component.consequences:
             cons_data = {
                 'id': consequence.id,
@@ -624,8 +624,7 @@ def export_to_sql(item):
             }
             sql_statements.append(generate_insert('consequences', cons_data))
 
-        # 4. Availability Requirements for each component
-        availability = AvailabilityRequirements.query.filter_by(component_id=component.id).first()
+        availability = component.availability_requirement
         if availability:
             ar_data = {
                 'id': availability.id,
@@ -636,11 +635,8 @@ def export_to_sql(item):
                 'component_id': availability.component_id
             }
             sql_statements.append(generate_insert('availability_requirements', ar_data))
-            
-            
-        # 5. AI Identification for each component
-        ai_identification = AIIdentificatie.query.filter_by(component_id=component.id).first()
-        if ai_identification:
+
+        for ai_identification in component.ai_identificaties:
             ai_data = {
                 'id': ai_identification.id,
                 'category': escape_sql_string(ai_identification.category),
@@ -650,7 +646,7 @@ def export_to_sql(item):
             sql_statements.append(generate_insert('ai_identificatie', ai_data))
 
     # 6. Summary
-    summary = Summary.query.filter_by(context_scope_id=item.id).first()
+    summary = item.summary
     if summary:
         summary_data = {
             'id': summary.id,
@@ -658,7 +654,6 @@ def export_to_sql(item):
             'context_scope_id': summary.context_scope_id
         }
         sql_statements.append(generate_insert('summary', summary_data))
-
     return "\n".join(sql_statements)
 
 
