@@ -7,7 +7,7 @@ This application is designed to facilitate Business Impact Assessments (BIAs) wi
 
 ### Prerequisites
 
-- Python 3.7 or higher
+- Python 3.12 or higher
 - pip (Python package installer)
 
 ### 1. Clone the Repository
