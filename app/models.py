@@ -164,22 +164,29 @@ class Summary(db.Model):
 def update_context_scope_last_update(mapper, connection, target):
     if isinstance(target, ContextScope):
         target.last_update = date.today()
-    else:
-        if isinstance(target, Component):
-            context_scope = target.context_scope
-        elif isinstance(target, Consequences):
-            context_scope = target.component.context_scope
-        elif isinstance(target, AvailabilityRequirements):
-            context_scope = target.component.context_scope
-        elif isinstance(target, AIIdentificatie):
-            context_scope = target.component.context_scope
-        elif isinstance(target, Summary):
-            context_scope = target.context_scope
-        else:
-            return  # If it's none of these types, we don't update anything
+        return
 
-        if context_scope:
-            context_scope.last_update = date.today()
+    context_scope = None
+
+    if isinstance(target, Component):
+        context_scope = target.context_scope
+    elif isinstance(target, Consequences):
+        component = getattr(target, "component", None)
+        if component is not None:
+            context_scope = component.context_scope
+    elif isinstance(target, AvailabilityRequirements):
+        component = getattr(target, "component", None)
+        if component is not None:
+            context_scope = component.context_scope
+    elif isinstance(target, AIIdentificatie):
+        component = getattr(target, "component", None)
+        if component is not None:
+            context_scope = component.context_scope
+    elif isinstance(target, Summary):
+        context_scope = target.context_scope
+
+    if context_scope:
+        context_scope.last_update = date.today()
 
 # Register the event listeners to automatically update the 'last_update' field.
 # This ensures that any change in related models updates the parent BIA.

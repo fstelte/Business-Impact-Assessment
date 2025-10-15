@@ -1,11 +1,19 @@
 import csv
 import io
+import logging
+import re
 from datetime import datetime
 from .models import db, ContextScope, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
 from flask_login import current_user
 from flask import session
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField, FileRequired
+from wtforms import SubmitField
+from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 
+
+MAX_SQL_FILE_SIZE = 2 * 1024 * 1024
 
 def get_session_info():
     """Get session information for display in templates."""
@@ -536,6 +544,16 @@ def import_from_csv(csv_files):
         db.session.rollback()
         raise
 
+class SQLImportForm(FlaskForm):
+    sql_file = FileField(
+        'SQL-bestand',
+        validators=[
+            FileRequired(message='Kies een SQL-bestand.'),
+            FileAllowed(['sql'], 'Alleen .sql-bestanden zijn toegestaan.')
+        ]
+    )
+    submit = SubmitField('Importeren')
+
 def escape_sql_string(value):
     """Escapes a string for use in an SQL statement."""
     if value is None:
@@ -602,15 +620,15 @@ def export_to_sql(item):
         comp_data = {
             'id': component.id,
             'name': escape_sql_string(component.name),
-            'description': escape_sql_string(component.description),
-            'supplier': escape_sql_string(component.supplier),
             'info_type': escape_sql_string(component.info_type),
             'info_owner': escape_sql_string(component.info_owner),
+            'user_type': escape_sql_string(component.user_type),
+            'process_dependencies': escape_sql_string(component.process_dependencies),
+            'description': escape_sql_string(component.description),
             'context_scope_id': component.context_scope_id
         }
         sql_statements.append(generate_insert('component', comp_data))
 
- # 3. Consequences for each component
         for consequence in component.consequences:
             cons_data = {
                 'id': consequence.id,
@@ -624,8 +642,7 @@ def export_to_sql(item):
             }
             sql_statements.append(generate_insert('consequences', cons_data))
 
-        # 4. Availability Requirements for each component
-        availability = AvailabilityRequirements.query.filter_by(component_id=component.id).first()
+        availability = component.availability_requirement
         if availability:
             ar_data = {
                 'id': availability.id,
@@ -636,11 +653,8 @@ def export_to_sql(item):
                 'component_id': availability.component_id
             }
             sql_statements.append(generate_insert('availability_requirements', ar_data))
-            
-            
-        # 5. AI Identification for each component
-        ai_identification = AIIdentificatie.query.filter_by(component_id=component.id).first()
-        if ai_identification:
+
+        for ai_identification in component.ai_identificaties:
             ai_data = {
                 'id': ai_identification.id,
                 'category': escape_sql_string(ai_identification.category),
@@ -650,7 +664,7 @@ def export_to_sql(item):
             sql_statements.append(generate_insert('ai_identificatie', ai_data))
 
     # 6. Summary
-    summary = Summary.query.filter_by(context_scope_id=item.id).first()
+    summary = item.summary
     if summary:
         summary_data = {
             'id': summary.id,
@@ -658,21 +672,262 @@ def export_to_sql(item):
             'context_scope_id': summary.context_scope_id
         }
         sql_statements.append(generate_insert('summary', summary_data))
-
     return "\n".join(sql_statements)
 
 
 
 def import_from_sql(sql_content):
-    """Executes SQL statements from a given string to import data."""
-    from . import db
+    if not current_user.is_authenticated:
+        raise PermissionError("Authenticatie vereist.")
+    if not sql_content or not sql_content.strip():
+        raise ValueError("Geen SQL-inhoud ontvangen.")
+    allowed_tables = {
+        'context_scope',
+        'component',
+        'consequences',
+        'availability_requirements',
+        'ai_identificatie',
+        'summary'
+    }
+    expected_columns = {
+        'context_scope': {
+            'id', 'name', 'responsible', 'coordinator', 'start_date', 'end_date', 'last_update',
+            'service_description', 'knowledge', 'interfaces', 'mission_critical', 'support_contracts',
+            'security_supplier', 'user_amount', 'scope_description', 'risk_assessment_human',
+            'risk_assessment_process', 'risk_assessment_technological', 'ai_model', 'project_leader',
+            'risk_owner', 'product_owner', 'technical_administrator', 'security_manager',
+            'incident_contact', 'user_id'
+        },
+        'component': {
+            'id', 'name', 'info_type', 'info_owner', 'user_type', 'process_dependencies',
+            'description', 'context_scope_id'
+        },
+        'consequences': {
+            'id', 'consequence_category', 'security_property', 'consequence_worstcase',
+            'justification_worstcase', 'consequence_realisticcase', 'justification_realisticcase',
+            'component_id'
+        },
+        'availability_requirements': {
+            'id', 'mtd', 'rto', 'rpo', 'masl', 'component_id'
+        },
+        'ai_identificatie': {
+            'id', 'category', 'motivatie', 'component_id'
+        },
+        'summary': {
+            'id', 'content', 'context_scope_id'
+        }
+    }
+    insert_regex = re.compile(
+        r"^INSERT\s+INTO\s+(?P<table>[a-z_]+)\s*\((?P<columns>[^)]+)\)\s+VALUES\s*\((?P<values>.*)\)\s*;$",
+        re.IGNORECASE | re.DOTALL
+    )
+
+    def split_statements(sql_text):
+        statements, current, in_string, i = [], [], False, 0
+        while i < len(sql_text):
+            ch = sql_text[i]
+            current.append(ch)
+            if ch == "'":
+                if i + 1 < len(sql_text) and sql_text[i + 1] == "'":
+                    current.append("'")
+                    i += 1
+                else:
+                    in_string = not in_string
+            elif ch == ';' and not in_string:
+                statement = ''.join(current).strip()
+                if statement:
+                    statements.append(statement)
+                current = []
+            i += 1
+        if ''.join(current).strip():
+            raise ValueError("SQL-bestand bevat een onvolledig statement.")
+        return statements
+
+    def split_values(values_str):
+        values, current, in_string, i = [], [], False, 0
+        while i < len(values_str):
+            ch = values_str[i]
+            if ch == "'" and not in_string:
+                in_string = True
+                current.append(ch)
+            elif ch == "'" and in_string:
+                current.append(ch)
+                if i + 1 < len(values_str) and values_str[i + 1] == "'":
+                    current.append("'")
+                    i += 1
+                else:
+                    in_string = False
+            elif ch == ',' and not in_string:
+                values.append(''.join(current).strip())
+                current = []
+            else:
+                current.append(ch)
+            i += 1
+        if current:
+            values.append(''.join(current).strip())
+        return values
+
+    def convert_value(token):
+        cleaned = token.strip()
+        if cleaned.upper() == 'NULL':
+            return None
+        if cleaned.startswith("'") and cleaned.endswith("'"):
+            return cleaned[1:-1].replace("''", "'")
+        if re.fullmatch(r'-?\d+', cleaned):
+            return int(cleaned)
+        if re.fullmatch(r'-?\d+\.\d+', cleaned):
+            return float(cleaned)
+        return cleaned
+
+    def parse_statement(statement):
+        match = insert_regex.match(statement)
+        if not match:
+            raise ValueError("Ongeldig SQL statement gedetecteerd.")
+        table = match.group('table').lower()
+        if table not in allowed_tables:
+            raise ValueError("Niet-toegestane tabel aangetroffen.")
+        columns = [col.strip() for col in match.group('columns').split(',')]
+        if not all(re.fullmatch(r'[a-z_]+', col) for col in columns):
+            raise ValueError("Ongeldige kolomnaam aangetroffen.")
+        values = split_values(match.group('values').strip())
+        if len(columns) != len(values):
+            raise ValueError("Aantal kolommen komt niet overeen met aantal waarden.")
+        if not set(columns).issubset(expected_columns[table]):
+            raise ValueError("Niet-toegestane kolommen voor tabel aangetroffen.")
+        return table, columns, [convert_value(value) for value in values]
+
+    statements = split_statements(sql_content)
+    if not statements:
+        raise ValueError("Geen SQL-statements gevonden.")
+
+    parsed_data = {table: [] for table in allowed_tables}
+    for statement in statements:
+        table, columns, values = parse_statement(statement)
+        parsed_data[table].append(dict(zip(columns, values)))
+
+    if not parsed_data['context_scope']:
+        raise ValueError("Geen context_scope records gevonden in het SQL-bestand.")
+
+    def to_bool(value):
+        if isinstance(value, bool):
+            return value
+        if value in (None, '', 'None'):
+            return False
+        if isinstance(value, (int, float)):
+            return bool(value)
+        return str(value).strip().lower() in {'true', '1', 'yes', 'y', 'on'}
+
+    def parse_date_field(value):
+        if not value or str(value).strip().lower() == 'none':
+            return None
+        if isinstance(value, datetime):
+            return value.date()
+        return datetime.strptime(str(value), '%Y-%m-%d').date()
+
+    def prepare_context(row):
+        prepared = {k: v for k, v in row.items() if k not in {'id', 'user_id'}}
+        prepared['user_id'] = current_user.id
+        for field in ('start_date', 'end_date', 'last_update'):
+            prepared[field] = parse_date_field(prepared.get(field))
+        for field in ('risk_assessment_human', 'risk_assessment_process', 'risk_assessment_technological', 'ai_model'):
+            prepared[field] = to_bool(prepared.get(field))
+        numeric = prepared.get('user_amount')
+        if numeric in (None, '', 'None'):
+            prepared['user_amount'] = None
+        else:
+            try:
+                prepared['user_amount'] = int(numeric)
+            except (TypeError, ValueError):
+                prepared['user_amount'] = None
+        return prepared
+
+    def prepare_component(row, context_map):
+        prepared = {k: v for k, v in row.items() if k != 'id'}
+        original_id = prepared.get('context_scope_id')
+        if isinstance(original_id, str) and original_id.isdigit():
+            original_id = int(original_id)
+        if original_id not in context_map:
+            raise ValueError("Component verwijst naar onbekende context_scope.")
+        prepared['context_scope_id'] = context_map[original_id]
+        return prepared
+
+    def prepare_child(row, key_map, foreign_key):
+        prepared = {k: v for k, v in row.items() if k != 'id'}
+        original_fk = prepared.get(foreign_key)
+        if isinstance(original_fk, str) and original_fk.isdigit():
+            original_fk = int(original_fk)
+        if original_fk not in key_map:
+            raise ValueError(f"Record verwijst naar onbekende {foreign_key}.")
+        prepared[foreign_key] = key_map[original_fk]
+        return prepared
+
+    scope_names = {row.get('name') for row in parsed_data['context_scope'] if row.get('name')}
+    if not scope_names:
+        raise ValueError("Geen geldige BIA-namen gevonden in het SQL-bestand.")
+
+    context_map, component_map = {}, {}
     try:
-        # Split statements and execute them one by one
-        statements = [s.strip() for s in sql_content.split(';') if s.strip()]
-        for statement in statements:
-            db.session.execute(db.text(statement))
+        with db.session.begin_nested():
+            for name in scope_names:
+                for scope in ContextScope.query.filter_by(name=name).all():
+                    db.session.delete(scope)
+            db.session.flush()
+
+            for row in parsed_data['context_scope']:
+                original_id = row.get('id')
+                context = ContextScope(**prepare_context(row))
+                db.session.add(context)
+                db.session.flush()
+                if original_id is not None:
+                    context_map[original_id] = context.id
+
+            for row in parsed_data['component']:
+                original_id = row.get('id')
+                component = Component(**prepare_component(row, context_map))
+                db.session.add(component)
+                db.session.flush()
+                if original_id is not None:
+                    component_map[original_id] = component.id
+
+            for row in parsed_data['consequences']:
+                db.session.add(Consequences(**prepare_child(row, component_map, 'component_id')))
+
+            for row in parsed_data['availability_requirements']:
+                db.session.add(AvailabilityRequirements(**prepare_child(row, component_map, 'component_id')))
+
+            for row in parsed_data['ai_identificatie']:
+                ai_row = prepare_child(row, component_map, 'component_id')
+                if not ai_row.get('category'):
+                    ai_row['category'] = 'No AI'
+                db.session.add(AIIdentificatie(**ai_row))
+
+            for row in parsed_data['summary']:
+                db.session.add(Summary(**prepare_child(row, context_map, 'context_scope_id')))
         db.session.commit()
-    except Exception as e:
+    except Exception as exc:
         db.session.rollback()
-        # Re-raise the exception to be caught by the route
-        raise e
+        logging.exception("SQL import failed")
+        cause = exc.__cause__ if exc.__cause__ else exc
+        raise ValueError(f"Import van SQL-bestand is mislukt: {cause}") from exc
+
+def import_sql_file(file_storage):
+    if not current_user.is_authenticated:
+        raise PermissionError("Authenticatie vereist.")
+    if not file_storage or not file_storage.filename:
+        raise ValueError("Geen bestand opgegeven.")
+    filename = secure_filename(file_storage.filename)
+    if not filename.lower().endswith('.sql'):
+        raise ValueError("Alleen .sql-bestanden zijn toegestaan.")
+    stream = file_storage.stream
+    stream.seek(0, io.SEEK_END)
+    if stream.tell() > MAX_SQL_FILE_SIZE:
+        raise ValueError("SQL-bestand overschrijdt de maximale grootte.")
+    stream.seek(0)
+    content = stream.read()
+    if not content:
+        raise ValueError("Het SQL-bestand is leeg.")
+    try:
+        sql_text = content.decode('utf-8')
+    except UnicodeDecodeError as exc:
+        raise ValueError("SQL-bestand moet UTF-8 gecodeerd zijn.") from exc
+    import_from_sql(sql_text)

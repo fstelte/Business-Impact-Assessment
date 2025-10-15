@@ -1,3 +1,7 @@
+# 2025.10.3
+- Update export to sql routine
+- Add import sql routine
+
 # 2025.10.2
 - Display amount of users in the overview
 - Created export to SQL routine, not fully implemented
