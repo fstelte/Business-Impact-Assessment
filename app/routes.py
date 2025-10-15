@@ -4,7 +4,14 @@
 
 from flask import render_template, flash, redirect, url_for, request, Blueprint, jsonify,  current_app, send_file, abort
 from flask_login import current_user, login_required, login_user
-from .utils import export_to_csv, import_from_csv, get_impact_level, get_impact_color, export_to_sql
+from .utils import (
+    export_to_csv,
+    import_from_csv,
+    get_impact_level,
+    get_impact_color,
+    export_to_sql,
+    import_sql_file,
+)
 from . import db
 from . import auth
 from .models import ContextScope, User, Component, Consequences, AvailabilityRequirements, AIIdentificatie, Summary
@@ -925,32 +932,17 @@ def export_bia_sql(item_id):
         flash(f'Error exporting BIA to SQL: {e}', 'danger')
         return redirect(url_for('main.bia_detail', item_id=item_id))
 
-@main.route('/import/sql', methods=['GET', 'POST'])
+@main.route("/import-sql", methods=["GET", "POST"])
 @login_required
-def import_bia_sql():
-    """Importeert een BIA vanuit een SQL-bestand."""
+def import_sql_form():
     form = ImportSQLForm()
     if form.validate_on_submit():
-        file = form.sql_file.data
-        filename = secure_filename(file.filename)
-        
-        # Tijdelijk opslaan om te lezen
-        temp_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        file.save(temp_path)
-        
         try:
-            with open(temp_path, 'r', encoding='utf-8') as f:
-                sql_content = f.read()
-            
-            new_bia_id = import_from_sql(sql_content)
-            flash('BIA successfully imported from SQL file.', 'success')
-            return redirect(url_for('main.bia_detail', item_id=new_bia_id))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'An error occurred during SQL import: {e}', 'danger')
-        finally:
-            # Verwijder het tijdelijke bestand
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-                
-    return render_template('import_sql.html', title='Import BIA from SQL', form=form)
+            import_sql_file(form.sql_file.data)
+            flash("SQL-bestand succesvol geïmporteerd.", "success")
+            return redirect(url_for("main.index"))
+        except (ValueError, PermissionError) as exc:
+            flash(str(exc), "danger")
+        except Exception:
+            flash("Onbekende fout bij het importeren van het SQL-bestand.", "danger")
+    return render_template("import_sql_form.html", form=form)

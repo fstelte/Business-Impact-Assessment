@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="mb-4">Importeer BIA SQL</h1>
+  <p class="lead">Upload een gevalideerd export-bestand (.sql) om de bestaande gegevens te vervangen. Alle records met dezelfde BIA-naam worden eerst verwijderd en vervolgens teruggezet vanuit het bestand.</p>
+  <div class="alert alert-warning" role="alert">
+    Upload alleen SQL-bestanden die door deze applicatie zijn geëxporteerd. Het bestand wordt gecontroleerd op ongeoorloofde tabellen en SQL-injectie patronen.
+  </div>
+  <form id="sql-upload-form" class="row g-3" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="col-12">
+      {{ form.sql_file.label(class="form-label") }}
+      {{ form.sql_file(class="form-control") }}
+      {% for error in form.sql_file.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+    <div class="col-12">
+      {{ form.submit(class="btn btn-success") }}
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}{% endblock %}
